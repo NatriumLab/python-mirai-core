@@ -16,7 +16,7 @@ pip install kuriyama-core
 ### Install from github
 
 ``` bash
-pip install git+git:://github.com/jqqqqqqqqqq/python-mirai-core
+pip install git+git:://github.com/NatriumLab/python-mirai-core
 ```
 
 ### Example
