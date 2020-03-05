@@ -4,12 +4,12 @@ with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setup(
-    name="kuriyama-core",
+    name="python-mirai-core",
     version='0.1',
     description='A framework for OICQ(QQ, made by Tencent) headless client "Mirai".',
     author='Chenwe-i-lin, jqqqqqqqqqq',
     author_email="Chenwe_i_lin@outlook.com",
-    url="https://github.com/jqqqqqqqqqq/python-mirai-core",
+    url="https://github.com/NatriumLab/python-mirai-core",
     packages=find_packages(include=("mirai_core", "mirai_core.*")),
     python_requires='>=3.7',
     keywords=["oicq qq qqbot", ],
