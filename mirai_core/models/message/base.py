@@ -6,6 +6,7 @@ __all__ = [
     "BaseMessageComponent"
 ]
 
+
 class MessageComponentTypes(Enum):
     Source = "Source"
     Plain = "Plain"
@@ -16,15 +17,9 @@ class MessageComponentTypes(Enum):
     Quote = "Quote"
     Unknown = "Unknown"
 
+
 class BaseMessageComponent(BaseModel):
     type: MessageComponentTypes
-
-    def display(self):
-        """
-        for debugging purpose
-        :return: detailed string
-        """
-        return self.__repr__()
 
     def __str__(self):
         """

@@ -1,8 +1,5 @@
 from enum import Enum
 from pydantic import BaseModel
-from PIL import Image
-from mirai_core.network import session
-from io import BytesIO
 
 
 class Permission(Enum):
@@ -19,12 +16,8 @@ class Group(BaseModel):
     def __repr__(self):
         return f"<Group id={self.id} name='{self.name}' permission={self.permission.name}>"
 
-    def getAvatarUrl(self) -> str:
+    def get_avatar_url(self) -> str:
         return f'https://p.qlogo.cn/gh/{self.id}/{self.id}_1/140'
-
-    async def getAvatarAsPillowImage(self) -> Image.Image:
-        async with session.get(self.getAvatarUrl()) as response:
-            return Image.open(BytesIO(await response.read()))
 
 
 class Member(BaseModel):
@@ -36,12 +29,8 @@ class Member(BaseModel):
     def __repr__(self):
         return f"<GroupMember id={self.id} group={self.group} permission={self.permission} group={self.group.id}>"
 
-    def getAvatarUrl(self) -> str:
+    def get_avatar_url(self) -> str:
         return f'http://q4.qlogo.cn/g?b=qq&nk={self.id}&s=140'
-
-    async def getAvatarAsPillowImage(self) -> Image.Image:
-        async with session.get(self.getAvatarUrl()) as response:
-            return Image.open(BytesIO(await response.read()))
 
 
 class MemberChangeableSetting(BaseModel):

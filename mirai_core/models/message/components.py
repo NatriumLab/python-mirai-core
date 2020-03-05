@@ -1,12 +1,13 @@
 from enum import Enum
-import typing as T
+from typing import Optional
 from uuid import UUID
-from .base import BaseMessageComponent, MessageComponentTypes
 from pydantic import Field, validator, HttpUrl
 from pydantic.generics import GenericModel
 from pathlib import Path
 import datetime
 import re
+
+from .base import BaseMessageComponent, MessageComponentTypes
 
 __all__ = [
     'Plain',
@@ -300,7 +301,7 @@ class Plain(BaseMessageComponent):
     def __str__(self):
         return self.text
 
-    def display(self):
+    def __repr__(self):
         return f'[Plain: {self.text}]'
 
 
@@ -312,8 +313,9 @@ class Source(BaseMessageComponent):
     def __str__(self):
         return ''
 
-    def display(self):
+    def __repr__(self):
         return f'[Source: id={self.id}, time={self.time}]'
+        # return f'[Source: id={self.id}]'
 
 
 class Quote(BaseMessageComponent):
@@ -323,7 +325,7 @@ class Quote(BaseMessageComponent):
     def __str__(self):
         return ''
 
-    def display(self):
+    def __repr__(self):
         return f'[Quote: id={self.id}]'
 
 
@@ -335,7 +337,7 @@ class At(GenericModel, BaseMessageComponent):
     def __str__(self):
         return self.display
 
-    def display(self):
+    def __repr__(self):
         return f'[At: target={self.target}, display={self.display}]'
 
 
@@ -345,7 +347,7 @@ class AtAll(BaseMessageComponent):
     def __str__(self):
         return '@All'
 
-    def display(self):
+    def __repr__(self):
         return f'[AtAll]'
 
 
@@ -356,24 +358,24 @@ class Face(BaseMessageComponent):
     def __str__(self):
         return qq_emoji_text_list[self.faceId]
 
-    def display(self):
+    def __repr__(self):
         return f'[Face: id={self.faceId}, {qq_emoji_text_list[self.faceId]}]'
 
 
 class Image(BaseMessageComponent):
     type = MessageComponentTypes.Image
     imageId: UUID
-    url: T.Optional[HttpUrl] = None
+    url: Optional[HttpUrl] = None
 
-    @classmethod
     @validator('imageId', always=True, pre=True)
+    @classmethod
     def imageId_formater(cls, v):
         if isinstance(v, str):
-            imageType = 'group'
-            uuid_string = get_matched_string(re.search(image_regex[imageType], v))
+            image_type = 'group'
+            uuid_string = get_matched_string(re.search(image_regex[image_type], v))
             if not uuid_string:
-                imageType = 'friend'
-                uuid_string = get_matched_string(re.search(image_regex[imageType], v))
+                image_type = 'friend'
+                uuid_string = get_matched_string(re.search(image_regex[image_type], v))
             if uuid_string:
                 return UUID(uuid_string)
         elif isinstance(v, UUID):
@@ -382,7 +384,7 @@ class Image(BaseMessageComponent):
     def __str__(self):
         return ''
 
-    def display(self):
+    def __repr__(self):
         return f'[Image: {self.imageId}]'
 
     def as_group_image(self) -> str:
@@ -397,7 +399,7 @@ class SendImage:
     class for outbound image from local disk
     """
     path: Path
-    uuid: UUID
+    uuid: UUID = ''
 
     def __init__(self, path=None, uuid=None):
         if isinstance(path, str):
@@ -418,7 +420,7 @@ class Unknown(BaseMessageComponent):
     def __str__(self):
         return ''
 
-    def display(self):
+    def __repr__(self):
         return '[Unknown]'
 
 

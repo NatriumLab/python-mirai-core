@@ -1,20 +1,72 @@
 import re
-from typing import Union, List, Any, Dict, Optional
+from typing import Union, List, Type
 from datetime import timedelta
 from pathlib import Path
 from uuid import UUID
 import json
-from logbook import Logger, DEBUG
-
-from .models.message import FriendMessage, GroupMessage, BotMessage, MessageTypes
-from events.external import ExternalEvent, ExternalEvents
-from models import Friend, Group, GroupSetting, Member, MemberChangeableSetting
-from models.message import MessageChain, Source, Image, Quote, Plain, SendImage
-from utils import ImageRegex, ImageType, get_matched_string
-from models.message import BaseMessageComponent
-from network import HttpXClient
-from exceptions import AuthenticationException, MiraiException
+from .log import create_logger
 from functools import partial
+import asyncio
+
+from .models.message import BotMessage, ImageType, MessageChain,\
+    Source, Image, Quote, Plain, SendImage, BaseMessageComponent
+from .models.events import *
+from .models.entity import Friend, Group, GroupSetting, Member, MemberChangeableSetting
+from .network import HttpXClient
+from .exceptions import AuthenticationException, MiraiException
+
+
+ImageRegex = {
+    "group": r"(?<=\{)([0-9A-Z]{8})\-([0-9A-Z]{4})-([0-9A-Z]{4})-([0-9A-Z]{4})-([0-9A-Z]{12})(?=\}\..*?)",
+    "friend": r"(?<=/)([0-9a-z]{8})\-([0-9a-z]{4})-([0-9a-z]{4})-([0-9a-z]{4})-([0-9a-z]{12})"
+}
+
+
+def get_matched_string(regex_result):
+    if regex_result:
+        return regex_result.string[slice(*regex_result.span())]
+
+
+class Events(Enum):
+    BotOnlineEvent = BotOnlineEvent
+    BotOfflineEventActive = BotOfflineEventActive
+    BotOfflineEventForce = BotOfflineEventForce
+    BotOfflineEventDropped = BotOfflineEventDropped
+    BotReloginEvent = BotReloginEvent
+    BotGroupPermissionChangeEvent = BotGroupPermissionChangeEvent
+    BotMuteEvent = BotMuteEvent
+    BotUnmuteEvent = BotUnmuteEvent
+    BotJoinGroupEvent = BotJoinGroupEvent
+
+    GroupNameChangeEvent = GroupNameChangeEvent
+    GroupEntranceAnnouncementChangeEvent = GroupEntranceAnnouncementChangeEvent
+    GroupMuteAllEvent = GroupMuteAllEvent
+
+    # 群设置被修改事件
+    GroupAllowAnonymousChatEvent = GroupAllowAnonymousChatEvent  # 群设置 是否允许匿名聊天 被修改
+    GroupAllowConfessTalkEvent = GroupAllowConfessTalkEvent  # 坦白说
+    GroupAllowMemberInviteEvent = GroupAllowMemberInviteEvent  # 邀请进群
+
+    # 群事件(被 Bot 监听到的, 为被动事件, 其中 Bot 身份为第三方.)
+    MemberJoinEvent = MemberJoinEvent
+    MemberLeaveEventKick = MemberLeaveEventKick
+    MemberLeaveEventQuit = MemberLeaveEventQuit
+    MemberCardChangeEvent = MemberCardChangeEvent
+    MemberSpecialTitleChangeEvent = MemberSpecialTitleChangeEvent
+    MemberPermissionChangeEvent = MemberPermissionChangeEvent
+    MemberMuteEvent = MemberMuteEvent
+    MemberUnmuteEvent = MemberUnmuteEvent
+
+    FriendMessage = FriendMessage
+    GroupMessage = GroupMessage
+
+
+def _require_session_key(func):
+    async def checker(self: 'Bot', *args, **kwargs):
+        if not self.session_key:
+            raise AuthenticationException('Session key is not set')
+        return await func(self, *args, **kwargs)
+    return checker
 
 
 class Bot:
@@ -27,19 +79,11 @@ class Bot:
         self.base_url = f'http://{host}:{port}'
         self.session = HttpXClient(self.base_url)
         self.session_key = ''
-        self.logger = Logger('Bot', DEBUG)
+        self.logger = create_logger('Bot')
 
     async def handshake(self):
         await self.auth()
         await self.verify()
-
-    @staticmethod
-    def _require_session_key(func):
-        def checker(self: 'Bot', *args, **kwargs):
-            if not self.session_key:
-                raise AuthenticationException('Session key is not set')
-            func(self, *args, **kwargs)
-        return checker
 
     async def auth(self) -> None:
         """
@@ -66,7 +110,13 @@ class Bot:
                                 })
 
     @staticmethod
-    def _handle_target_as(target: Union[Group, Friend, Member, int], as_type: Any[Group, Friend, Member]):
+    def _handle_target_as(target: Union[Group, Friend, Member, int], as_type: Union[Type[Group], Type[Friend], Type[Member]]):
+        """
+        convert target to id
+        :param target: Union[Group, Friend, Member, int]
+        :param as_type: Group, Friend or Member
+        :return: id, int
+        """
         if isinstance(target, int):
             return target
         elif isinstance(target, as_type):
@@ -83,12 +133,12 @@ class Bot:
                                       List[BaseMessageComponent],
                                       str
                                   ]) -> BotMessage:
-        result = (await self.session.post('/sendFriendMessage',
-                                          data={
-                                              'sessionKey':   self.session_key,
-                                              'target':       Bot._handle_target_as(friend, Friend),
-                                              'messageChain': await self._handle_message_chain(message, Friend)
-                                          }))
+        result = await self.session.post('/sendFriendMessage',
+                                         data={
+                                             'sessionKey':   self.session_key,
+                                             'target':       Bot._handle_target_as(friend, Friend),
+                                             'messageChain': await self._handle_message_chain(message, Friend)
+                                         })
         return BotMessage.parse_obj(result)
 
     @_require_session_key
@@ -173,13 +223,13 @@ class Bot:
             'type':       image_type.value
         }
         result = await self.session.upload('/uploadImage', file=image_path, data=data)
-        regex = ImageRegex[image_type]
+        regex = ImageRegex[image_type.value]
         uuid_string = re.search(regex, result)
         if uuid_string:
             return Image(imageId=UUID(get_matched_string(uuid_string)))
 
     @_require_session_key
-    async def fetchMessage(self, count: int) -> List[Union[FriendMessage, GroupMessage, ExternalEvent]]:
+    async def fetch_message(self, count: int) -> List[Event]:
         params = {
             'sessionKey': self.session_key,
             'count':      count
@@ -187,13 +237,10 @@ class Bot:
         result = await self.session.get('/fetchMessage', params=params)
 
         for index in range(len(result)):
-            if result[index]['type'] in MessageTypes:  # if Message
+            if hasattr(Events, result[index]['type']):  # if Event
                 if 'messageChain' in result[index]:  # construct message chain
                     result[index]['messageChain'] = MessageChain.custom_parse(result[index]['messageChain'])
-                result[index] = MessageTypes[result[index]['type']].parse_obj(result[index])
-
-            elif hasattr(ExternalEvents, result[index]['type']):  # if Event
-                result[index] = ExternalEvents[result[index]['type']].value.parse_obj(result[index])
+                result[index] = Events[result[index]['type']].value.parse_obj(result[index])
         return result
 
     @_require_session_key
@@ -209,10 +256,14 @@ class Bot:
         }
 
         result = await self.session.get('/messageFromId', params=params)
-        if result.get('type') in MessageTypes:
+        if result.get('type') in (EventTypes.GroupMessageEvent.value, EventTypes.FriendMessageEvent.value):
             if "messageChain" in result:
                 result['messageChain'] = MessageChain.custom_parse(result['messageChain'])
-            return MessageTypes[result['type']].parse_obj(result)
+
+            if result.get('type') == EventTypes.GroupMessageEvent.value:
+                return GroupMessage.parse_obj(result)
+            else:
+                return FriendMessage.parse_obj(result)
         else:
             raise TypeError(f'Unknown message type')
 
@@ -321,7 +372,7 @@ class Bot:
 
         await self.session.post('/kick', data=data)
 
-    async def _handle_image(self, image_type: ImageType, message: BaseMessageComponent):
+    async def _handle_image(self, message: BaseMessageComponent, image_type: ImageType):
         if not isinstance(message, SendImage):
             return json.loads(message.json())
 
@@ -341,7 +392,7 @@ class Bot:
         BaseMessageComponent,
         List[BaseMessageComponent],
         str
-    ], as_type: Any[Group, Friend]) -> List:
+    ], as_type: Union[Type[Group], Type[Friend]]) -> List:
         if isinstance(message, MessageChain):
             return json.loads(message.json())
         elif isinstance(message, str):
@@ -351,13 +402,13 @@ class Bot:
                 image_type = ImageType.Group
             else:
                 image_type = ImageType.Friend
-            return [await self._handle_image(image_type, message)]
+            return [await self._handle_image(message, image_type)]
         elif isinstance(message, (tuple, list)):
             if as_type == Group:
                 image_type = ImageType.Group
             else:
                 image_type = ImageType.Friend
-            result = [*map(partial(self._handle_image, image_type=image_type), message)]
+            result = [await self._handle_image(m, image_type=image_type) for m in message]
             return result
         else:
             raise ValueError('Invalid message')

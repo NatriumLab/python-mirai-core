@@ -1,4 +1,4 @@
-import typing as T
+from typing import List, Dict, Optional
 from pydantic import BaseModel
 
 from .base import BaseMessageComponent
@@ -7,7 +7,7 @@ from .components import Source
 
 class MessageChain(BaseModel):
     # stores the actual components
-    __root__: T.List[BaseMessageComponent] = []
+    __root__: List[BaseMessageComponent] = []
 
     def __add__(self, value):
         # merge two message chain or append one component
@@ -22,7 +22,7 @@ class MessageChain(BaseModel):
         return ''.join([str(i) for i in self.__root__])
 
     @classmethod
-    def custom_parse(cls, value: T.List[T.Dict]) -> 'MessageChain':
+    def custom_parse(cls, value: List[Dict]) -> 'MessageChain':
         """
         construct message chain from dict
         :param value: dict contains message components
@@ -40,9 +40,6 @@ class MessageChain(BaseModel):
     def __getitem__(self, index):
         return self.__root__[index]
 
-    def __len__(self):
-        return len(self.__root__)
-
     def has(self, component_class) -> bool:
         """
         test if any item in MessageChain is component_class
@@ -58,7 +55,7 @@ class MessageChain(BaseModel):
     def __len__(self) -> int:
         return len(self.__root__)
 
-    def get_first(self, component_class) -> T.Optional[BaseMessageComponent]:
+    def get_first(self, component_class) -> Optional[BaseMessageComponent]:
         """
         Get the first component with component_class
         :param component_class: the class for the component
@@ -68,7 +65,7 @@ class MessageChain(BaseModel):
             if isinstance(i, component_class):
                 return i
 
-    def get_all(self, component_class) -> T.List[BaseMessageComponent]:
+    def get_all(self, component_class) -> List[BaseMessageComponent]:
         return [i for i in self.__root__ if isinstance(i, component_class)]
 
     def get_source(self) -> Source:
