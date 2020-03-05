@@ -10,7 +10,7 @@ A Flask like Python wrapper of [Mirai-HTTP-API](https://github.com/mamoe/mirai-a
 ### Install from PyPI
 
 ``` bash
-pip install kuriyama-core
+pip install python-mirai-core
 ```
 
 ### Install from github
