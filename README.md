@@ -3,7 +3,7 @@
 Derived from [Python-Mirai](https://github.com/Chenwe-i-lin/python-mirai). If you decided to **Star** this project, please
  also **Star** the original project.
 
-A Flask like Python wrapper of [Mirai-HTTP-API](https://github.com/mamoe/mirai-api-http
+A Flask like Python wrapper of [Mirai-HTTP-API](https://github.com/mamoe/mirai-api-http)
 
 ## Installation
 
