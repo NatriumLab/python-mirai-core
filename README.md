@@ -23,6 +23,8 @@ pip install git+git:://github.com/jqqqqqqqqqq/python-mirai-core
 
 see [UMR](https://github.com/jqqqqqqqqqq/UnifiedMessageRelay/blob/dev-4.0/src/Driver/Mirai/__init__.py)
 
+Fundamentals: Bot is for sending and Updater is for receiving.
+
 ### Thanks 
 
 Thanks [`mamoe`](https://github.com/mamoe) brings us [`mirai`](https://github.com/mamoe/mirai), a tremendous work that 
