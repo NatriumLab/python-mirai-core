@@ -19,9 +19,19 @@ pip install python-mirai-core
 pip install git+git:://github.com/NatriumLab/python-mirai-core
 ```
 
+### Features
+
+- Updater handshake with mirai-console automatically when console is restarted or session is expired
+
+- Similar logic to python-telegram-bot or aiogram
+
+- Supports multiple listener for single event, use `return True` to block further calling for this event only
+
 ### Example
 
-see [UMR](https://github.com/jqqqqqqqqqq/UnifiedMessageRelay/blob/dev-4.0/src/Driver/Mirai/__init__.py)
+Basic example: see demo folder.
+
+Comprehensive example: see [UMR](https://github.com/jqqqqqqqqqq/UnifiedMessageRelay/blob/dev-4.0/src/Driver/Mirai/__init__.py)
 
 Fundamentals: Bot is for sending and Updater is for receiving.
 
