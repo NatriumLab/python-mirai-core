@@ -3,25 +3,27 @@
 Derived from [Python-Mirai](https://github.com/Chenwe-i-lin/python-mirai). If you decided to **Star** this project, please
  also **Star** the original project.
 
-A Flask like Python wrapper of [Mirai-HTTP-API](https://github.com/mamoe/mirai-api-http
+A Flask like Python wrapper of [Mirai-HTTP-API](https://github.com/mamoe/mirai-api-http)
 
 ## Installation
 
 ### Install from PyPI
 
 ``` bash
-pip install kuriyama-core
+pip install python-mirai-core
 ```
 
 ### Install from github
 
 ``` bash
-pip install git+git:://github.com/jqqqqqqqqqq/python-mirai-core
+pip install git+git:://github.com/NatriumLab/python-mirai-core
 ```
 
 ### Example
 
 see [UMR](https://github.com/jqqqqqqqqqq/UnifiedMessageRelay/blob/dev-4.0/src/Driver/Mirai/__init__.py)
+
+Fundamentals: Bot is for sending and Updater is for receiving.
 
 ### Thanks 
 
