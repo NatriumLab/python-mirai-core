@@ -1,5 +1,5 @@
 from mirai_core import Bot, Updater
-from mirai_core.models import events
+from mirai_core.models import events, message
 
 qq = 123456
 host = '127.0.0.1'
@@ -18,6 +18,10 @@ async def handle(event: events.Event):
                                      quote_source=event.messageChain.get_source())
     elif isinstance(event, events.FriendMessage):
         await bot.send_friend_message(friend=event.sender,
-                                      message=event.messageChain)
+                                      message=[
+                                          message.Plain(text='test'),
+                                          message.At(target=event.sender),
+                                          message.SendImage(path='/root/whatever.jpg')
+                                      ])
 
 updater.run()
