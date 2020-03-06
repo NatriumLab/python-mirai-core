@@ -298,6 +298,9 @@ class Plain(BaseMessageComponent):
     type = MessageComponentTypes.Plain
     text: str
 
+    def __init__(self, text):
+        super().__init__(text=text, type=MessageComponentTypes.Plain)
+
     def __str__(self):
         return self.text
 
@@ -334,6 +337,9 @@ class At(GenericModel, BaseMessageComponent):
     target: int
     display: str
 
+    def __init__(self, target):
+        super().__init__(target=target, display=None, type=MessageComponentTypes.At)
+
     def __str__(self):
         return self.display
 
@@ -355,6 +361,9 @@ class Face(BaseMessageComponent):
     type = MessageComponentTypes.Face
     faceId: int
 
+    def __init__(self, face_id):
+        super().__init__(faceId=face_id, type=MessageComponentTypes.Face)
+
     def __str__(self):
         return qq_emoji_text_list[self.faceId]
 
@@ -366,6 +375,9 @@ class Image(BaseMessageComponent):
     type = MessageComponentTypes.Image
     imageId: UUID
     url: Optional[HttpUrl] = None
+
+    def __init__(self, image_id):
+        super().__init__(imageId=image_id, url=None, type=MessageComponentTypes.Image)
 
     @validator('imageId', always=True, pre=True)
     @classmethod
