@@ -7,6 +7,7 @@ from .log import create_logger, install_logger
 
 from .bot import Bot
 from .models.events import Event, EventTypes
+from .exceptions import SessionException, NetworkException, AuthenticationException
 
 
 @dataclass
@@ -28,6 +29,18 @@ class Updater:
         self.logger = create_logger('Updater')
         self.event_handlers: DefaultDict[EventTypes, List[EventHandler]] = defaultdict(lambda: list())
 
+    async def handshake(self):
+        while True:
+            try:
+                await self.bot.handshake()
+                return
+            except NetworkException:
+                self.logger.warning('Unable to communicate with Mirai console, retrying in 5 seconds')
+                await asyncio.sleep(5)
+            except AuthenticationException as e:
+                self.logger.warning(f'{e}, retrying in 5 seconds')
+                await asyncio.sleep(5)
+
     async def run_task(self, shutdown_trigger=None):
         """
         return awaitable coroutine to run in any event loop
@@ -35,7 +48,7 @@ class Updater:
         """
         self.logger.debug('Run tasks')
         tasks = [
-            self.bot.handshake(),
+            self.handshake(),
             self.message_polling(),
         ]
         if shutdown_trigger:
@@ -73,12 +86,14 @@ class Updater:
         """
         while True:
             await asyncio.sleep(interval)
-
-            results: List[Event] = await self.bot.fetch_message(count)
-            if len(results) > 0:
-                self.logger.debug('Received messages:\n' + '\n'.join([str(result) for result in results]))
-            for result in results:
-                asyncio.run_coroutine_threadsafe(self.event_caller(result), self.loop)
+            try:
+                results: List[Event] = await self.bot.fetch_message(count)
+                if len(results) > 0:
+                    self.logger.debug('Received messages:\n' + '\n'.join([str(result) for result in results]))
+                for result in results:
+                    asyncio.run_coroutine_threadsafe(self.event_caller(result), self.loop)
+            except (SessionException, NetworkException, AuthenticationException):
+                await self.handshake()
 
     async def event_caller(self, event: Event):
         for handler in self.event_handlers[event.type]:

@@ -10,6 +10,10 @@ class AuthenticationException(MiraiException):
     pass
 
 
+class SessionException(MiraiException):
+    pass
+
+
 class PrivilegeException(MiraiException):
     pass
 
@@ -19,4 +23,8 @@ class UnknownTargetException(MiraiException):
 
 
 class BadRequestException(MiraiException):
+    pass
+
+
+class ServerException(MiraiException):
     pass
