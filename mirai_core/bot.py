@@ -132,13 +132,21 @@ class Bot:
                                       BaseMessageComponent,
                                       List[BaseMessageComponent],
                                       str
-                                  ]) -> BotMessage:
+                                  ],
+                                  quote_source: Union[int, Source] = None) -> BotMessage:
+        data = {
+            'sessionKey':   self.session_key,
+            'target':       Bot._handle_target_as(friend, Friend),
+            'messageChain': await self._handle_message_chain(message, Friend)
+        }
+        if quote_source:
+            if isinstance(quote_source, int):
+                data['quote'] = quote_source
+            elif isinstance(quote_source, Source):
+                data['quote'] = quote_source.id
         result = await self.session.post('/sendFriendMessage',
-                                         data={
-                                             'sessionKey':   self.session_key,
-                                             'target':       Bot._handle_target_as(friend, Friend),
-                                             'messageChain': await self._handle_message_chain(message, Friend)
-                                         })
+                                         data=data)
+
         return BotMessage.parse_obj(result)
 
     @_require_session_key
