@@ -21,7 +21,14 @@ async def handle(event: events.Event):
                                       message=[
                                           message.Plain(text='test'),
                                           message.At(target=event.sender),
-                                          message.SendImage(path='/root/whatever.jpg')
+                                          message.LocalImage(path='/root/whatever.jpg')
+                                      ])
+        # or if you want to save image_id
+        image = await bot.upload_image(image_type=message.ImageType.Friend, image_path='/root/whatever.jpg')
+        # image.imageId is what you want to save
+        await bot.send_friend_message(friend=event.sender,
+                                      message=[
+                                          image
                                       ])
 
 updater.run()

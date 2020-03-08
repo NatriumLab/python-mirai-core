@@ -7,7 +7,7 @@ from .log import create_logger, install_logger
 
 from .bot import Bot
 from .models.events import Event, EventTypes
-from .exceptions import SessionException, NetworkException, AuthenticationException
+from .exceptions import SessionException, NetworkException, AuthenticationException, ServerException
 
 
 @dataclass
@@ -37,7 +37,7 @@ class Updater:
             except NetworkException:
                 self.logger.warning('Unable to communicate with Mirai console, retrying in 5 seconds')
                 await asyncio.sleep(5)
-            except AuthenticationException as e:
+            except Exception as e:
                 self.logger.warning(f'{e}, retrying in 5 seconds')
                 await asyncio.sleep(5)
 
@@ -92,7 +92,8 @@ class Updater:
                     self.logger.debug('Received messages:\n' + '\n'.join([str(result) for result in results]))
                 for result in results:
                     asyncio.run_coroutine_threadsafe(self.event_caller(result), self.loop)
-            except (SessionException, NetworkException, AuthenticationException):
+            except Exception as e:
+                self.logger.warning(f'{e}, new handshake initiated')
                 await self.handshake()
 
     async def event_caller(self, event: Event):

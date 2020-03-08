@@ -80,7 +80,8 @@ class HttpXClient:
                                                headers=headers, files=files, timeout=timeout)
         except httpx.exceptions.NetworkError:
             raise NetworkException('Unable to reach Mirai console')
-        return response.text
+        self.logger.debug(f'Image uploaded: {response.text}')
+        return response.json()
 
     async def close(self):
         await self.session.aclose()

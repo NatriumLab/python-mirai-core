@@ -19,7 +19,7 @@ __all__ = [
     'Unknown',
     'Quote',
     'ComponentTypes',
-    'SendImage'
+    'LocalImage'
 ]
 
 # original text copied from Tim
@@ -298,8 +298,8 @@ class Plain(BaseMessageComponent):
     type = MessageComponentTypes.Plain
     text: str
 
-    def __init__(self, text):
-        super().__init__(text=text, type=MessageComponentTypes.Plain)
+    def __init__(self, text, **kwargs):
+        super().__init__(text=text, **kwargs)
 
     def __str__(self):
         return self.text
@@ -337,8 +337,8 @@ class At(GenericModel, BaseMessageComponent):
     target: int
     display: str
 
-    def __init__(self, target):
-        super().__init__(target=target, display=None, type=MessageComponentTypes.At)
+    def __init__(self, target, **kwargs):
+        super().__init__(target=target, display=None, type=MessageComponentTypes.At, **kwargs)
 
     def __str__(self):
         return self.display
@@ -361,8 +361,8 @@ class Face(BaseMessageComponent):
     type = MessageComponentTypes.Face
     faceId: int
 
-    def __init__(self, face_id):
-        super().__init__(faceId=face_id, type=MessageComponentTypes.Face)
+    def __init__(self, face_id, **kwargs):
+        super().__init__(faceId=face_id, **kwargs)
 
     def __str__(self):
         return qq_emoji_text_list[self.faceId]
@@ -372,26 +372,15 @@ class Face(BaseMessageComponent):
 
 
 class Image(BaseMessageComponent):
+    """
+    class for received image
+    """
     type = MessageComponentTypes.Image
-    imageId: UUID
+    imageId: str
     url: Optional[HttpUrl] = None
 
-    def __init__(self, image_id):
-        super().__init__(imageId=image_id, url=None, type=MessageComponentTypes.Image)
-
-    @validator('imageId', always=True, pre=True)
-    @classmethod
-    def imageId_formater(cls, v):
-        if isinstance(v, str):
-            image_type = 'group'
-            uuid_string = get_matched_string(re.search(image_regex[image_type], v))
-            if not uuid_string:
-                image_type = 'friend'
-                uuid_string = get_matched_string(re.search(image_regex[image_type], v))
-            if uuid_string:
-                return UUID(uuid_string)
-        elif isinstance(v, UUID):
-            return v
+    def __init__(self, imageId, **kwargs):
+        super().__init__(imageId=imageId, **kwargs)
 
     def __str__(self):
         return ''
@@ -399,30 +388,27 @@ class Image(BaseMessageComponent):
     def __repr__(self):
         return f'[Image: {self.imageId}]'
 
-    def as_group_image(self) -> str:
-        return f'{{{str(self.imageId).upper()}}}.jpg'
+    @property
+    def image_type(self):
+        if self.imageId.startswith('/'):
+            return 'friend'
+        elif self.imageId.startswith('{'):
+            return 'group'
+        else:
+            'unknown'
 
-    def as_friend_image(self) -> str:
-        return f'/{str(self.imageId)}'
 
-
-class SendImage:
+class LocalImage:
     """
     class for outbound image from local disk
     """
     path: Path
-    uuid: UUID = ''
 
-    def __init__(self, path=None, uuid=None):
+    def __init__(self, path=None):
         if isinstance(path, str):
             self.path = Path(path)
         elif isinstance(path, Path):
             self.path = path
-
-        if isinstance(uuid, str):
-            self.uuid = UUID(uuid)
-        elif isinstance(uuid, UUID):
-            self.uuid = uuid
 
 
 class Unknown(BaseMessageComponent):
