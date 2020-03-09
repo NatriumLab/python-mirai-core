@@ -4,16 +4,15 @@ from pathlib import Path
 import json
 from .log import create_logger
 
-from .models.message import BotMessage, ImageType, MessageChain,\
+from .models.message import BotMessage, ImageType, MessageChain, \
     Source, Image, Quote, Plain, BaseMessageComponent, LocalImage
 from .models.events import *
 from .models.entity import Friend, Group, GroupSetting, Member, MemberChangeableSetting
 from .network import HttpClient
 from .exceptions import AuthenticationException, MiraiException
 
-
 ImageRegex = {
-    "group": r"(?<=\{)([0-9A-Z]{8})\-([0-9A-Z]{4})-([0-9A-Z]{4})-([0-9A-Z]{4})-([0-9A-Z]{12})(?=\}\..*?)",
+    "group":  r"(?<=\{)([0-9A-Z]{8})\-([0-9A-Z]{4})-([0-9A-Z]{4})-([0-9A-Z]{4})-([0-9A-Z]{12})(?=\}\..*?)",
     "friend": r"(?<=/)([0-9a-z]{8})\-([0-9a-z]{4})-([0-9a-z]{4})-([0-9a-z]{4})-([0-9a-z]{12})"
 }
 
@@ -61,6 +60,7 @@ class Bot:
     """
     See https://github.com/mamoe/mirai-api-http for details
     """
+
     def __init__(self, qq: int, host: str = '127.0.0.1', port: int = 8080, auth_key: str = 'abcdefgh', loop=None):
         self.qq = qq
         self.auth_key = auth_key
@@ -70,17 +70,14 @@ class Bot:
         self.session_key = ''
         self.logger = create_logger('Bot')
 
-    async def check_session(self):
-        if not self.session_key:
-            raise AuthenticationException('Session key is not set')
+    async def retry_once(self, task):
         try:
-            result = await self.get_config()
-            return
+            return await task
         except MiraiException:
             pass
-
         try:
             await self.handshake()
+            return await task
         except MiraiException:
             self.logger.exception('Unable to handshake')
 
@@ -111,7 +108,8 @@ class Bot:
                                 })
 
     @staticmethod
-    def _handle_target_as(target: Union[Group, Friend, Member, int], as_type: Union[Type[Group], Type[Friend], Type[Member]]):
+    def _handle_target_as(target: Union[Group, Friend, Member, int],
+                          as_type: Union[Type[Group], Type[Friend], Type[Member]]):
         """
         convert target to id
         :param target: Union[Group, Friend, Member, int]
@@ -134,7 +132,6 @@ class Bot:
                                       str
                                   ],
                                   quote_source: Union[int, Source] = None) -> BotMessage:
-        await self.check_session()
         data = {
             'sessionKey':   self.session_key,
             'target':       Bot._handle_target_as(friend, Friend),
@@ -145,8 +142,8 @@ class Bot:
                 data['quote'] = quote_source
             elif isinstance(quote_source, Source):
                 data['quote'] = quote_source.id
-        result = await self.session.post('/sendFriendMessage',
-                                         data=data)
+        result = await self.retry_once(self.session.post('/sendFriendMessage',
+                                                         data=data))
 
         return BotMessage.parse_obj(result)
 
@@ -159,7 +156,6 @@ class Bot:
                                      str
                                  ],
                                  quote_source: Union[int, Source] = None) -> BotMessage:
-        await self.check_session()
         data = {
             'sessionKey':   self.session_key,
             'target':       Bot._handle_target_as(group, Group),
@@ -170,14 +166,13 @@ class Bot:
                 data['quote'] = quote_source
             elif isinstance(quote_source, Source):
                 data['quote'] = quote_source.id
-        result = await self.session.post('/sendGroupMessage',
-                                         data=data)
+        result = await self.retry_once(self.session.post('/sendGroupMessage',
+                                                         data=data))
         return BotMessage.parse_obj(result)
 
     async def recall(self, source: Union[Source, int]) -> None:
-        await self.check_session()
         data = {
-            'sessionKey':   self.session_key,
+            'sessionKey': self.session_key,
         }
         if isinstance(source, int):
             data['target'] = source
@@ -186,41 +181,37 @@ class Bot:
         else:
             raise MiraiException('Invalid source argument')
 
-        await self.session.post('/recall', data=data)
+        await self.retry_once(self.session.post('/recall', data=data))
 
     @property
     async def groups(self) -> List[Group]:
-        await self.check_session()
         params = {
             'sessionKey': self.session_key,
         }
-        result = await self.session.get('/groupList', params=params)
+        result = await self.retry_once(self.session.get('/groupList', params=params))
         return [Group.parse_obj(group_info) for group_info in result]
 
     @property
     async def friends(self) -> List[Friend]:
-        await self.check_session()
         params = {
             'sessionKey': self.session_key,
         }
-        result = await self.session.get('/friendList', params=params)
+        result = await self.retry_once(self.session.get('/friendList', params=params))
         return [Friend.parse_obj(friend_info) for friend_info in result]
 
     async def get_members(self, target: Union[Group, int]) -> List[Member]:
-        await self.check_session()
         if isinstance(target, int):
             group = target
         else:
             group = target.id
         params = {
             'sessionKey': self.session_key,
-            'target': group
+            'target':     group
         }
-        result = await self.session.get('/memberList', params=params)
+        result = await self.retry_once(self.session.get('/memberList', params=params))
         return [Member.parse_obj(member_info) for member_info in result]
 
     async def upload_image(self, image_type: ImageType, image_path: Union[Path, str]) -> Optional[Image]:
-        await self.check_session()
         if isinstance(image_path, str):
             image_path = Path(image_path)
 
@@ -231,16 +222,15 @@ class Bot:
             'sessionKey': self.session_key,
             'type':       image_type.value
         }
-        result = await self.session.upload('/uploadImage', file=image_path, data=data)
+        result = await self.retry_once(self.session.upload('/uploadImage', file=image_path, data=data))
         return Image.parse_obj(result)
 
     async def fetch_message(self, count: int) -> List[Event]:
-        await self.check_session()
         params = {
             'sessionKey': self.session_key,
             'count':      count
         }
-        result = await self.session.get('/fetchMessage', params=params)
+        result = await self.retry_once(self.session.get('/fetchMessage', params=params))
 
         for index in range(len(result)):
             if hasattr(Events, result[index]['type']):  # if Event
@@ -250,7 +240,6 @@ class Bot:
         return result
 
     async def message_from_id(self, source_id: Union[Source, Quote, int]):
-        await self.check_session()
         if isinstance(source_id, Source):
             source_id = source_id.id
         elif isinstance(source_id, Quote):
@@ -261,7 +250,7 @@ class Bot:
             'id':         source_id
         }
 
-        result = await self.session.get('/messageFromId', params=params)
+        result = await self.retry_once(self.session.get('/messageFromId', params=params))
         if result.get('type') in (EventTypes.GroupMessageEvent.value, EventTypes.FriendMessageEvent.value):
             if "messageChain" in result:
                 result['messageChain'] = MessageChain.custom_parse(result['messageChain'])
@@ -274,42 +263,37 @@ class Bot:
             raise TypeError(f'Unknown message type')
 
     async def mute_all(self, group: Union[Group, int]):
-        await self.check_session()
         params = {
             'sessionKey': self.session_key,
             'target':     Bot._handle_target_as(target=group, as_type=Group)
         }
 
-        await self.session.get('/muteAll', params=params)
+        await self.retry_once(self.session.get('/muteAll', params=params))
 
     async def unmute_all(self, group: Union[Group, int]):
-        await self.check_session()
         params = {
             'sessionKey': self.session_key,
             'target':     Bot._handle_target_as(target=group, as_type=Group)
         }
 
-        await self.session.get('/unmuteAll', params=params)
+        await self.retry_once(self.session.get('/unmuteAll', params=params))
 
     async def get_member_info(self, group: Union[Group, int], member: Union[Member, int]):
-        await self.check_session()
         params = {
             'sessionKey': self.session_key,
             'target':     Bot._handle_target_as(target=group, as_type=Group),
             'memberId':   self._handle_target_as(target=member, as_type=Member)
         }
 
-        result = await self.session.get('/memberInfo', params=params)
+        result = await self.retry_once(self.session.get('/memberInfo', params=params))
         return MemberChangeableSetting.parse_obj(result)
 
     async def get_bot_member_info(self, group: Union[Group, int]):
-        await self.check_session()
-        return await self.get_member_info(group, self.qq)
+        return await self.retry_once(self.get_member_info(group, self.qq))
 
     async def set_member_info(self, group: Union[Group, int],
                               member: Union[Member, int],
                               setting: MemberChangeableSetting):
-        await self.check_session()
         data = {
             'sessionKey': self.session_key,
             'target':     Bot._handle_target_as(target=group, as_type=Group),
@@ -317,32 +301,29 @@ class Bot:
             'info':       json.loads(setting.json())
         }
 
-        await self.session.post('/memberInfo', data=data)
+        await self.retry_once(self.session.post('/memberInfo', data=data))
 
     async def get_group_config(self, group: Union[Group, int]) -> GroupSetting:
-        await self.check_session()
         params = {
             'sessionKey': self.session_key,
             'target':     Bot._handle_target_as(target=group, as_type=Group),
         }
-        result = await self.session.get('/groupConfig', params=params)
+        result = await self.retry_once(self.session.get('/groupConfig', params=params))
         return GroupSetting.parse_obj(result)
 
     async def set_group_config(self, group: Union[Group, int],
                                config: GroupSetting):
-        await self.check_session()
         data = {
             'sessionKey': self.session_key,
             'target':     Bot._handle_target_as(target=group, as_type=Group),
             'config':     json.loads(config.json())
         }
 
-        await self.session.post('/groupConfig', data=data)
+        await self.retry_once(self.session.post('/groupConfig', data=data))
 
     async def mute(self, group: Union[Group, int],
                    member: Union[Member, int],
                    time: Union[timedelta, int]):
-        await self.check_session()
         if isinstance(time, timedelta):
             time = int(time.total_seconds())
         time = min(86400 * 30, max(60, time))  # time should between 1 minutes and 30 days
@@ -352,22 +333,20 @@ class Bot:
             'MemberId':   Bot._handle_target_as(target=member, as_type=Member),
             'time':       time
         }
-        await self.session.post('/mute', data=data)
+        await self.retry_once(self.session.post('/mute', data=data))
 
     async def unmute(self, group: Union[Group, int],
                      member: Union[Member, int]):
-        await self.check_session()
         data = {
             'sessionKey': self.session_key,
             'target':     Bot._handle_target_as(target=group, as_type=Group),
             'MemberId':   Bot._handle_target_as(target=member, as_type=Member)
         }
-        await self.session.post('/unmute', data=data)
+        await self.retry_once(self.session.post('/unmute', data=data))
 
     async def kick(self, group: Union[Group, int],
-                     member: Union[Member, int],
-                     message: str = ''):
-        await self.check_session()
+                   member: Union[Member, int],
+                   message: str = ''):
         data = {
             'sessionKey': self.session_key,
             'target':     Bot._handle_target_as(target=group, as_type=Group),
@@ -376,13 +355,13 @@ class Bot:
         if message:
             data['msg'] = message
 
-        await self.session.post('/kick', data=data)
+        await self.retry_once(self.session.post('/kick', data=data))
 
     async def _handle_image(self, message: BaseMessageComponent, image_type: ImageType):
         if not isinstance(message, LocalImage):
             return json.loads(message.json())
 
-        image = await self.upload_image(image_type, message.path)
+        image = await self.retry_once(self.upload_image(image_type, message.path))
 
         return {
             'type':    'Image',
@@ -414,7 +393,7 @@ class Bot:
             return result
         else:
             raise ValueError('Invalid message')
-        
+
     async def get_config(self):
         """
         this function is used to check if session_key is still valid
@@ -424,7 +403,7 @@ class Bot:
             'sessionKey': self.session_key
         }
 
-        result = await self.session.get('/config', params=params)
+        result = await self.retry_once(self.session.get('/config', params=params))
         return result
 
     @staticmethod
@@ -439,9 +418,9 @@ class Bot:
                     result['messageChain'] = MessageChain.custom_parse(result['messageChain'])
                 result = Events[result['type']].value.parse_obj(result)
             await handler(result)
+
         return _websocket_handler
 
     async def create_websocket(self, handler, ws_close_handler):
-        await self.check_session()
-        await self.session.websocket(f'/all?sessionKey={self.session_key}',
-                                     Bot.websocket_handler(handler), ws_close_handler)
+        await self.retry_once(self.session.websocket(f'/all?sessionKey={self.session_key}',
+                                                     Bot.websocket_handler(handler), ws_close_handler))

@@ -25,7 +25,6 @@ class Updater:
         self.loop = bot.loop
         self.logger = create_logger('Updater')
         self.event_handlers: DefaultDict[EventTypes, List[EventHandler]] = defaultdict(lambda: list())
-        self._app = Quart(__name__)
         self.use_websocket = use_websocket
 
     async def handshake(self):
