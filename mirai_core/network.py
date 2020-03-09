@@ -1,5 +1,6 @@
 from typing import Dict
-import httpx
+import aiohttp
+from aiohttp import client_exceptions
 from .log import create_logger
 from io import BytesIO
 
@@ -7,81 +8,96 @@ from .exceptions import AuthenticationException, NetworkException, ServerExcepti
     UnknownTargetException, PrivilegeException, BadRequestException, MiraiException, SessionException
 
 
-class HttpXClient:
-    """HttpClient implemented by httpx."""
+error_code = {
+                1: AuthenticationException('Incorrect authKey'),
+                2: AuthenticationException('Bot does not exist'),
+                3: SessionException('Session does not exist or has expired'),
+                4: AuthenticationException('Session is not verified'),
+                5: UnknownTargetException('Message target does not exist'),
+                10: PrivilegeException('Bot does not have corresponding privilege'),
+                400: BadRequestException('Bad Request, please check arguments/url'),
+            }
 
-    DEFAULT_TIMEOUT = 30
+
+class HttpClient:
+    """HttpClient implemented by aiohttp."""
+
+    DEFAULT_TIMEOUT = 5
 
     @staticmethod
-    def _check_response(result: httpx.Response, url, method) -> Dict:
-        if result.status_code != 200:
-            raise ServerException(f'{url} {method} failed, status code: {result.status_code}')
-        result = result.json()
+    async def _check_response(result: aiohttp.ClientResponse, url, method) -> Dict:
+        if result.status != 200:
+            raise ServerException(f'{url} {method} failed, status code: {result.status}')
+        result = await result.json()
+        status_code = result.get('code')
         if method == 'post':
-            status_code = result.get('code')
             if status_code is None:
                 raise ServerException('Empty response')
             if status_code == 0:  # normal
                 return result
-            elif status_code == 1:
-                raise AuthenticationException('Incorrect authKey')
-            elif status_code == 2:
-                raise AuthenticationException('Bot does not exist')
-            elif status_code == 3:
-                raise SessionException('Session does not exist or has expired')
-            elif status_code == 4:
-                raise AuthenticationException('Session is not verified')
-            elif status_code == 5:
-                raise UnknownTargetException('Message target does not exist')
-            elif status_code == 10:
-                raise PrivilegeException('Bot does not have corresponding privilege')
-            elif status_code == 400:
-                raise BadRequestException('Bad Request, please check arguments/url')
-            else:
-                raise MiraiException('HTTP API updated, please upgrade python-mirai-core')
         elif method == 'get':
-            return result
+            if status_code is None or status_code == 0:
+                return result
+        if status_code in error_code:
+            raise error_code[status_code]
+        else:
+            raise MiraiException('HTTP API updated, please upgrade python-mirai-core')
 
-    def __init__(self, base_url: str, timeout=DEFAULT_TIMEOUT):
+    def __init__(self, base_url: str, timeout=DEFAULT_TIMEOUT, loop=None):
         self.base_url = base_url
-        self.session = httpx.AsyncClient(timeout=timeout)
-        self.timeout = timeout
+        self.timeout = aiohttp.ClientTimeout(timeout)
+        self.session = aiohttp.ClientSession(timeout=self.timeout, loop=loop)
         self.logger = create_logger('Network')
+        self.loop = loop
 
-    async def get(self, url, headers=None, params=None, timeout=None):
-        if timeout is None:
-            timeout = self.timeout
+    async def get(self, url, headers=None, params=None):
         if url != '/fetchMessage':
             self.logger.debug(f'get {url} with params: {str(params)}')
         try:
-            response = await self.session.get(self.base_url + url, headers=headers, params=params, timeout=timeout)
-        except httpx.exceptions.NetworkError:
+            response = await self.session.get(self.base_url + url, headers=headers, params=params)
+        except client_exceptions.ClientConnectorError:
             raise NetworkException('Unable to reach Mirai console')
-        return HttpXClient._check_response(response, url, 'get')
+        return await HttpClient._check_response(response, url, 'get')
 
-    async def post(self, url, headers=None, data=None, timeout=None):
-        if timeout is None:
-            timeout = self.timeout
+    async def post(self, url, headers=None, data=None):
 
         self.logger.debug(f'post {url} with data: {str(data)}')
         try:
-            response = await self.session.post(self.base_url + url, headers=headers, json=data, timeout=timeout)
-        except httpx.exceptions.NetworkError:
+            response = await self.session.post(self.base_url + url, headers=headers, json=data)
+        except client_exceptions.ClientConnectorError:
             raise NetworkException('Unable to reach Mirai console')
-        return HttpXClient._check_response(response, url, 'post')
+        return await HttpClient._check_response(response, url, 'post')
 
-    async def upload(self, url, headers=None, data=None, file: str = None, timeout=None):
-        files = {
-            'img': BytesIO(open(str(file.absolute()), 'rb').read())
-        }
+    async def upload(self, url, headers=None, data=None, file: str = None):
+        if data is None:
+            data = dict()
+        data['img'] = BytesIO(open(str(file.absolute()), 'rb').read())
         self.logger.debug(f'upload {url} with file: {file}')
         try:
-            response = await self.session.post(self.base_url + url, data=data,
-                                               headers=headers, files=files, timeout=timeout)
-        except httpx.exceptions.NetworkError:
+            response = await self.session.post(self.base_url + url,
+                                               headers=headers, data=data)
+        except client_exceptions.ClientConnectorError:
             raise NetworkException('Unable to reach Mirai console')
         self.logger.debug(f'Image uploaded: {response.text}')
-        return response.json()
+        return await response.json()
+
+    async def websocket(self, url: str, handler: callable, ws_close_handler: callable):
+        try:
+            ws = await self.session.ws_connect(self.base_url + url)
+            self.logger.debug('Websocket established')
+            while True:
+                msg = await ws.receive()
+                if msg.type == aiohttp.WSMsgType.TEXT:
+                    self.logger.debug(f'Websocket received {msg}')
+                    await handler(msg.json())
+                elif msg.type == aiohttp.WSMsgType.CLOSED:
+                    self.logger.debug('Websocket closed')
+                    await ws_close_handler()
+                    return
+                else:
+                    self.logger.warning(f'Received unexpected type: {msg.type}')
+        except client_exceptions.ClientConnectorError:
+            raise NetworkException('Unable to reach Mirai console')
 
     async def close(self):
-        await self.session.aclose()
+        await self.session.close()

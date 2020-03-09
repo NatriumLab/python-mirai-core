@@ -20,25 +20,27 @@ class Shutdown(Exception):
 
 
 class Updater:
-    def __init__(self, bot: Bot, loop: asyncio.AbstractEventLoop = None):
+    def __init__(self, bot: Bot, use_websocket: bool = True):
         self.bot = bot
-        if loop:
-            self.loop = loop
-        else:
-            self.loop = asyncio.new_event_loop()
+        self.loop = bot.loop
         self.logger = create_logger('Updater')
         self.event_handlers: DefaultDict[EventTypes, List[EventHandler]] = defaultdict(lambda: list())
+        self._app = Quart(__name__)
+        self.use_websocket = use_websocket
 
     async def handshake(self):
         while True:
             try:
                 await self.bot.handshake()
+                if self.use_websocket:
+                    asyncio.run_coroutine_threadsafe(
+                        self.bot.create_websocket(self.event_caller, self.handshake), self.loop)
                 return
             except NetworkException:
                 self.logger.warning('Unable to communicate with Mirai console, retrying in 5 seconds')
                 await asyncio.sleep(5)
             except Exception as e:
-                self.logger.warning(f'{e}, retrying in 5 seconds')
+                self.logger.exception(f'retrying in 5 seconds')
                 await asyncio.sleep(5)
 
     async def run_task(self, shutdown_trigger=None):
@@ -48,9 +50,10 @@ class Updater:
         """
         self.logger.debug('Run tasks')
         tasks = [
-            self.handshake(),
-            self.message_polling(),
+            self.handshake()
         ]
+        if not self.use_websocket:
+            tasks.append(self.message_polling())
         if shutdown_trigger:
             tasks.append(self.raise_shutdown(shutdown_trigger))
         await asyncio.wait(tasks)

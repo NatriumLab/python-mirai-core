@@ -27,6 +27,8 @@ pip install git+git:://github.com/NatriumLab/python-mirai-core
 
 - Supports multiple listener for single event, use `return True` to block further calling for this event only
 
+- Supports Websocket (enabled by default)
+
 ### Example
 
 Basic example: see demo folder.
