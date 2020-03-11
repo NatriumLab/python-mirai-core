@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="python-mirai-core",
-    version='0.6.3',
+    version='0.6.4',
     description='A framework for OICQ(QQ, made by Tencent) headless client "Mirai".',
     author='Chenwe-i-lin, jqqqqqqqqqq',
     author_email="Chenwe_i_lin@outlook.com",

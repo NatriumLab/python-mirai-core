@@ -12,43 +12,6 @@ from .network import HttpClient
 from .exceptions import AuthenticationException, MiraiException
 
 
-class Events(Enum):
-    """
-    Internal use only
-    """
-    BotOnlineEvent = BotOnlineEvent
-    BotOfflineEventActive = BotOfflineEventActive
-    BotOfflineEventForce = BotOfflineEventForce
-    BotOfflineEventDropped = BotOfflineEventDropped
-    BotReloginEvent = BotReloginEvent
-    BotGroupPermissionChangeEvent = BotGroupPermissionChangeEvent
-    BotMuteEvent = BotMuteEvent
-    BotUnmuteEvent = BotUnmuteEvent
-    BotJoinGroupEvent = BotJoinGroupEvent
-
-    GroupNameChangeEvent = GroupNameChangeEvent
-    GroupEntranceAnnouncementChangeEvent = GroupEntranceAnnouncementChangeEvent
-    GroupMuteAllEvent = GroupMuteAllEvent
-
-    # 群设置被修改事件
-    GroupAllowAnonymousChatEvent = GroupAllowAnonymousChatEvent  # 群设置 是否允许匿名聊天 被修改
-    GroupAllowConfessTalkEvent = GroupAllowConfessTalkEvent  # 坦白说
-    GroupAllowMemberInviteEvent = GroupAllowMemberInviteEvent  # 邀请进群
-
-    # 群事件(被 Bot 监听到的, 为被动事件, 其中 Bot 身份为第三方.)
-    MemberJoinEvent = MemberJoinEvent
-    MemberLeaveEventKick = MemberLeaveEventKick
-    MemberLeaveEventQuit = MemberLeaveEventQuit
-    MemberCardChangeEvent = MemberCardChangeEvent
-    MemberSpecialTitleChangeEvent = MemberSpecialTitleChangeEvent
-    MemberPermissionChangeEvent = MemberPermissionChangeEvent
-    MemberMuteEvent = MemberMuteEvent
-    MemberUnmuteEvent = MemberUnmuteEvent
-
-    FriendMessage = FriendMessage
-    GroupMessage = GroupMessage
-
-
 class Bot:
     """
     See https://github.com/mamoe/mirai-api-http for details
@@ -115,6 +78,7 @@ class Bot:
                           as_type: Union[Type[Group], Type[Friend], Type[Member]]):
         """
         Internal use only, convert target to id
+
         :param target: Union[Group, Friend, Member, int]
         :param as_type: Group, Friend or Member
         :return: id, int
@@ -137,6 +101,7 @@ class Bot:
                                   quote_source: Union[int, Source] = None) -> BotMessage:
         """
         Send friend message
+
         :param friend: int or Friend object as target
         :param message: MessageChain, BaseMessageComponent, List of BaseMessageComponent or str, the content to send
         :param quote_source: int (the 64-bit int) or Source, the message to quote
@@ -168,6 +133,7 @@ class Bot:
                                  quote_source: Union[int, Source] = None) -> BotMessage:
         """
         Send group message
+
         :param group: int or Group object as target
         :param message: MessageChain, BaseMessageComponent, List of BaseMessageComponent or str, the content to send
         :param quote_source: int (the 64-bit int) or Source, the message to quote
@@ -191,6 +157,7 @@ class Bot:
         """
         Recall a message
         Success if no exception is raised
+
         :param source: int (the 64-bit int) or Source
         """
         data = {
@@ -209,6 +176,7 @@ class Bot:
     async def groups(self) -> List[Group]:
         """
         Get list of joined groups
+
         :return: List of Group
         """
         params = {
@@ -221,6 +189,7 @@ class Bot:
     async def friends(self) -> List[Friend]:
         """
         Get list of friends
+
         :return: List of Friend
         """
         params = {
@@ -232,6 +201,7 @@ class Bot:
     async def get_members(self, target: Union[Group, int]) -> List[Member]:
         """
         Get list of members of a group
+
         :param target: int or Group, the target group
         :return: List of Member
         """
@@ -250,6 +220,7 @@ class Bot:
         """
         Upload a image to QQ server. The image between group and friend is not exchangeable
         This function can be called separately to acquire image uuids, or automatically if using LocalImage while sending
+
         :param image_type: ImageType, Friend or Group
         :param image_path: absolute path of the image
         :return: Image object
@@ -271,6 +242,7 @@ class Bot:
         """
         Fetch a list of messages
         This function is called automatically if using polling instead of websocket
+
         :param count: maximum count of one fetch
         :return: List of Event
         """
@@ -287,39 +259,12 @@ class Bot:
             self.logger.exception('Unhandled exception')
         return result
 
-    # async def message_from_id(self, source_id: Union[Source, Quote, int]):
-    #     """
-    #     Deprecated function
-    #     :param source_id:
-    #     :return:
-    #     """
-    #     if isinstance(source_id, Source):
-    #         source_id = source_id.id
-    #     elif isinstance(source_id, Quote):
-    #         source_id = source_id.id
-    #
-    #     params = {
-    #         'sessionKey': self.session_key,
-    #         'id':         source_id
-    #     }
-    #
-    #     result = await self.retry_once(self.session.get('/messageFromId', params=params))
-    #     if result.get('type') in (EventTypes.GroupMessageEvent.value, EventTypes.FriendMessageEvent.value):
-    #         if "messageChain" in result:
-    #             result['messageChain'] = MessageChain.custom_parse(result['messageChain'])
-    #
-    #         if result.get('type') == EventTypes.GroupMessageEvent.value:
-    #             return GroupMessage.parse_obj(result)
-    #         else:
-    #             return FriendMessage.parse_obj(result)
-    #     else:
-    #         raise TypeError(f'Unknown message type')
-
     async def mute_all(self, group: Union[Group, int]) -> None:
         """
         Mute all non admin members in group
-        :param group: int or Group, the target group
         Success if no exception is raised
+
+        :param group: int or Group, the target group
         """
         params = {
             'sessionKey': self.session_key,
@@ -331,8 +276,9 @@ class Bot:
     async def unmute_all(self, group: Union[Group, int]) -> None:
         """
         Unmute all non admin members in group
-        :param group: int or Group, the target group
         Success if no exception is raised
+
+        :param group: int or Group, the target group
         """
         params = {
             'sessionKey': self.session_key,
@@ -344,6 +290,7 @@ class Bot:
     async def get_member_info(self, group: Union[Group, int], member: Union[Member, int]) -> MemberChangeableSetting:
         """
         Get the info of a member
+
         :param group: int or Group, target group
         :param member: int or Member, target member
         :return: MemberChangeableSetting
@@ -360,6 +307,7 @@ class Bot:
     async def get_bot_member_info(self, group: Union[Group, int]) -> MemberChangeableSetting:
         """
         Get the info of this bot
+
         :param group: int or Group, target group
         :return: MemberChangeableSetting
         """
@@ -370,10 +318,11 @@ class Bot:
                               setting: MemberChangeableSetting) -> None:
         """
         Set the info of a member
+        Success if no exception is raised
+
         :param group: int or Group, target group
         :param member: int or Member, target member
         :param setting: MemberChangeableSetting, the new settings
-        Success if no exception is raised
         """
         data = {
             'sessionKey': self.session_key,
@@ -387,6 +336,7 @@ class Bot:
     async def get_group_config(self, group: Union[Group, int]) -> GroupSetting:
         """
         Get the group config of a group
+
         :param group: int or Group, target group
         :return: GroupSetting
         """
@@ -400,10 +350,11 @@ class Bot:
     async def set_group_config(self, group: Union[Group, int],
                                config: GroupSetting) -> None:
         """
-        Set  the group config of a group
+        Set the group config of a group
+        Success if no exception is raised
+
         :param group: int or Group, target group
         :param config: GroupSetting
-        Success if no exception is raised
         """
         data = {
             'sessionKey': self.session_key,
@@ -418,10 +369,11 @@ class Bot:
                    time: Union[timedelta, int]) -> None:
         """
         Mute a member of a group
+        Success if no exception is raised
+
         :param group: int or Group, target group
         :param member: int or Member, target member
         :param time: int or datetime.timedelta, must between 1 minutes and 30 days
-        Success if no exception is raised
         """
         if isinstance(time, timedelta):
             time = int(time.total_seconds())
@@ -438,9 +390,10 @@ class Bot:
                      member: Union[Member, int]) -> None:
         """
         Unmute a member of a group
+        Success if no exception is raised
+
         :param group: int or Group, target group
         :param member: int or Member, target member
-        Success if no exception is raised
         """
         data = {
             'sessionKey': self.session_key,
@@ -454,6 +407,7 @@ class Bot:
                    message: str = '') -> None:
         """
         Kick a member of a group
+
         :param group: int or Group, target group
         :param member: int or Member, target member
         :param message: string, message to the member
@@ -472,6 +426,7 @@ class Bot:
         """
         Internal use only
         Convert LocalImage to Image, and everything to json
+
         :param message: BaseMessageComponent
         :param image_type: ImageType
         :return: json representation
@@ -495,6 +450,7 @@ class Bot:
         """
         Internal use only
         Convert MessageChain to json
+
         :param message: MessageChain
         :param as_type: Group or Friend
         :return: list
@@ -522,6 +478,7 @@ class Bot:
     async def get_config(self) -> dict:
         """
         Get the config of http api
+
         :return: config
         """
         params = {
@@ -534,9 +491,10 @@ class Bot:
     async def set_config(self, cache_size: int = 4096, enable_websocket: bool = True) -> None:
         """
         Set the config of http api
+        Success if no exception is raised
+
         :param cache_size: int, the size of message cache
         :param enable_websocket: bool, whether to enable websocket (will disable fetch_message accordingly)
-        Success if no exception is raised
         """
         data = {
             'sessionKey':      self.session_key,
@@ -550,6 +508,7 @@ class Bot:
         """
         Internal use only
         Parse event or message from json to Event
+
         :param result: the json
         :return: Event
         """
@@ -573,6 +532,7 @@ class Bot:
         """
         Internal use only
         Wrap the handler, and convert json to Event
+
         :param handler: callable, the handler
         :return: wrapped handler
         """
@@ -590,6 +550,7 @@ class Bot:
     async def create_websocket(self, handler, ws_close_handler=None, listen: str = 'all') -> None:
         """
         Register callback for websocket. Once an Event or Message is received, the handler will be invoked
+
         :param handler: callable
         :param ws_close_handler: callable, websocket shutdown hook
         :param listen: 'all', 'event' or 'message'
@@ -601,3 +562,40 @@ class Bot:
                 pass
         await self.retry_once(self.session.websocket(f'/{listen}?sessionKey={self.session_key}',
                                                      self._websocket_handler(handler), ws_close_handler))
+
+
+class Events(Enum):
+    """
+    Internal use only
+    """
+    BotOnlineEvent = BotOnlineEvent
+    BotOfflineEventActive = BotOfflineEventActive
+    BotOfflineEventForce = BotOfflineEventForce
+    BotOfflineEventDropped = BotOfflineEventDropped
+    BotReloginEvent = BotReloginEvent
+    BotGroupPermissionChangeEvent = BotGroupPermissionChangeEvent
+    BotMuteEvent = BotMuteEvent
+    BotUnmuteEvent = BotUnmuteEvent
+    BotJoinGroupEvent = BotJoinGroupEvent
+
+    GroupNameChangeEvent = GroupNameChangeEvent
+    GroupEntranceAnnouncementChangeEvent = GroupEntranceAnnouncementChangeEvent
+    GroupMuteAllEvent = GroupMuteAllEvent
+
+    # 群设置被修改事件
+    GroupAllowAnonymousChatEvent = GroupAllowAnonymousChatEvent  # 群设置 是否允许匿名聊天 被修改
+    GroupAllowConfessTalkEvent = GroupAllowConfessTalkEvent  # 坦白说
+    GroupAllowMemberInviteEvent = GroupAllowMemberInviteEvent  # 邀请进群
+
+    # 群事件(被 Bot 监听到的, 为被动事件, 其中 Bot 身份为第三方.)
+    MemberJoinEvent = MemberJoinEvent
+    MemberLeaveEventKick = MemberLeaveEventKick
+    MemberLeaveEventQuit = MemberLeaveEventQuit
+    MemberCardChangeEvent = MemberCardChangeEvent
+    MemberSpecialTitleChangeEvent = MemberSpecialTitleChangeEvent
+    MemberPermissionChangeEvent = MemberPermissionChangeEvent
+    MemberMuteEvent = MemberMuteEvent
+    MemberUnmuteEvent = MemberUnmuteEvent
+
+    FriendMessage = FriendMessage
+    GroupMessage = GroupMessage

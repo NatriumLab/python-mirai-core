@@ -1,3 +1,5 @@
+from enum import Enum
+from pydantic import BaseModel
 from abc import abstractmethod
 from enum import Enum
 from typing import List, Dict, Optional, overload, Iterable, Union
@@ -7,9 +9,9 @@ from pathlib import Path
 import datetime
 from collections import MutableSequence
 
-from .base import BaseMessageComponent, MessageComponentTypes
-
 __all__ = [
+    "MessageComponentTypes",
+    "BaseMessageComponent",
     'Plain',
     'Source',
     'At',
@@ -20,8 +22,35 @@ __all__ = [
     'Quote',
     'ComponentTypes',
     'LocalImage',
-    'MessageChain'
+    'MessageChain',
+    'qq_emoji_text_list'
 ]
+
+
+class MessageComponentTypes(Enum):
+    Source = "Source"
+    Plain = "Plain"
+    Face = "Face"
+    At = "At"
+    AtAll = "AtAll"
+    Image = "Image"
+    Quote = "Quote"
+    Xml = "Xml"
+    Json = "Json"
+    App = "App"
+    Unknown = "Unknown"
+
+
+class BaseMessageComponent(BaseModel):
+    type: MessageComponentTypes
+
+    def __str__(self):
+        """
+        for plain text extraction
+        :return: human readable text component
+        """
+        return ''
+
 
 # original text copied from Tim
 qq_emoji_text_list = {
@@ -293,22 +322,26 @@ class MessageChain(BaseModel, MutableSequence):
 
     @overload
     @abstractmethod
-    def __setitem__(self, i: int, o) -> None: ...
+    def __setitem__(self, i: int, o) -> None:
+        ...
 
     @overload
     @abstractmethod
-    def __setitem__(self, s: slice, o: Iterable) -> None: ...
+    def __setitem__(self, s: slice, o: Iterable) -> None:
+        ...
 
     def __setitem__(self, i: int, o) -> None:
         self.__root__.__setitem__(i, o)
 
     @overload
     @abstractmethod
-    def __delitem__(self, i: int) -> None: ...
+    def __delitem__(self, i: int) -> None:
+        ...
 
     @overload
     @abstractmethod
-    def __delitem__(self, i: slice) -> None: ...
+    def __delitem__(self, i: slice) -> None:
+        ...
 
     def __delitem__(self, i: int) -> None:
         self.__root__.__delitem__(i)
@@ -330,6 +363,7 @@ class MessageChain(BaseModel, MutableSequence):
         """
         construct message chain from dict
         used only when receiving messages from mirai
+
         :param value: dict contains message components
         :return: MessageChain
         """
@@ -347,6 +381,7 @@ class MessageChain(BaseModel, MutableSequence):
     def has(self, component_class) -> bool:
         """
         test if any item in MessageChain is component_class
+
         :param component_class: the class for the component
         :return: boolean
         """
@@ -362,6 +397,7 @@ class MessageChain(BaseModel, MutableSequence):
     def get_first(self, component_class) -> Optional[BaseMessageComponent]:
         """
         Get the first component with component_class
+
         :param component_class: the class for the component
         :return: None or the component
         """
@@ -411,6 +447,7 @@ class Plain(BaseMessageComponent):
     def __init__(self, text: str, **kwargs):
         """
         Construct text component
+
         :param text: message text
         """
         super().__init__(text=text, **kwargs)
@@ -452,6 +489,7 @@ class At(GenericModel, BaseMessageComponent):
     def __init__(self, target, **kwargs):
         """
         Construct at component
+
         :param target: target qq number
         """
         super().__init__(target=target, **kwargs)
@@ -488,6 +526,7 @@ class Face(BaseMessageComponent):
     def __init__(self, face_id, **kwargs):
         """
         Construct Face component
+
         :param face_id: unsigned 8-bit face id
         """
         super().__init__(faceId=face_id, **kwargs)
@@ -511,6 +550,7 @@ class Image(BaseMessageComponent):
     def __init__(self, imageId, **kwargs):
         """
         Construct Image from mirai styled uuid
+
         :param imageId: uuid as str (see https://github.com/mamoe/mirai-api-http/blob/master/MessageType.md#image)
         """
         super().__init__(imageId=imageId, **kwargs)
@@ -525,7 +565,8 @@ class Image(BaseMessageComponent):
     def image_type(self):
         """
         get image type from pattern
-        :return:
+
+        :return: 'friend' or 'group', if uuid is invalid format, return 'unknown'
         """
         if self.imageId.startswith('/'):
             return 'friend'
@@ -545,6 +586,7 @@ class LocalImage:
     def __init__(self, path=None):
         """
         Construct LocalImage component
+
         :param path: absolute path on disk
         """
         if isinstance(path, str):
@@ -564,6 +606,7 @@ class Xml(BaseMessageComponent):
     def __init__(self, xml: str):
         """
         Construct Xml component
+
         :param xml: str contains xml
         """
         super().__init__(XML=xml)
@@ -580,6 +623,7 @@ class Json(BaseMessageComponent):
     def __init__(self, json: Union[dict, List]):
         """
         Construct Json component
+
         :param json: json content
         """
         super().__init__(Json=json)
@@ -596,6 +640,7 @@ class App(BaseMessageComponent):
     def __init__(self, content: str):
         """
         Construct App component
+
         :param content: app content
         """
         super().__init__(content=content)
@@ -604,7 +649,7 @@ class App(BaseMessageComponent):
 class Unknown(BaseMessageComponent):
     """
     Unknown component
-        Not a valid component for outbound message
+    Not a valid component for outbound message
     """
     type = MessageComponentTypes.Unknown
     text: str  # content in string
@@ -643,3 +688,13 @@ MessageComponents = {
     'App':     App,
     'Unknown': Unknown
 }
+
+
+class BotMessage(BaseModel):
+    type: str = 'BotMessage'
+    messageId: int
+
+
+class ImageType(Enum):
+    Friend = 'friend'
+    Group = 'group'
