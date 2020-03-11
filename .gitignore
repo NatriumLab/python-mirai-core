@@ -136,7 +136,4 @@ dmypy.json
 .pytype/
 docs/
 
-autodoc/build/*
-autodoc/source/_build/
-autodoc/source/_static/
-autodoc/source/_templates/
+autodoc/
