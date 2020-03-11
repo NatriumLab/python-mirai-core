@@ -1,11 +1,11 @@
+from abc import abstractmethod
 from enum import Enum
-from typing import Optional
-from uuid import UUID
-from pydantic import Field, validator, HttpUrl
+from typing import List, Dict, Optional, overload, _T, Iterable, Union
+from pydantic import Field, validator, HttpUrl, BaseModel
 from pydantic.generics import GenericModel
 from pathlib import Path
 import datetime
-import re
+from collections import MutableSequence
 
 from .base import BaseMessageComponent, MessageComponentTypes
 
@@ -19,7 +19,8 @@ __all__ = [
     'Unknown',
     'Quote',
     'ComponentTypes',
-    'LocalImage'
+    'LocalImage',
+    'MessageChain'
 ]
 
 # original text copied from Tim
@@ -283,22 +284,135 @@ qq_emoji_text_list = {
 }
 
 
-image_regex = {
-    'group':  r'(?<=\{)([0-9A-Z]{8})\-([0-9A-Z]{4})-([0-9A-Z]{4})-([0-9A-Z]{4})-([0-9A-Z]{12})(?=\}\..*?)',
-    'friend': r'(?<=/)([0-9a-z]{8})\-([0-9a-z]{4})-([0-9a-z]{4})-([0-9a-z]{4})-([0-9a-z]{12})'
-}
+class MessageChain(BaseModel, MutableSequence):
+    # stores the actual components
+    __root__: List[BaseMessageComponent] = []
+
+    def insert(self, index: int, object: _T) -> None:
+        self.__root__.insert(index, object)
+
+    @overload
+    @abstractmethod
+    def __setitem__(self, i: int, o: _T) -> None: ...
+
+    @overload
+    @abstractmethod
+    def __setitem__(self, s: slice, o: Iterable[_T]) -> None: ...
+
+    def __setitem__(self, i: int, o: _T) -> None:
+        self.__root__.__setitem__(i, o)
+
+    @overload
+    @abstractmethod
+    def __delitem__(self, i: int) -> None: ...
+
+    @overload
+    @abstractmethod
+    def __delitem__(self, i: slice) -> None: ...
+
+    def __delitem__(self, i: int) -> None:
+        self.__root__.__delitem__(i)
+
+    def __add__(self, value):
+        # merge two message chain or append one component
+        if isinstance(value, BaseMessageComponent):
+            self.__root__.append(value)
+            return self
+        elif isinstance(value, MessageChain):
+            self.__root__ += value.__root__
+            return self
+
+    def __str__(self) -> str:
+        return ''.join([str(i) for i in self.__root__])
+
+    @classmethod
+    def custom_parse(cls, value: List[Dict]) -> 'MessageChain':
+        """
+        construct message chain from dict
+        used only when receiving messages from mirai
+        :param value: dict contains message components
+        :return: MessageChain
+        """
+        for i in value:
+            if not isinstance(i, dict):
+                raise TypeError("invaild value")
+        return cls(__root__=[ComponentTypes.__members__[m['type']].value(**m) for m in value])
+
+    def __iter__(self):
+        return self.__root__.__iter__()
+
+    def __getitem__(self, index):
+        return self.__root__.__getitem__(index)
+
+    def has(self, component_class) -> bool:
+        """
+        test if any item in MessageChain is component_class
+        :param component_class: the class for the component
+        :return: boolean
+        """
+        for i in self:
+            if isinstance(i, component_class):
+                return True
+        else:
+            return False
+
+    def __len__(self) -> int:
+        return len(self.__root__)
+
+    def get_first(self, component_class) -> Optional[BaseMessageComponent]:
+        """
+        Get the first component with component_class
+        :param component_class: the class for the component
+        :return: None or the component
+        """
+        for i in self.__root__:
+            if isinstance(i, component_class):
+                return i
+
+    def get_all(self, component_class) -> List[BaseMessageComponent]:
+        return [i for i in self.__root__ if isinstance(i, component_class)]
+
+    def get_source(self) -> 'Source':
+        result = self.get_first(Source)
+        assert isinstance(result, Source)
+        return result
+
+    def get_quote(self) -> 'Quote':
+        result = self.get_first(Quote)
+        if result:
+            assert isinstance(result, Quote)
+            return result
 
 
-def get_matched_string(regex_result):
-    if regex_result:
-        return regex_result.string[slice(*regex_result.span())]
+class Source(BaseMessageComponent):
+    """
+    The source of the message
+    Not a valid component for outbound message
+    """
+    type = MessageComponentTypes.Source
+    id: int  # the message id: higher 32 bits are sequence id, and lower 32 bits are random id
+    time: datetime.datetime  # the timestamp the message was sent
+
+    def __str__(self):
+        return ''
+
+    def __repr__(self):
+        return f'[Source: id={self.id}, time={self.time}]'
 
 
 class Plain(BaseMessageComponent):
+    """
+    Text component
+    Available for outbound message
+    """
     type = MessageComponentTypes.Plain
-    text: str
+    text: str  # text content
 
-    def __init__(self, text, **kwargs):
+    def __init__(self, text: str, **kwargs):
+        """
+        Construct text component
+        :param text: message text
+        """
         super().__init__(text=text, **kwargs)
 
     def __str__(self):
@@ -308,22 +422,16 @@ class Plain(BaseMessageComponent):
         return f'[Plain: {self.text}]'
 
 
-class Source(BaseMessageComponent):
-    type = MessageComponentTypes.Source
-    id: int
-    time: datetime.datetime
-
-    def __str__(self):
-        return ''
-
-    def __repr__(self):
-        return f'[Source: id={self.id}, time={self.time}]'
-        # return f'[Source: id={self.id}]'
-
-
 class Quote(BaseMessageComponent):
+    """
+    Quote component
+    Not a valid component for outbound message
+    """
     type = MessageComponentTypes.Quote
-    id: int
+    id: int  # origin message id
+    groupId: int  # origin group id
+    senderId: int  # origin sender id
+    origin: MessageChain  # origin message (Source and other content without Quote)
 
     def __str__(self):
         return ''
@@ -333,12 +441,20 @@ class Quote(BaseMessageComponent):
 
 
 class At(GenericModel, BaseMessageComponent):
+    """
+    At component
+    Available for outbound message
+    """
     type = MessageComponentTypes.At
-    target: int
-    display: str
+    target: int  # target qq number
+    display: str  # display name (only used for inbound at), '@' already included
 
     def __init__(self, target, **kwargs):
-        super().__init__(target=target, display=None, type=MessageComponentTypes.At, **kwargs)
+        """
+        Construct at component
+        :param target: target qq number
+        """
+        super().__init__(target=target, **kwargs)
 
     def __str__(self):
         return self.display
@@ -348,6 +464,10 @@ class At(GenericModel, BaseMessageComponent):
 
 
 class AtAll(BaseMessageComponent):
+    """
+    AtAll component
+    Available for outbound message
+    """
     type = MessageComponentTypes.AtAll
 
     def __str__(self):
@@ -358,10 +478,18 @@ class AtAll(BaseMessageComponent):
 
 
 class Face(BaseMessageComponent):
+    """
+    Face component
+    Available for outbound message
+    """
     type = MessageComponentTypes.Face
-    faceId: int
+    faceId: int  # face id, see qq_emoji_text_list for details
 
     def __init__(self, face_id, **kwargs):
+        """
+        Construct Face component
+        :param face_id: unsigned 8-bit face id
+        """
         super().__init__(faceId=face_id, **kwargs)
 
     def __str__(self):
@@ -373,13 +501,18 @@ class Face(BaseMessageComponent):
 
 class Image(BaseMessageComponent):
     """
-    class for received image
+    Received image component
+    Available for outbound message
     """
     type = MessageComponentTypes.Image
     imageId: str
     url: Optional[HttpUrl] = None
 
     def __init__(self, imageId, **kwargs):
+        """
+        Construct Image from mirai styled uuid
+        :param imageId: uuid as str (see https://github.com/mamoe/mirai-api-http/blob/master/MessageType.md#image)
+        """
         super().__init__(imageId=imageId, **kwargs)
 
     def __str__(self):
@@ -390,6 +523,10 @@ class Image(BaseMessageComponent):
 
     @property
     def image_type(self):
+        """
+        get image type from pattern
+        :return:
+        """
         if self.imageId.startswith('/'):
             return 'friend'
         elif self.imageId.startswith('{'):
@@ -400,20 +537,77 @@ class Image(BaseMessageComponent):
 
 class LocalImage:
     """
-    class for outbound image from local disk
+    Local image component
+    Available for outbound message
     """
-    path: Path
+    path: Path  # absolute path to image
 
     def __init__(self, path=None):
+        """
+        Construct LocalImage component
+        :param path: absolute path on disk
+        """
         if isinstance(path, str):
             self.path = Path(path)
         elif isinstance(path, Path):
             self.path = path
 
 
+class Xml(BaseMessageComponent):
+    """
+    Xml component
+    Available for outbound message
+    """
+    type = MessageComponentTypes.Xml
+    XML: str  # xml content
+
+    def __init__(self, xml: str):
+        """
+        Construct Xml component
+        :param xml: str contains xml
+        """
+        super().__init__(XML=xml)
+
+
+class Json(BaseMessageComponent):
+    """
+    Json component
+    Available for outbound message
+    """
+    type = MessageComponentTypes.Json
+    Json: dict = Field(..., alias="json")  # json content
+
+    def __init__(self, json: Union[dict, List]):
+        """
+        Construct Json component
+        :param json: json content
+        """
+        super().__init__(Json=json)
+
+
+class App(BaseMessageComponent):
+    """
+    App component
+    Available for outbound message
+    """
+    type = MessageComponentTypes.App
+    content: str  # app content
+
+    def __init__(self, content: str):
+        """
+        Construct App component
+        :param content: app content
+        """
+        super().__init__(content=content)
+
+
 class Unknown(BaseMessageComponent):
+    """
+    Unknown component
+        Not a valid component for outbound message
+    """
     type = MessageComponentTypes.Unknown
-    text: str
+    text: str  # content in string
 
     def __str__(self):
         return ''
@@ -430,6 +624,9 @@ class ComponentTypes(Enum):
     Face = Face
     Image = Image
     Quote = Quote
+    Xml = Xml
+    Json = Json
+    App = App
     Unknown = Unknown
 
 
@@ -441,5 +638,8 @@ MessageComponents = {
     'Image':   Image,
     'Source':  Source,
     'Quote':   Quote,
+    'Xml':     Xml,
+    'Json':    Json,
+    'App':     App,
     'Unknown': Unknown
 }

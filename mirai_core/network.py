@@ -29,6 +29,8 @@ class HttpClient:
         if result.status != 200:
             raise ServerException(f'{url} {method} failed, status code: {result.status}')
         result = await result.json()
+        if not isinstance(result, dict):
+            return result
         status_code = result.get('code')
         if method == 'post':
             if status_code is None:

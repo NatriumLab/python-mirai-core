@@ -11,18 +11,11 @@ from .models.entity import Friend, Group, GroupSetting, Member, MemberChangeable
 from .network import HttpClient
 from .exceptions import AuthenticationException, MiraiException
 
-ImageRegex = {
-    "group":  r"(?<=\{)([0-9A-Z]{8})\-([0-9A-Z]{4})-([0-9A-Z]{4})-([0-9A-Z]{4})-([0-9A-Z]{12})(?=\}\..*?)",
-    "friend": r"(?<=/)([0-9a-z]{8})\-([0-9a-z]{4})-([0-9a-z]{4})-([0-9a-z]{4})-([0-9a-z]{12})"
-}
-
-
-def get_matched_string(regex_result):
-    if regex_result:
-        return regex_result.string[slice(*regex_result.span())]
-
 
 class Events(Enum):
+    """
+    Internal use only
+    """
     BotOnlineEvent = BotOnlineEvent
     BotOfflineEventActive = BotOfflineEventActive
     BotOfflineEventForce = BotOfflineEventForce
@@ -74,7 +67,7 @@ class Bot:
         try:
             return await task
         except MiraiException:
-            pass
+            self.logger.exception('Trying handshake due to the following exception')
         try:
             await self.handshake()
             return await task
@@ -82,18 +75,24 @@ class Bot:
             self.logger.exception('Unable to handshake')
 
     async def handshake(self):
+        """
+        Authenticate and verify the session_key
+        Automatically called if session_key needs to be updated
+        """
         await self.auth()
         await self.verify()
 
     async def auth(self) -> None:
         """
-        post auth key, and get session key
-        :return: None
+        Post auth_key, and get session_key
         """
         result = await self.session.post('/auth', data={'authKey': self.auth_key})
         self.session_key = result.get('session')
 
     async def verify(self) -> None:
+        """
+        Post session_key to verify the session
+        """
         await self.session.post('/verify',
                                 data={
                                     'sessionKey': self.session_key,
@@ -101,6 +100,10 @@ class Bot:
                                 })
 
     async def release(self) -> None:
+        """
+        Post session_key to release the session
+        Needs to be called manually if Updater is not used
+        """
         await self.session.post('/release',
                                 data={
                                     'sessionKey': self.session_key,
@@ -111,7 +114,7 @@ class Bot:
     def _handle_target_as(target: Union[Group, Friend, Member, int],
                           as_type: Union[Type[Group], Type[Friend], Type[Member]]):
         """
-        convert target to id
+        Internal use only, convert target to id
         :param target: Union[Group, Friend, Member, int]
         :param as_type: Group, Friend or Member
         :return: id, int
@@ -132,6 +135,13 @@ class Bot:
                                       str
                                   ],
                                   quote_source: Union[int, Source] = None) -> BotMessage:
+        """
+        Send friend message
+        :param friend: int or Friend object as target
+        :param message: MessageChain, BaseMessageComponent, List of BaseMessageComponent or str, the content to send
+        :param quote_source: int (the 64-bit int) or Source, the message to quote
+        :return: BotMessage (contains message id)
+        """
         data = {
             'sessionKey':   self.session_key,
             'target':       Bot._handle_target_as(friend, Friend),
@@ -156,6 +166,13 @@ class Bot:
                                      str
                                  ],
                                  quote_source: Union[int, Source] = None) -> BotMessage:
+        """
+        Send group message
+        :param group: int or Group object as target
+        :param message: MessageChain, BaseMessageComponent, List of BaseMessageComponent or str, the content to send
+        :param quote_source: int (the 64-bit int) or Source, the message to quote
+        :return: BotMessage (contains message id)
+        """
         data = {
             'sessionKey':   self.session_key,
             'target':       Bot._handle_target_as(group, Group),
@@ -171,6 +188,11 @@ class Bot:
         return BotMessage.parse_obj(result)
 
     async def recall(self, source: Union[Source, int]) -> None:
+        """
+        Recall a message
+        Success if no exception is raised
+        :param source: int (the 64-bit int) or Source
+        """
         data = {
             'sessionKey': self.session_key,
         }
@@ -185,6 +207,10 @@ class Bot:
 
     @property
     async def groups(self) -> List[Group]:
+        """
+        Get list of joined groups
+        :return: List of Group
+        """
         params = {
             'sessionKey': self.session_key,
         }
@@ -193,6 +219,10 @@ class Bot:
 
     @property
     async def friends(self) -> List[Friend]:
+        """
+        Get list of friends
+        :return: List of Friend
+        """
         params = {
             'sessionKey': self.session_key,
         }
@@ -200,6 +230,11 @@ class Bot:
         return [Friend.parse_obj(friend_info) for friend_info in result]
 
     async def get_members(self, target: Union[Group, int]) -> List[Member]:
+        """
+        Get list of members of a group
+        :param target: int or Group, the target group
+        :return: List of Member
+        """
         if isinstance(target, int):
             group = target
         else:
@@ -212,6 +247,13 @@ class Bot:
         return [Member.parse_obj(member_info) for member_info in result]
 
     async def upload_image(self, image_type: ImageType, image_path: Union[Path, str]) -> Optional[Image]:
+        """
+        Upload a image to QQ server. The image between group and friend is not exchangeable
+        This function can be called separately to acquire image uuids, or automatically if using LocalImage while sending
+        :param image_type: ImageType, Friend or Group
+        :param image_path: absolute path of the image
+        :return: Image object
+        """
         if isinstance(image_path, str):
             image_path = Path(image_path)
 
@@ -226,43 +268,59 @@ class Bot:
         return Image.parse_obj(result)
 
     async def fetch_message(self, count: int) -> List[Event]:
+        """
+        Fetch a list of messages
+        This function is called automatically if using polling instead of websocket
+        :param count: maximum count of one fetch
+        :return: List of Event
+        """
         params = {
             'sessionKey': self.session_key,
             'count':      count
         }
         result = await self.retry_once(self.session.get('/fetchMessage', params=params))
 
-        for index in range(len(result)):
-            if hasattr(Events, result[index]['type']):  # if Event
-                if 'messageChain' in result[index]:  # construct message chain
-                    result[index]['messageChain'] = MessageChain.custom_parse(result[index]['messageChain'])
-                result[index] = Events[result[index]['type']].value.parse_obj(result[index])
+        try:
+            for index in range(len(result)):
+                result[index] = self._parse_event(result[index])
+        except:
+            self.logger.exception('Unhandled exception')
         return result
 
-    async def message_from_id(self, source_id: Union[Source, Quote, int]):
-        if isinstance(source_id, Source):
-            source_id = source_id.id
-        elif isinstance(source_id, Quote):
-            source_id = source_id.id
+    # async def message_from_id(self, source_id: Union[Source, Quote, int]):
+    #     """
+    #     Deprecated function
+    #     :param source_id:
+    #     :return:
+    #     """
+    #     if isinstance(source_id, Source):
+    #         source_id = source_id.id
+    #     elif isinstance(source_id, Quote):
+    #         source_id = source_id.id
+    #
+    #     params = {
+    #         'sessionKey': self.session_key,
+    #         'id':         source_id
+    #     }
+    #
+    #     result = await self.retry_once(self.session.get('/messageFromId', params=params))
+    #     if result.get('type') in (EventTypes.GroupMessageEvent.value, EventTypes.FriendMessageEvent.value):
+    #         if "messageChain" in result:
+    #             result['messageChain'] = MessageChain.custom_parse(result['messageChain'])
+    #
+    #         if result.get('type') == EventTypes.GroupMessageEvent.value:
+    #             return GroupMessage.parse_obj(result)
+    #         else:
+    #             return FriendMessage.parse_obj(result)
+    #     else:
+    #         raise TypeError(f'Unknown message type')
 
-        params = {
-            'sessionKey': self.session_key,
-            'id':         source_id
-        }
-
-        result = await self.retry_once(self.session.get('/messageFromId', params=params))
-        if result.get('type') in (EventTypes.GroupMessageEvent.value, EventTypes.FriendMessageEvent.value):
-            if "messageChain" in result:
-                result['messageChain'] = MessageChain.custom_parse(result['messageChain'])
-
-            if result.get('type') == EventTypes.GroupMessageEvent.value:
-                return GroupMessage.parse_obj(result)
-            else:
-                return FriendMessage.parse_obj(result)
-        else:
-            raise TypeError(f'Unknown message type')
-
-    async def mute_all(self, group: Union[Group, int]):
+    async def mute_all(self, group: Union[Group, int]) -> None:
+        """
+        Mute all non admin members in group
+        :param group: int or Group, the target group
+        Success if no exception is raised
+        """
         params = {
             'sessionKey': self.session_key,
             'target':     Bot._handle_target_as(target=group, as_type=Group)
@@ -270,7 +328,12 @@ class Bot:
 
         await self.retry_once(self.session.get('/muteAll', params=params))
 
-    async def unmute_all(self, group: Union[Group, int]):
+    async def unmute_all(self, group: Union[Group, int]) -> None:
+        """
+        Unmute all non admin members in group
+        :param group: int or Group, the target group
+        Success if no exception is raised
+        """
         params = {
             'sessionKey': self.session_key,
             'target':     Bot._handle_target_as(target=group, as_type=Group)
@@ -278,7 +341,13 @@ class Bot:
 
         await self.retry_once(self.session.get('/unmuteAll', params=params))
 
-    async def get_member_info(self, group: Union[Group, int], member: Union[Member, int]):
+    async def get_member_info(self, group: Union[Group, int], member: Union[Member, int]) -> MemberChangeableSetting:
+        """
+        Get the info of a member
+        :param group: int or Group, target group
+        :param member: int or Member, target member
+        :return: MemberChangeableSetting
+        """
         params = {
             'sessionKey': self.session_key,
             'target':     Bot._handle_target_as(target=group, as_type=Group),
@@ -288,12 +357,24 @@ class Bot:
         result = await self.retry_once(self.session.get('/memberInfo', params=params))
         return MemberChangeableSetting.parse_obj(result)
 
-    async def get_bot_member_info(self, group: Union[Group, int]):
+    async def get_bot_member_info(self, group: Union[Group, int]) -> MemberChangeableSetting:
+        """
+        Get the info of this bot
+        :param group: int or Group, target group
+        :return: MemberChangeableSetting
+        """
         return await self.retry_once(self.get_member_info(group, self.qq))
 
     async def set_member_info(self, group: Union[Group, int],
                               member: Union[Member, int],
-                              setting: MemberChangeableSetting):
+                              setting: MemberChangeableSetting) -> None:
+        """
+        Set the info of a member
+        :param group: int or Group, target group
+        :param member: int or Member, target member
+        :param setting: MemberChangeableSetting, the new settings
+        Success if no exception is raised
+        """
         data = {
             'sessionKey': self.session_key,
             'target':     Bot._handle_target_as(target=group, as_type=Group),
@@ -304,6 +385,11 @@ class Bot:
         await self.retry_once(self.session.post('/memberInfo', data=data))
 
     async def get_group_config(self, group: Union[Group, int]) -> GroupSetting:
+        """
+        Get the group config of a group
+        :param group: int or Group, target group
+        :return: GroupSetting
+        """
         params = {
             'sessionKey': self.session_key,
             'target':     Bot._handle_target_as(target=group, as_type=Group),
@@ -312,7 +398,13 @@ class Bot:
         return GroupSetting.parse_obj(result)
 
     async def set_group_config(self, group: Union[Group, int],
-                               config: GroupSetting):
+                               config: GroupSetting) -> None:
+        """
+        Set  the group config of a group
+        :param group: int or Group, target group
+        :param config: GroupSetting
+        Success if no exception is raised
+        """
         data = {
             'sessionKey': self.session_key,
             'target':     Bot._handle_target_as(target=group, as_type=Group),
@@ -323,7 +415,14 @@ class Bot:
 
     async def mute(self, group: Union[Group, int],
                    member: Union[Member, int],
-                   time: Union[timedelta, int]):
+                   time: Union[timedelta, int]) -> None:
+        """
+        Mute a member of a group
+        :param group: int or Group, target group
+        :param member: int or Member, target member
+        :param time: int or datetime.timedelta, must between 1 minutes and 30 days
+        Success if no exception is raised
+        """
         if isinstance(time, timedelta):
             time = int(time.total_seconds())
         time = min(86400 * 30, max(60, time))  # time should between 1 minutes and 30 days
@@ -336,7 +435,13 @@ class Bot:
         await self.retry_once(self.session.post('/mute', data=data))
 
     async def unmute(self, group: Union[Group, int],
-                     member: Union[Member, int]):
+                     member: Union[Member, int]) -> None:
+        """
+        Unmute a member of a group
+        :param group: int or Group, target group
+        :param member: int or Member, target member
+        Success if no exception is raised
+        """
         data = {
             'sessionKey': self.session_key,
             'target':     Bot._handle_target_as(target=group, as_type=Group),
@@ -346,7 +451,13 @@ class Bot:
 
     async def kick(self, group: Union[Group, int],
                    member: Union[Member, int],
-                   message: str = ''):
+                   message: str = '') -> None:
+        """
+        Kick a member of a group
+        :param group: int or Group, target group
+        :param member: int or Member, target member
+        :param message: string, message to the member
+        """
         data = {
             'sessionKey': self.session_key,
             'target':     Bot._handle_target_as(target=group, as_type=Group),
@@ -357,7 +468,14 @@ class Bot:
 
         await self.retry_once(self.session.post('/kick', data=data))
 
-    async def _handle_image(self, message: BaseMessageComponent, image_type: ImageType):
+    async def _handle_image(self, message: BaseMessageComponent, image_type: ImageType) -> dict:
+        """
+        Internal use only
+        Convert LocalImage to Image, and everything to json
+        :param message: BaseMessageComponent
+        :param image_type: ImageType
+        :return: json representation
+        """
         if not isinstance(message, LocalImage):
             return json.loads(message.json())
 
@@ -374,6 +492,13 @@ class Bot:
         List[BaseMessageComponent],
         str
     ], as_type: Union[Type[Group], Type[Friend]]) -> List:
+        """
+        Internal use only
+        Convert MessageChain to json
+        :param message: MessageChain
+        :param as_type: Group or Friend
+        :return: list
+        """
         if isinstance(message, MessageChain):
             return json.loads(message.json())
         elif isinstance(message, str):
@@ -394,9 +519,9 @@ class Bot:
         else:
             raise ValueError('Invalid message')
 
-    async def get_config(self):
+    async def get_config(self) -> dict:
         """
-        this function is used to check if session_key is still valid
+        Get the config of http api
         :return: config
         """
         params = {
@@ -406,21 +531,73 @@ class Bot:
         result = await self.retry_once(self.session.get('/config', params=params))
         return result
 
-    @staticmethod
-    def websocket_handler(handler: callable):
-        async def _websocket_handler(result: Union[List, Dict]):
+    async def set_config(self, cache_size: int = 4096, enable_websocket: bool = True) -> None:
+        """
+        Set the config of http api
+        :param cache_size: int, the size of message cache
+        :param enable_websocket: bool, whether to enable websocket (will disable fetch_message accordingly)
+        Success if no exception is raised
+        """
+        data = {
+            'sessionKey':      self.session_key,
+            'cacheSize':       cache_size,
+            'enableWebsocket': enable_websocket
+        }
+
+        await self.retry_once(self.session.post('/config', data=data))
+
+    def _parse_event(self, result) -> Event:
+        """
+        Internal use only
+        Parse event or message from json to Event
+        :param result: the json
+        :return: Event
+        """
+        if hasattr(Events, result['type']):  # if Event
+            try:
+                if 'messageChain' in result:  # construct message chain
+                    # parse quote first
+                    for idx, component in enumerate(result['messageChain']):
+                        if component['type'] == 'Quote':
+                            result['messageChain'][idx]['origin'] = MessageChain.custom_parse(
+                                result['messageChain'][idx]['origin'])
+                    result['messageChain'] = MessageChain.custom_parse(result['messageChain'])
+                result = Events[result['type']].value.parse_obj(result)
+            except:
+                self.logger.exception('Unhandled exception')
+            return result
+        else:
+            raise ValueError('Invalid message chain')
+
+    def _websocket_handler(self, handler: callable) -> callable:
+        """
+        Internal use only
+        Wrap the handler, and convert json to Event
+        :param handler: callable, the handler
+        :return: wrapped handler
+        """
+
+        async def _handler(result: Union[List, Dict]):
             """
             an example handler for create_websocket
             :param result: json
             """
-            if hasattr(Events, result['type']):  # if Event
-                if 'messageChain' in result:  # construct message chain
-                    result['messageChain'] = MessageChain.custom_parse(result['messageChain'])
-                result = Events[result['type']].value.parse_obj(result)
+            result = self._parse_event(result)
             await handler(result)
 
-        return _websocket_handler
+        return _handler
 
-    async def create_websocket(self, handler, ws_close_handler):
-        await self.retry_once(self.session.websocket(f'/all?sessionKey={self.session_key}',
-                                                     Bot.websocket_handler(handler), ws_close_handler))
+    async def create_websocket(self, handler, ws_close_handler=None, listen: str = 'all') -> None:
+        """
+        Register callback for websocket. Once an Event or Message is received, the handler will be invoked
+        :param handler: callable
+        :param ws_close_handler: callable, websocket shutdown hook
+        :param listen: 'all', 'event' or 'message'
+        """
+        if listen not in ('all', 'event', 'message'):
+            raise ValueError("listen must be one of 'all', 'event' or 'message'")
+        if ws_close_handler is None:
+            async def ws_close_handler(event):
+                pass
+        await self.retry_once(self.session.websocket(f'/{listen}?sessionKey={self.session_key}',
+                                                     self._websocket_handler(handler), ws_close_handler))

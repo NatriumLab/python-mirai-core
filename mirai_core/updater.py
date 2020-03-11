@@ -21,6 +21,11 @@ class Shutdown(Exception):
 
 class Updater:
     def __init__(self, bot: Bot, use_websocket: bool = True):
+        """
+        Initialize Updater
+        :param bot: the Bot object to use
+        :param use_websocket: bool. whether websocket (recommended) should be used
+        """
         self.bot = bot
         self.loop = bot.loop
         self.logger = create_logger('Updater')
@@ -28,6 +33,11 @@ class Updater:
         self.use_websocket = use_websocket
 
     async def handshake(self):
+        """
+        Internal use only, automatic handshake
+        Called when launch or websocket disconnects
+        :return:
+        """
         while True:
             try:
                 await self.bot.handshake()
@@ -42,10 +52,10 @@ class Updater:
                 self.logger.exception(f'retrying in 5 seconds')
                 await asyncio.sleep(5)
 
-    async def run_task(self, shutdown_trigger=None):
+    async def run_task(self, shutdown_hook: callable = None):
         """
-        return awaitable coroutine to run in any event loop
-        :param shutdown_trigger: shutdown event if running in main thread
+        return awaitable coroutine to run in event loop (must be the same loop as bot object)
+        :param shutdown_hook: callable, if running in main thread, this must be set. Trigger is called on shutdown
         """
         self.logger.debug('Run tasks')
         tasks = [
@@ -53,8 +63,8 @@ class Updater:
         ]
         if not self.use_websocket:
             tasks.append(self.message_polling())
-        if shutdown_trigger:
-            tasks.append(self.raise_shutdown(shutdown_trigger))
+        if shutdown_hook:
+            tasks.append(self.raise_shutdown(shutdown_hook))
         await asyncio.wait(tasks)
 
     def add_handler(self, event: Union[EventTypes, List[EventTypes]]):
@@ -80,9 +90,9 @@ class Updater:
 
         return receiver_wrapper
 
-    async def message_polling(self, count=5, interval=0.5):
+    async def message_polling(self, count=5, interval=0.5) -> None:
         """
-        polling message and fire events
+        Internal use only, polling message and fire events
         :param count: maximum message count for each polling
         :param interval: minimum interval between two polling
         """
@@ -98,12 +108,20 @@ class Updater:
                 self.logger.warning(f'{e}, new handshake initiated')
                 await self.handshake()
 
-    async def event_caller(self, event: Event):
+    async def event_caller(self, event: Event) -> None:
+        """
+        Internal use only, call the event handlers sequentially
+        :param event: the event
+        """
         for handler in self.event_handlers[event.type]:
             if await handler.func(event):  # if the function returns True, stop calling next event
                 break
 
-    def run(self, log_to_stderr=True):
+    def run(self, log_to_stderr=True) -> None:
+        """
+        Start the Updater and block the thread
+        :param log_to_stderr: if you are setting other loggers that capture the log from this Library, set to False
+        """
         asyncio.set_event_loop(self.loop)
 
         shutdown_event = asyncio.Event()
@@ -120,10 +138,14 @@ class Updater:
         if log_to_stderr:
             install_logger()
 
-        self.loop.create_task(self.run_task(shutdown_trigger=shutdown_event.wait))
+        self.loop.create_task(self.run_task(shutdown_hook=shutdown_event.wait))
         self.loop.run_forever()
 
     async def raise_shutdown(self, shutdown_event: Callable[..., Awaitable[None]]) -> None:
+        """
+        Internal use only, shutdown
+        :param shutdown_event: callable
+        """
         await shutdown_event()
         await self.bot.release()
         raise Shutdown()

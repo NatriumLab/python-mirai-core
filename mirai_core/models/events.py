@@ -6,6 +6,9 @@ from typing import Optional
 
 
 class EventTypes(Enum):
+    """
+    EventTypes is used for registering handlers
+    """
     # Bot events
     BotOnlineEvent = 'BotOnlineEvent'
     BotOfflineEventActive = 'BotOfflineEventActive'
