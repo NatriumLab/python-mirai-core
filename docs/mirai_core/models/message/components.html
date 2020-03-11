@@ -1,0 +1,1460 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.7.5" />
+<title>mirai_core.models.message.components API documentation</title>
+<meta name="description" content="" />
+<link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
+<link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
+<style>.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{font-weight:bold}#index h4 + ul{margin-bottom:.6em}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>mirai_core.models.message.components</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">from abc import abstractmethod
+from enum import Enum
+from typing import List, Dict, Optional, overload, Iterable, Union
+from pydantic import Field, validator, HttpUrl, BaseModel
+from pydantic.generics import GenericModel
+from pathlib import Path
+import datetime
+from collections import MutableSequence
+
+from .base import BaseMessageComponent, MessageComponentTypes
+
+__all__ = [
+    &#39;Plain&#39;,
+    &#39;Source&#39;,
+    &#39;At&#39;,
+    &#39;AtAll&#39;,
+    &#39;Face&#39;,
+    &#39;Image&#39;,
+    &#39;Unknown&#39;,
+    &#39;Quote&#39;,
+    &#39;ComponentTypes&#39;,
+    &#39;LocalImage&#39;,
+    &#39;MessageChain&#39;
+]
+
+# original text copied from Tim
+qq_emoji_text_list = {
+    0:   &#39;[惊讶]&#39;,
+    1:   &#39;[撇嘴]&#39;,
+    2:   &#39;[色]&#39;,
+    3:   &#39;[发呆]&#39;,
+    4:   &#39;[得意]&#39;,
+    5:   &#39;[流泪]&#39;,
+    6:   &#39;[害羞]&#39;,
+    7:   &#39;[闭嘴]&#39;,
+    8:   &#39;[睡]&#39;,
+    9:   &#39;[大哭]&#39;,
+    10:  &#39;[尴尬]&#39;,
+    11:  &#39;[发怒]&#39;,
+    12:  &#39;[调皮]&#39;,
+    13:  &#39;[呲牙]&#39;,
+    14:  &#39;[微笑]&#39;,
+    15:  &#39;[难过]&#39;,
+    16:  &#39;[酷]&#39;,
+    17:  &#39;[Empty]&#39;,
+    18:  &#39;[抓狂]&#39;,
+    19:  &#39;[吐]&#39;,
+    20:  &#39;[偷笑]&#39;,
+    21:  &#39;[可爱]&#39;,
+    22:  &#39;[白眼]&#39;,
+    23:  &#39;[傲慢]&#39;,
+    24:  &#39;[饥饿]&#39;,
+    25:  &#39;[困]&#39;,
+    26:  &#39;[惊恐]&#39;,
+    27:  &#39;[流汗]&#39;,
+    28:  &#39;[憨笑]&#39;,
+    29:  &#39;[悠闲]&#39;,
+    30:  &#39;[奋斗]&#39;,
+    31:  &#39;[咒骂]&#39;,
+    32:  &#39;[疑问]&#39;,
+    33:  &#39;[嘘]&#39;,
+    34:  &#39;[晕]&#39;,
+    35:  &#39;[折磨]&#39;,
+    36:  &#39;[衰]&#39;,
+    37:  &#39;[骷髅]&#39;,
+    38:  &#39;[敲打]&#39;,
+    39:  &#39;[再见]&#39;,
+    40:  &#39;[Empty]&#39;,
+    41:  &#39;[发抖]&#39;,
+    42:  &#39;[爱情]&#39;,
+    43:  &#39;[跳跳]&#39;,
+    44:  &#39;[Empty]&#39;,
+    45:  &#39;[Empty]&#39;,
+    46:  &#39;[猪头]&#39;,
+    47:  &#39;[Empty]&#39;,
+    48:  &#39;[Empty]&#39;,
+    49:  &#39;[拥抱]&#39;,
+    50:  &#39;[Empty]&#39;,
+    51:  &#39;[Empty]&#39;,
+    52:  &#39;[Empty]&#39;,
+    53:  &#39;[蛋糕]&#39;,
+    54:  &#39;[闪电]&#39;,
+    55:  &#39;[炸弹]&#39;,
+    56:  &#39;[刀]&#39;,
+    57:  &#39;[足球]&#39;,
+    58:  &#39;[Empty]&#39;,
+    59:  &#39;[便便]&#39;,
+    60:  &#39;[咖啡]&#39;,
+    61:  &#39;[饭]&#39;,
+    62:  &#39;[Empty]&#39;,
+    63:  &#39;[玫瑰]&#39;,
+    64:  &#39;[凋谢]&#39;,
+    65:  &#39;[Empty]&#39;,
+    66:  &#39;[爱心]&#39;,
+    67:  &#39;[心碎]&#39;,
+    68:  &#39;[Empty]&#39;,
+    69:  &#39;[礼物]&#39;,
+    70:  &#39;[Empty]&#39;,
+    71:  &#39;[Empty]&#39;,
+    72:  &#39;[Empty]&#39;,
+    73:  &#39;[Empty]&#39;,
+    74:  &#39;[太阳]&#39;,
+    75:  &#39;[月亮]&#39;,
+    76:  &#39;[赞]&#39;,
+    77:  &#39;[踩]&#39;,
+    78:  &#39;[握手]&#39;,
+    79:  &#39;[胜利]&#39;,
+    80:  &#39;[Empty]&#39;,
+    81:  &#39;[Empty]&#39;,
+    82:  &#39;[Empty]&#39;,
+    83:  &#39;[Empty]&#39;,
+    84:  &#39;[Empty]&#39;,
+    85:  &#39;[飞吻]&#39;,
+    86:  &#39;[怄火]&#39;,
+    87:  &#39;[Empty]&#39;,
+    88:  &#39;[Empty]&#39;,
+    89:  &#39;[西瓜]&#39;,
+    90:  &#39;[Empty]&#39;,
+    91:  &#39;[Empty]&#39;,
+    92:  &#39;[Empty]&#39;,
+    93:  &#39;[Empty]&#39;,
+    94:  &#39;[Empty]&#39;,
+    95:  &#39;[Empty]&#39;,
+    96:  &#39;[冷汗]&#39;,
+    97:  &#39;[擦汗]&#39;,
+    98:  &#39;[抠鼻]&#39;,
+    99:  &#39;[鼓掌]&#39;,
+    100: &#39;[糗大了]&#39;,
+    101: &#39;[坏笑]&#39;,
+    102: &#39;[左哼哼]&#39;,
+    103: &#39;[右哼哼]&#39;,
+    104: &#39;[哈欠]&#39;,
+    105: &#39;[鄙视]&#39;,
+    106: &#39;[委屈]&#39;,
+    107: &#39;[快哭了]&#39;,
+    108: &#39;[阴险]&#39;,
+    109: &#39;[亲亲]&#39;,
+    110: &#39;[吓]&#39;,
+    111: &#39;[可怜]&#39;,
+    112: &#39;[菜刀]&#39;,
+    113: &#39;[啤酒]&#39;,
+    114: &#39;[篮球]&#39;,
+    115: &#39;[乒乓]&#39;,
+    116: &#39;[示爱]&#39;,
+    117: &#39;[瓢虫]&#39;,
+    118: &#39;[抱拳]&#39;,
+    119: &#39;[勾引]&#39;,
+    120: &#39;[拳头]&#39;,
+    121: &#39;[差劲]&#39;,
+    122: &#39;[爱你]&#39;,
+    123: &#39;[NO]&#39;,
+    124: &#39;[OK]&#39;,
+    125: &#39;[转圈]&#39;,
+    126: &#39;[磕头]&#39;,
+    127: &#39;[回头]&#39;,
+    128: &#39;[跳绳]&#39;,
+    129: &#39;[挥手]&#39;,
+    130: &#39;[激动]&#39;,
+    131: &#39;[街舞]&#39;,
+    132: &#39;[献吻]&#39;,
+    133: &#39;[左太极]&#39;,
+    134: &#39;[右太极]&#39;,
+    135: &#39;[Empty]&#39;,
+    136: &#39;[双喜]&#39;,
+    137: &#39;[鞭炮]&#39;,
+    138: &#39;[灯笼]&#39;,
+    139: &#39;[发财]&#39;,
+    140: &#39;[K歌]&#39;,
+    141: &#39;[购物]&#39;,
+    142: &#39;[邮件]&#39;,
+    143: &#39;[帅]&#39;,
+    144: &#39;[喝彩]&#39;,
+    145: &#39;[祈祷]&#39;,
+    146: &#39;[爆筋]&#39;,
+    147: &#39;[棒棒糖]&#39;,
+    148: &#39;[喝奶]&#39;,
+    149: &#39;[下面]&#39;,
+    150: &#39;[香蕉]&#39;,
+    151: &#39;[飞机]&#39;,
+    152: &#39;[开车]&#39;,
+    153: &#39;[高铁左车头]&#39;,
+    154: &#39;[车厢]&#39;,
+    155: &#39;[高铁右车头]&#39;,
+    156: &#39;[多云]&#39;,
+    157: &#39;[下雨]&#39;,
+    158: &#39;[钞票]&#39;,
+    159: &#39;[熊猫]&#39;,
+    160: &#39;[灯泡]&#39;,
+    161: &#39;[风车]&#39;,
+    162: &#39;[闹钟]&#39;,
+    163: &#39;[打伞]&#39;,
+    164: &#39;[彩球]&#39;,
+    165: &#39;[钻戒]&#39;,
+    166: &#39;[沙发]&#39;,
+    167: &#39;[纸巾]&#39;,
+    168: &#39;[药]&#39;,
+    169: &#39;[手枪]&#39;,
+    170: &#39;[青蛙]&#39;,
+    171: &#39;[茶]&#39;,
+    172: &#39;[眨眼睛]&#39;,
+    173: &#39;[泪奔]&#39;,
+    174: &#39;[无奈]&#39;,
+    175: &#39;[卖萌]&#39;,
+    176: &#39;[小纠结]&#39;,
+    177: &#39;[喷血]&#39;,
+    178: &#39;[斜眼笑]&#39;,
+    179: &#39;[doge]&#39;,
+    180: &#39;[惊喜]&#39;,
+    181: &#39;[骚扰]&#39;,
+    182: &#39;[笑哭]&#39;,
+    183: &#39;[我最美]&#39;,
+    184: &#39;[河蟹]&#39;,
+    185: &#39;[羊驼]&#39;,
+    186: &#39;[Empty]&#39;,
+    187: &#39;[幽灵]&#39;,
+    188: &#39;[蛋]&#39;,
+    189: &#39;[Empty]&#39;,
+    190: &#39;[菊花]&#39;,
+    191: &#39;[Empty]&#39;,
+    192: &#39;[红包]&#39;,
+    193: &#39;[大笑]&#39;,
+    194: &#39;[不开心]&#39;,
+    195: &#39;[Empty]&#39;,
+    196: &#39;[Empty]&#39;,
+    197: &#39;[冷漠]&#39;,
+    198: &#39;[呃]&#39;,
+    199: &#39;[好棒]&#39;,
+    200: &#39;[拜托]&#39;,
+    201: &#39;[点赞]&#39;,
+    202: &#39;[无聊]&#39;,
+    203: &#39;[托脸]&#39;,
+    204: &#39;[吃]&#39;,
+    205: &#39;[送花]&#39;,
+    206: &#39;[害怕]&#39;,
+    207: &#39;[花痴]&#39;,
+    208: &#39;[小样儿]&#39;,
+    209: &#39;[Empty]&#39;,
+    210: &#39;[飙泪]&#39;,
+    211: &#39;[我不看]&#39;,
+    212: &#39;[托腮]&#39;,
+    213: &#39;[Empty]&#39;,
+    214: &#39;[啵啵]&#39;,
+    215: &#39;[糊脸]&#39;,
+    216: &#39;[拍头]&#39;,
+    217: &#39;[扯一扯]&#39;,
+    218: &#39;[舔一舔]&#39;,
+    219: &#39;[蹭一蹭]&#39;,
+    220: &#39;[拽炸天]&#39;,
+    221: &#39;[顶呱呱]&#39;,
+    222: &#39;[抱抱]&#39;,
+    223: &#39;[暴击]&#39;,
+    224: &#39;[开枪]&#39;,
+    225: &#39;[撩一撩]&#39;,
+    226: &#39;[拍桌]&#39;,
+    227: &#39;[拍手]&#39;,
+    228: &#39;[恭喜]&#39;,
+    229: &#39;[干杯]&#39;,
+    230: &#39;[嘲讽]&#39;,
+    231: &#39;[哼]&#39;,
+    232: &#39;[佛系]&#39;,
+    233: &#39;[掐一掐]&#39;,
+    234: &#39;[惊呆]&#39;,
+    235: &#39;[颤抖]&#39;,
+    236: &#39;[啃头]&#39;,
+    237: &#39;[偷看]&#39;,
+    238: &#39;[扇脸]&#39;,
+    239: &#39;[原谅]&#39;,
+    240: &#39;[喷脸]&#39;,
+    241: &#39;[生日快乐]&#39;,
+    242: &#39;[Empty]&#39;,
+    243: &#39;[Empty]&#39;,
+    244: &#39;[Empty]&#39;,
+    245: &#39;[Empty]&#39;,
+    246: &#39;[Empty]&#39;,
+    247: &#39;[Empty]&#39;,
+    248: &#39;[Empty]&#39;,
+    249: &#39;[Empty]&#39;,
+    250: &#39;[Empty]&#39;,
+    251: &#39;[Empty]&#39;,
+    252: &#39;[Empty]&#39;,
+    253: &#39;[Empty]&#39;,
+    254: &#39;[Empty]&#39;,
+    255: &#39;[Empty]&#39;,
+}
+
+
+class MessageChain(BaseModel, MutableSequence):
+    # stores the actual components
+    __root__: List[BaseMessageComponent] = []
+
+    def insert(self, index: int, object) -&gt; None:
+        self.__root__.insert(index, object)
+
+    @overload
+    @abstractmethod
+    def __setitem__(self, i: int, o) -&gt; None: ...
+
+    @overload
+    @abstractmethod
+    def __setitem__(self, s: slice, o: Iterable) -&gt; None: ...
+
+    def __setitem__(self, i: int, o) -&gt; None:
+        self.__root__.__setitem__(i, o)
+
+    @overload
+    @abstractmethod
+    def __delitem__(self, i: int) -&gt; None: ...
+
+    @overload
+    @abstractmethod
+    def __delitem__(self, i: slice) -&gt; None: ...
+
+    def __delitem__(self, i: int) -&gt; None:
+        self.__root__.__delitem__(i)
+
+    def __add__(self, value):
+        # merge two message chain or append one component
+        if isinstance(value, BaseMessageComponent):
+            self.__root__.append(value)
+            return self
+        elif isinstance(value, MessageChain):
+            self.__root__ += value.__root__
+            return self
+
+    def __str__(self) -&gt; str:
+        return &#39;&#39;.join([str(i) for i in self.__root__])
+
+    @classmethod
+    def custom_parse(cls, value: List[Dict]) -&gt; &#39;MessageChain&#39;:
+        &#34;&#34;&#34;
+        construct message chain from dict
+        used only when receiving messages from mirai
+        :param value: dict contains message components
+        :return: MessageChain
+        &#34;&#34;&#34;
+        for i in value:
+            if not isinstance(i, dict):
+                raise TypeError(&#34;invaild value&#34;)
+        return cls(__root__=[ComponentTypes.__members__[m[&#39;type&#39;]].value(**m) for m in value])
+
+    def __iter__(self):
+        return self.__root__.__iter__()
+
+    def __getitem__(self, index):
+        return self.__root__.__getitem__(index)
+
+    def has(self, component_class) -&gt; bool:
+        &#34;&#34;&#34;
+        test if any item in MessageChain is component_class
+        :param component_class: the class for the component
+        :return: boolean
+        &#34;&#34;&#34;
+        for i in self:
+            if isinstance(i, component_class):
+                return True
+        else:
+            return False
+
+    def __len__(self) -&gt; int:
+        return len(self.__root__)
+
+    def get_first(self, component_class) -&gt; Optional[BaseMessageComponent]:
+        &#34;&#34;&#34;
+        Get the first component with component_class
+        :param component_class: the class for the component
+        :return: None or the component
+        &#34;&#34;&#34;
+        for i in self.__root__:
+            if isinstance(i, component_class):
+                return i
+
+    def get_all(self, component_class) -&gt; List[BaseMessageComponent]:
+        return [i for i in self.__root__ if isinstance(i, component_class)]
+
+    def get_source(self) -&gt; &#39;Source&#39;:
+        result = self.get_first(Source)
+        assert isinstance(result, Source)
+        return result
+
+    def get_quote(self) -&gt; &#39;Quote&#39;:
+        result = self.get_first(Quote)
+        if result:
+            assert isinstance(result, Quote)
+            return result
+
+
+class Source(BaseMessageComponent):
+    &#34;&#34;&#34;
+    The source of the message
+    Not a valid component for outbound message
+    &#34;&#34;&#34;
+    type = MessageComponentTypes.Source
+    id: int  # the message id: higher 32 bits are sequence id, and lower 32 bits are random id
+    time: datetime.datetime  # the timestamp the message was sent
+
+    def __str__(self):
+        return &#39;&#39;
+
+    def __repr__(self):
+        return f&#39;[Source: id={self.id}, time={self.time}]&#39;
+
+
+class Plain(BaseMessageComponent):
+    &#34;&#34;&#34;
+    Text component
+    Available for outbound message
+    &#34;&#34;&#34;
+    type = MessageComponentTypes.Plain
+    text: str  # text content
+
+    def __init__(self, text: str, **kwargs):
+        &#34;&#34;&#34;
+        Construct text component
+        :param text: message text
+        &#34;&#34;&#34;
+        super().__init__(text=text, **kwargs)
+
+    def __str__(self):
+        return self.text
+
+    def __repr__(self):
+        return f&#39;[Plain: {self.text}]&#39;
+
+
+class Quote(BaseMessageComponent):
+    &#34;&#34;&#34;
+    Quote component
+    Not a valid component for outbound message
+    &#34;&#34;&#34;
+    type = MessageComponentTypes.Quote
+    id: int  # origin message id
+    groupId: int  # origin group id
+    senderId: int  # origin sender id
+    origin: MessageChain  # origin message (Source and other content without Quote)
+
+    def __str__(self):
+        return &#39;&#39;
+
+    def __repr__(self):
+        return f&#39;[Quote: id={self.id}]&#39;
+
+
+class At(GenericModel, BaseMessageComponent):
+    &#34;&#34;&#34;
+    At component
+    Available for outbound message
+    &#34;&#34;&#34;
+    type = MessageComponentTypes.At
+    target: int  # target qq number
+    display: str  # display name (only used for inbound at), &#39;@&#39; already included
+
+    def __init__(self, target, **kwargs):
+        &#34;&#34;&#34;
+        Construct at component
+        :param target: target qq number
+        &#34;&#34;&#34;
+        super().__init__(target=target, **kwargs)
+
+    def __str__(self):
+        return self.display
+
+    def __repr__(self):
+        return f&#39;[At: target={self.target}, display={self.display}]&#39;
+
+
+class AtAll(BaseMessageComponent):
+    &#34;&#34;&#34;
+    AtAll component
+    Available for outbound message
+    &#34;&#34;&#34;
+    type = MessageComponentTypes.AtAll
+
+    def __str__(self):
+        return &#39;@All&#39;
+
+    def __repr__(self):
+        return f&#39;[AtAll]&#39;
+
+
+class Face(BaseMessageComponent):
+    &#34;&#34;&#34;
+    Face component
+    Available for outbound message
+    &#34;&#34;&#34;
+    type = MessageComponentTypes.Face
+    faceId: int  # face id, see qq_emoji_text_list for details
+
+    def __init__(self, face_id, **kwargs):
+        &#34;&#34;&#34;
+        Construct Face component
+        :param face_id: unsigned 8-bit face id
+        &#34;&#34;&#34;
+        super().__init__(faceId=face_id, **kwargs)
+
+    def __str__(self):
+        return qq_emoji_text_list[self.faceId]
+
+    def __repr__(self):
+        return f&#39;[Face: id={self.faceId}, {qq_emoji_text_list[self.faceId]}]&#39;
+
+
+class Image(BaseMessageComponent):
+    &#34;&#34;&#34;
+    Received image component
+    Available for outbound message
+    &#34;&#34;&#34;
+    type = MessageComponentTypes.Image
+    imageId: str
+    url: Optional[HttpUrl] = None
+
+    def __init__(self, imageId, **kwargs):
+        &#34;&#34;&#34;
+        Construct Image from mirai styled uuid
+        :param imageId: uuid as str (see https://github.com/mamoe/mirai-api-http/blob/master/MessageType.md#image)
+        &#34;&#34;&#34;
+        super().__init__(imageId=imageId, **kwargs)
+
+    def __str__(self):
+        return &#39;&#39;
+
+    def __repr__(self):
+        return f&#39;[Image: {self.imageId}]&#39;
+
+    @property
+    def image_type(self):
+        &#34;&#34;&#34;
+        get image type from pattern
+        :return:
+        &#34;&#34;&#34;
+        if self.imageId.startswith(&#39;/&#39;):
+            return &#39;friend&#39;
+        elif self.imageId.startswith(&#39;{&#39;):
+            return &#39;group&#39;
+        else:
+            &#39;unknown&#39;
+
+
+class LocalImage:
+    &#34;&#34;&#34;
+    Local image component
+    Available for outbound message
+    &#34;&#34;&#34;
+    path: Path  # absolute path to image
+
+    def __init__(self, path=None):
+        &#34;&#34;&#34;
+        Construct LocalImage component
+        :param path: absolute path on disk
+        &#34;&#34;&#34;
+        if isinstance(path, str):
+            self.path = Path(path)
+        elif isinstance(path, Path):
+            self.path = path
+
+
+class Xml(BaseMessageComponent):
+    &#34;&#34;&#34;
+    Xml component
+    Available for outbound message
+    &#34;&#34;&#34;
+    type = MessageComponentTypes.Xml
+    XML: str  # xml content
+
+    def __init__(self, xml: str):
+        &#34;&#34;&#34;
+        Construct Xml component
+        :param xml: str contains xml
+        &#34;&#34;&#34;
+        super().__init__(XML=xml)
+
+
+class Json(BaseMessageComponent):
+    &#34;&#34;&#34;
+    Json component
+    Available for outbound message
+    &#34;&#34;&#34;
+    type = MessageComponentTypes.Json
+    Json: dict = Field(..., alias=&#34;json&#34;)  # json content
+
+    def __init__(self, json: Union[dict, List]):
+        &#34;&#34;&#34;
+        Construct Json component
+        :param json: json content
+        &#34;&#34;&#34;
+        super().__init__(Json=json)
+
+
+class App(BaseMessageComponent):
+    &#34;&#34;&#34;
+    App component
+    Available for outbound message
+    &#34;&#34;&#34;
+    type = MessageComponentTypes.App
+    content: str  # app content
+
+    def __init__(self, content: str):
+        &#34;&#34;&#34;
+        Construct App component
+        :param content: app content
+        &#34;&#34;&#34;
+        super().__init__(content=content)
+
+
+class Unknown(BaseMessageComponent):
+    &#34;&#34;&#34;
+    Unknown component
+        Not a valid component for outbound message
+    &#34;&#34;&#34;
+    type = MessageComponentTypes.Unknown
+    text: str  # content in string
+
+    def __str__(self):
+        return &#39;&#39;
+
+    def __repr__(self):
+        return &#39;[Unknown]&#39;
+
+
+class ComponentTypes(Enum):
+    Plain = Plain
+    Source = Source
+    At = At
+    AtAll = AtAll
+    Face = Face
+    Image = Image
+    Quote = Quote
+    Xml = Xml
+    Json = Json
+    App = App
+    Unknown = Unknown
+
+
+MessageComponents = {
+    &#39;At&#39;:      At,
+    &#39;AtAll&#39;:   AtAll,
+    &#39;Face&#39;:    Face,
+    &#39;Plain&#39;:   Plain,
+    &#39;Image&#39;:   Image,
+    &#39;Source&#39;:  Source,
+    &#39;Quote&#39;:   Quote,
+    &#39;Xml&#39;:     Xml,
+    &#39;Json&#39;:    Json,
+    &#39;App&#39;:     App,
+    &#39;Unknown&#39;: Unknown
+}</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="mirai_core.models.message.components.At"><code class="flex name class">
+<span>class <span class="ident">At</span></span>
+<span>(</span><span>target, **kwargs)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>At component
+Available for outbound message</p>
+<p>Construct at component
+:param target: target qq number</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class At(GenericModel, BaseMessageComponent):
+    &#34;&#34;&#34;
+    At component
+    Available for outbound message
+    &#34;&#34;&#34;
+    type = MessageComponentTypes.At
+    target: int  # target qq number
+    display: str  # display name (only used for inbound at), &#39;@&#39; already included
+
+    def __init__(self, target, **kwargs):
+        &#34;&#34;&#34;
+        Construct at component
+        :param target: target qq number
+        &#34;&#34;&#34;
+        super().__init__(target=target, **kwargs)
+
+    def __str__(self):
+        return self.display
+
+    def __repr__(self):
+        return f&#39;[At: target={self.target}, display={self.display}]&#39;</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>pydantic.generics.GenericModel</li>
+<li><a title="mirai_core.models.message.base.BaseMessageComponent" href="base.html#mirai_core.models.message.base.BaseMessageComponent">BaseMessageComponent</a></li>
+<li>pydantic.main.BaseModel</li>
+</ul>
+</dd>
+<dt id="mirai_core.models.message.components.AtAll"><code class="flex name class">
+<span>class <span class="ident">AtAll</span></span>
+<span>(</span><span>**data)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>AtAll component
+Available for outbound message</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class AtAll(BaseMessageComponent):
+    &#34;&#34;&#34;
+    AtAll component
+    Available for outbound message
+    &#34;&#34;&#34;
+    type = MessageComponentTypes.AtAll
+
+    def __str__(self):
+        return &#39;@All&#39;
+
+    def __repr__(self):
+        return f&#39;[AtAll]&#39;</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="mirai_core.models.message.base.BaseMessageComponent" href="base.html#mirai_core.models.message.base.BaseMessageComponent">BaseMessageComponent</a></li>
+<li>pydantic.main.BaseModel</li>
+</ul>
+</dd>
+<dt id="mirai_core.models.message.components.ComponentTypes"><code class="flex name class">
+<span>class <span class="ident">ComponentTypes</span></span>
+<span>(</span><span>value, names=None, *, module=None, qualname=None, type=None, start=1)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>An enumeration.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ComponentTypes(Enum):
+    Plain = Plain
+    Source = Source
+    At = At
+    AtAll = AtAll
+    Face = Face
+    Image = Image
+    Quote = Quote
+    Xml = Xml
+    Json = Json
+    App = App
+    Unknown = Unknown</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>enum.Enum</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="mirai_core.models.message.components.ComponentTypes.App"><code class="name">var <span class="ident">App</span></code></dt>
+<dd>
+<section class="desc"></section>
+</dd>
+<dt id="mirai_core.models.message.components.ComponentTypes.At"><code class="name">var <span class="ident">At</span></code></dt>
+<dd>
+<section class="desc"></section>
+</dd>
+<dt id="mirai_core.models.message.components.ComponentTypes.AtAll"><code class="name">var <span class="ident">AtAll</span></code></dt>
+<dd>
+<section class="desc"></section>
+</dd>
+<dt id="mirai_core.models.message.components.ComponentTypes.Face"><code class="name">var <span class="ident">Face</span></code></dt>
+<dd>
+<section class="desc"></section>
+</dd>
+<dt id="mirai_core.models.message.components.ComponentTypes.Image"><code class="name">var <span class="ident">Image</span></code></dt>
+<dd>
+<section class="desc"></section>
+</dd>
+<dt id="mirai_core.models.message.components.ComponentTypes.Json"><code class="name">var <span class="ident">Json</span></code></dt>
+<dd>
+<section class="desc"></section>
+</dd>
+<dt id="mirai_core.models.message.components.ComponentTypes.Plain"><code class="name">var <span class="ident">Plain</span></code></dt>
+<dd>
+<section class="desc"></section>
+</dd>
+<dt id="mirai_core.models.message.components.ComponentTypes.Quote"><code class="name">var <span class="ident">Quote</span></code></dt>
+<dd>
+<section class="desc"></section>
+</dd>
+<dt id="mirai_core.models.message.components.ComponentTypes.Source"><code class="name">var <span class="ident">Source</span></code></dt>
+<dd>
+<section class="desc"></section>
+</dd>
+<dt id="mirai_core.models.message.components.ComponentTypes.Unknown"><code class="name">var <span class="ident">Unknown</span></code></dt>
+<dd>
+<section class="desc"></section>
+</dd>
+<dt id="mirai_core.models.message.components.ComponentTypes.Xml"><code class="name">var <span class="ident">Xml</span></code></dt>
+<dd>
+<section class="desc"></section>
+</dd>
+</dl>
+</dd>
+<dt id="mirai_core.models.message.components.Face"><code class="flex name class">
+<span>class <span class="ident">Face</span></span>
+<span>(</span><span>face_id, **kwargs)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Face component
+Available for outbound message</p>
+<p>Construct Face component
+:param face_id: unsigned 8-bit face id</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Face(BaseMessageComponent):
+    &#34;&#34;&#34;
+    Face component
+    Available for outbound message
+    &#34;&#34;&#34;
+    type = MessageComponentTypes.Face
+    faceId: int  # face id, see qq_emoji_text_list for details
+
+    def __init__(self, face_id, **kwargs):
+        &#34;&#34;&#34;
+        Construct Face component
+        :param face_id: unsigned 8-bit face id
+        &#34;&#34;&#34;
+        super().__init__(faceId=face_id, **kwargs)
+
+    def __str__(self):
+        return qq_emoji_text_list[self.faceId]
+
+    def __repr__(self):
+        return f&#39;[Face: id={self.faceId}, {qq_emoji_text_list[self.faceId]}]&#39;</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="mirai_core.models.message.base.BaseMessageComponent" href="base.html#mirai_core.models.message.base.BaseMessageComponent">BaseMessageComponent</a></li>
+<li>pydantic.main.BaseModel</li>
+</ul>
+</dd>
+<dt id="mirai_core.models.message.components.Image"><code class="flex name class">
+<span>class <span class="ident">Image</span></span>
+<span>(</span><span>imageId, **kwargs)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Received image component
+Available for outbound message</p>
+<p>Construct Image from mirai styled uuid
+:param imageId: uuid as str (see <a href="https://github.com/mamoe/mirai-api-http/blob/master/MessageType.md#image">https://github.com/mamoe/mirai-api-http/blob/master/MessageType.md#image</a>)</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Image(BaseMessageComponent):
+    &#34;&#34;&#34;
+    Received image component
+    Available for outbound message
+    &#34;&#34;&#34;
+    type = MessageComponentTypes.Image
+    imageId: str
+    url: Optional[HttpUrl] = None
+
+    def __init__(self, imageId, **kwargs):
+        &#34;&#34;&#34;
+        Construct Image from mirai styled uuid
+        :param imageId: uuid as str (see https://github.com/mamoe/mirai-api-http/blob/master/MessageType.md#image)
+        &#34;&#34;&#34;
+        super().__init__(imageId=imageId, **kwargs)
+
+    def __str__(self):
+        return &#39;&#39;
+
+    def __repr__(self):
+        return f&#39;[Image: {self.imageId}]&#39;
+
+    @property
+    def image_type(self):
+        &#34;&#34;&#34;
+        get image type from pattern
+        :return:
+        &#34;&#34;&#34;
+        if self.imageId.startswith(&#39;/&#39;):
+            return &#39;friend&#39;
+        elif self.imageId.startswith(&#39;{&#39;):
+            return &#39;group&#39;
+        else:
+            &#39;unknown&#39;</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="mirai_core.models.message.base.BaseMessageComponent" href="base.html#mirai_core.models.message.base.BaseMessageComponent">BaseMessageComponent</a></li>
+<li>pydantic.main.BaseModel</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="mirai_core.models.message.components.Image.image_type"><code class="name">var <span class="ident">image_type</span></code></dt>
+<dd>
+<section class="desc"><p>get image type from pattern
+:return:</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def image_type(self):
+    &#34;&#34;&#34;
+    get image type from pattern
+    :return:
+    &#34;&#34;&#34;
+    if self.imageId.startswith(&#39;/&#39;):
+        return &#39;friend&#39;
+    elif self.imageId.startswith(&#39;{&#39;):
+        return &#39;group&#39;
+    else:
+        &#39;unknown&#39;</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="mirai_core.models.message.components.LocalImage"><code class="flex name class">
+<span>class <span class="ident">LocalImage</span></span>
+<span>(</span><span>path=None)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Local image component
+Available for outbound message</p>
+<p>Construct LocalImage component
+:param path: absolute path on disk</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class LocalImage:
+    &#34;&#34;&#34;
+    Local image component
+    Available for outbound message
+    &#34;&#34;&#34;
+    path: Path  # absolute path to image
+
+    def __init__(self, path=None):
+        &#34;&#34;&#34;
+        Construct LocalImage component
+        :param path: absolute path on disk
+        &#34;&#34;&#34;
+        if isinstance(path, str):
+            self.path = Path(path)
+        elif isinstance(path, Path):
+            self.path = path</code></pre>
+</details>
+</dd>
+<dt id="mirai_core.models.message.components.MessageChain"><code class="flex name class">
+<span>class <span class="ident">MessageChain</span></span>
+<span>(</span><span>**data)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>All the operations on a read-only sequence.</p>
+<p>Concrete subclasses must override <strong>new</strong> or <strong>init</strong>,
+<strong>getitem</strong>, and <strong>len</strong>.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class MessageChain(BaseModel, MutableSequence):
+    # stores the actual components
+    __root__: List[BaseMessageComponent] = []
+
+    def insert(self, index: int, object) -&gt; None:
+        self.__root__.insert(index, object)
+
+    @overload
+    @abstractmethod
+    def __setitem__(self, i: int, o) -&gt; None: ...
+
+    @overload
+    @abstractmethod
+    def __setitem__(self, s: slice, o: Iterable) -&gt; None: ...
+
+    def __setitem__(self, i: int, o) -&gt; None:
+        self.__root__.__setitem__(i, o)
+
+    @overload
+    @abstractmethod
+    def __delitem__(self, i: int) -&gt; None: ...
+
+    @overload
+    @abstractmethod
+    def __delitem__(self, i: slice) -&gt; None: ...
+
+    def __delitem__(self, i: int) -&gt; None:
+        self.__root__.__delitem__(i)
+
+    def __add__(self, value):
+        # merge two message chain or append one component
+        if isinstance(value, BaseMessageComponent):
+            self.__root__.append(value)
+            return self
+        elif isinstance(value, MessageChain):
+            self.__root__ += value.__root__
+            return self
+
+    def __str__(self) -&gt; str:
+        return &#39;&#39;.join([str(i) for i in self.__root__])
+
+    @classmethod
+    def custom_parse(cls, value: List[Dict]) -&gt; &#39;MessageChain&#39;:
+        &#34;&#34;&#34;
+        construct message chain from dict
+        used only when receiving messages from mirai
+        :param value: dict contains message components
+        :return: MessageChain
+        &#34;&#34;&#34;
+        for i in value:
+            if not isinstance(i, dict):
+                raise TypeError(&#34;invaild value&#34;)
+        return cls(__root__=[ComponentTypes.__members__[m[&#39;type&#39;]].value(**m) for m in value])
+
+    def __iter__(self):
+        return self.__root__.__iter__()
+
+    def __getitem__(self, index):
+        return self.__root__.__getitem__(index)
+
+    def has(self, component_class) -&gt; bool:
+        &#34;&#34;&#34;
+        test if any item in MessageChain is component_class
+        :param component_class: the class for the component
+        :return: boolean
+        &#34;&#34;&#34;
+        for i in self:
+            if isinstance(i, component_class):
+                return True
+        else:
+            return False
+
+    def __len__(self) -&gt; int:
+        return len(self.__root__)
+
+    def get_first(self, component_class) -&gt; Optional[BaseMessageComponent]:
+        &#34;&#34;&#34;
+        Get the first component with component_class
+        :param component_class: the class for the component
+        :return: None or the component
+        &#34;&#34;&#34;
+        for i in self.__root__:
+            if isinstance(i, component_class):
+                return i
+
+    def get_all(self, component_class) -&gt; List[BaseMessageComponent]:
+        return [i for i in self.__root__ if isinstance(i, component_class)]
+
+    def get_source(self) -&gt; &#39;Source&#39;:
+        result = self.get_first(Source)
+        assert isinstance(result, Source)
+        return result
+
+    def get_quote(self) -&gt; &#39;Quote&#39;:
+        result = self.get_first(Quote)
+        if result:
+            assert isinstance(result, Quote)
+            return result</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>pydantic.main.BaseModel</li>
+<li>collections.abc.MutableSequence</li>
+<li>collections.abc.Sequence</li>
+<li>collections.abc.Reversible</li>
+<li>collections.abc.Collection</li>
+<li>collections.abc.Sized</li>
+<li>collections.abc.Iterable</li>
+<li>collections.abc.Container</li>
+</ul>
+<h3>Static methods</h3>
+<dl>
+<dt id="mirai_core.models.message.components.MessageChain.custom_parse"><code class="name flex">
+<span>def <span class="ident">custom_parse</span></span>(<span>value)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>construct message chain from dict
+used only when receiving messages from mirai
+:param value: dict contains message components
+:return: MessageChain</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@classmethod
+def custom_parse(cls, value: List[Dict]) -&gt; &#39;MessageChain&#39;:
+    &#34;&#34;&#34;
+    construct message chain from dict
+    used only when receiving messages from mirai
+    :param value: dict contains message components
+    :return: MessageChain
+    &#34;&#34;&#34;
+    for i in value:
+        if not isinstance(i, dict):
+            raise TypeError(&#34;invaild value&#34;)
+    return cls(__root__=[ComponentTypes.__members__[m[&#39;type&#39;]].value(**m) for m in value])</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="mirai_core.models.message.components.MessageChain.get_all"><code class="name flex">
+<span>def <span class="ident">get_all</span></span>(<span>self, component_class)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_all(self, component_class) -&gt; List[BaseMessageComponent]:
+    return [i for i in self.__root__ if isinstance(i, component_class)]</code></pre>
+</details>
+</dd>
+<dt id="mirai_core.models.message.components.MessageChain.get_first"><code class="name flex">
+<span>def <span class="ident">get_first</span></span>(<span>self, component_class)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Get the first component with component_class
+:param component_class: the class for the component
+:return: None or the component</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_first(self, component_class) -&gt; Optional[BaseMessageComponent]:
+    &#34;&#34;&#34;
+    Get the first component with component_class
+    :param component_class: the class for the component
+    :return: None or the component
+    &#34;&#34;&#34;
+    for i in self.__root__:
+        if isinstance(i, component_class):
+            return i</code></pre>
+</details>
+</dd>
+<dt id="mirai_core.models.message.components.MessageChain.get_quote"><code class="name flex">
+<span>def <span class="ident">get_quote</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_quote(self) -&gt; &#39;Quote&#39;:
+    result = self.get_first(Quote)
+    if result:
+        assert isinstance(result, Quote)
+        return result</code></pre>
+</details>
+</dd>
+<dt id="mirai_core.models.message.components.MessageChain.get_source"><code class="name flex">
+<span>def <span class="ident">get_source</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_source(self) -&gt; &#39;Source&#39;:
+    result = self.get_first(Source)
+    assert isinstance(result, Source)
+    return result</code></pre>
+</details>
+</dd>
+<dt id="mirai_core.models.message.components.MessageChain.has"><code class="name flex">
+<span>def <span class="ident">has</span></span>(<span>self, component_class)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>test if any item in MessageChain is component_class
+:param component_class: the class for the component
+:return: boolean</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def has(self, component_class) -&gt; bool:
+    &#34;&#34;&#34;
+    test if any item in MessageChain is component_class
+    :param component_class: the class for the component
+    :return: boolean
+    &#34;&#34;&#34;
+    for i in self:
+        if isinstance(i, component_class):
+            return True
+    else:
+        return False</code></pre>
+</details>
+</dd>
+<dt id="mirai_core.models.message.components.MessageChain.insert"><code class="name flex">
+<span>def <span class="ident">insert</span></span>(<span>self, index, object)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>S.insert(index, value) &ndash; insert value before index</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def insert(self, index: int, object) -&gt; None:
+    self.__root__.insert(index, object)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="mirai_core.models.message.components.Plain"><code class="flex name class">
+<span>class <span class="ident">Plain</span></span>
+<span>(</span><span>text, **kwargs)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Text component
+Available for outbound message</p>
+<p>Construct text component
+:param text: message text</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Plain(BaseMessageComponent):
+    &#34;&#34;&#34;
+    Text component
+    Available for outbound message
+    &#34;&#34;&#34;
+    type = MessageComponentTypes.Plain
+    text: str  # text content
+
+    def __init__(self, text: str, **kwargs):
+        &#34;&#34;&#34;
+        Construct text component
+        :param text: message text
+        &#34;&#34;&#34;
+        super().__init__(text=text, **kwargs)
+
+    def __str__(self):
+        return self.text
+
+    def __repr__(self):
+        return f&#39;[Plain: {self.text}]&#39;</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="mirai_core.models.message.base.BaseMessageComponent" href="base.html#mirai_core.models.message.base.BaseMessageComponent">BaseMessageComponent</a></li>
+<li>pydantic.main.BaseModel</li>
+</ul>
+</dd>
+<dt id="mirai_core.models.message.components.Quote"><code class="flex name class">
+<span>class <span class="ident">Quote</span></span>
+<span>(</span><span>**data)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Quote component
+Not a valid component for outbound message</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Quote(BaseMessageComponent):
+    &#34;&#34;&#34;
+    Quote component
+    Not a valid component for outbound message
+    &#34;&#34;&#34;
+    type = MessageComponentTypes.Quote
+    id: int  # origin message id
+    groupId: int  # origin group id
+    senderId: int  # origin sender id
+    origin: MessageChain  # origin message (Source and other content without Quote)
+
+    def __str__(self):
+        return &#39;&#39;
+
+    def __repr__(self):
+        return f&#39;[Quote: id={self.id}]&#39;</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="mirai_core.models.message.base.BaseMessageComponent" href="base.html#mirai_core.models.message.base.BaseMessageComponent">BaseMessageComponent</a></li>
+<li>pydantic.main.BaseModel</li>
+</ul>
+</dd>
+<dt id="mirai_core.models.message.components.Source"><code class="flex name class">
+<span>class <span class="ident">Source</span></span>
+<span>(</span><span>**data)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>The source of the message
+Not a valid component for outbound message</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Source(BaseMessageComponent):
+    &#34;&#34;&#34;
+    The source of the message
+    Not a valid component for outbound message
+    &#34;&#34;&#34;
+    type = MessageComponentTypes.Source
+    id: int  # the message id: higher 32 bits are sequence id, and lower 32 bits are random id
+    time: datetime.datetime  # the timestamp the message was sent
+
+    def __str__(self):
+        return &#39;&#39;
+
+    def __repr__(self):
+        return f&#39;[Source: id={self.id}, time={self.time}]&#39;</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="mirai_core.models.message.base.BaseMessageComponent" href="base.html#mirai_core.models.message.base.BaseMessageComponent">BaseMessageComponent</a></li>
+<li>pydantic.main.BaseModel</li>
+</ul>
+</dd>
+<dt id="mirai_core.models.message.components.Unknown"><code class="flex name class">
+<span>class <span class="ident">Unknown</span></span>
+<span>(</span><span>**data)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Unknown component
+Not a valid component for outbound message</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Unknown(BaseMessageComponent):
+    &#34;&#34;&#34;
+    Unknown component
+        Not a valid component for outbound message
+    &#34;&#34;&#34;
+    type = MessageComponentTypes.Unknown
+    text: str  # content in string
+
+    def __str__(self):
+        return &#39;&#39;
+
+    def __repr__(self):
+        return &#39;[Unknown]&#39;</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="mirai_core.models.message.base.BaseMessageComponent" href="base.html#mirai_core.models.message.base.BaseMessageComponent">BaseMessageComponent</a></li>
+<li>pydantic.main.BaseModel</li>
+</ul>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="mirai_core.models.message" href="index.html">mirai_core.models.message</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="mirai_core.models.message.components.At" href="#mirai_core.models.message.components.At">At</a></code></h4>
+</li>
+<li>
+<h4><code><a title="mirai_core.models.message.components.AtAll" href="#mirai_core.models.message.components.AtAll">AtAll</a></code></h4>
+</li>
+<li>
+<h4><code><a title="mirai_core.models.message.components.ComponentTypes" href="#mirai_core.models.message.components.ComponentTypes">ComponentTypes</a></code></h4>
+<ul class="two-column">
+<li><code><a title="mirai_core.models.message.components.ComponentTypes.App" href="#mirai_core.models.message.components.ComponentTypes.App">App</a></code></li>
+<li><code><a title="mirai_core.models.message.components.ComponentTypes.At" href="#mirai_core.models.message.components.ComponentTypes.At">At</a></code></li>
+<li><code><a title="mirai_core.models.message.components.ComponentTypes.AtAll" href="#mirai_core.models.message.components.ComponentTypes.AtAll">AtAll</a></code></li>
+<li><code><a title="mirai_core.models.message.components.ComponentTypes.Face" href="#mirai_core.models.message.components.ComponentTypes.Face">Face</a></code></li>
+<li><code><a title="mirai_core.models.message.components.ComponentTypes.Image" href="#mirai_core.models.message.components.ComponentTypes.Image">Image</a></code></li>
+<li><code><a title="mirai_core.models.message.components.ComponentTypes.Json" href="#mirai_core.models.message.components.ComponentTypes.Json">Json</a></code></li>
+<li><code><a title="mirai_core.models.message.components.ComponentTypes.Plain" href="#mirai_core.models.message.components.ComponentTypes.Plain">Plain</a></code></li>
+<li><code><a title="mirai_core.models.message.components.ComponentTypes.Quote" href="#mirai_core.models.message.components.ComponentTypes.Quote">Quote</a></code></li>
+<li><code><a title="mirai_core.models.message.components.ComponentTypes.Source" href="#mirai_core.models.message.components.ComponentTypes.Source">Source</a></code></li>
+<li><code><a title="mirai_core.models.message.components.ComponentTypes.Unknown" href="#mirai_core.models.message.components.ComponentTypes.Unknown">Unknown</a></code></li>
+<li><code><a title="mirai_core.models.message.components.ComponentTypes.Xml" href="#mirai_core.models.message.components.ComponentTypes.Xml">Xml</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="mirai_core.models.message.components.Face" href="#mirai_core.models.message.components.Face">Face</a></code></h4>
+</li>
+<li>
+<h4><code><a title="mirai_core.models.message.components.Image" href="#mirai_core.models.message.components.Image">Image</a></code></h4>
+<ul class="">
+<li><code><a title="mirai_core.models.message.components.Image.image_type" href="#mirai_core.models.message.components.Image.image_type">image_type</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="mirai_core.models.message.components.LocalImage" href="#mirai_core.models.message.components.LocalImage">LocalImage</a></code></h4>
+</li>
+<li>
+<h4><code><a title="mirai_core.models.message.components.MessageChain" href="#mirai_core.models.message.components.MessageChain">MessageChain</a></code></h4>
+<ul class="two-column">
+<li><code><a title="mirai_core.models.message.components.MessageChain.custom_parse" href="#mirai_core.models.message.components.MessageChain.custom_parse">custom_parse</a></code></li>
+<li><code><a title="mirai_core.models.message.components.MessageChain.get_all" href="#mirai_core.models.message.components.MessageChain.get_all">get_all</a></code></li>
+<li><code><a title="mirai_core.models.message.components.MessageChain.get_first" href="#mirai_core.models.message.components.MessageChain.get_first">get_first</a></code></li>
+<li><code><a title="mirai_core.models.message.components.MessageChain.get_quote" href="#mirai_core.models.message.components.MessageChain.get_quote">get_quote</a></code></li>
+<li><code><a title="mirai_core.models.message.components.MessageChain.get_source" href="#mirai_core.models.message.components.MessageChain.get_source">get_source</a></code></li>
+<li><code><a title="mirai_core.models.message.components.MessageChain.has" href="#mirai_core.models.message.components.MessageChain.has">has</a></code></li>
+<li><code><a title="mirai_core.models.message.components.MessageChain.insert" href="#mirai_core.models.message.components.MessageChain.insert">insert</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="mirai_core.models.message.components.Plain" href="#mirai_core.models.message.components.Plain">Plain</a></code></h4>
+</li>
+<li>
+<h4><code><a title="mirai_core.models.message.components.Quote" href="#mirai_core.models.message.components.Quote">Quote</a></code></h4>
+</li>
+<li>
+<h4><code><a title="mirai_core.models.message.components.Source" href="#mirai_core.models.message.components.Source">Source</a></code></h4>
+</li>
+<li>
+<h4><code><a title="mirai_core.models.message.components.Unknown" href="#mirai_core.models.message.components.Unknown">Unknown</a></code></h4>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.7.5</a>.</p>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad()</script>
+</body>
+</html>

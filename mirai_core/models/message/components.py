@@ -1,6 +1,6 @@
 from abc import abstractmethod
 from enum import Enum
-from typing import List, Dict, Optional, overload, _T, Iterable, Union
+from typing import List, Dict, Optional, overload, Iterable, Union
 from pydantic import Field, validator, HttpUrl, BaseModel
 from pydantic.generics import GenericModel
 from pathlib import Path
@@ -288,18 +288,18 @@ class MessageChain(BaseModel, MutableSequence):
     # stores the actual components
     __root__: List[BaseMessageComponent] = []
 
-    def insert(self, index: int, object: _T) -> None:
+    def insert(self, index: int, object) -> None:
         self.__root__.insert(index, object)
 
     @overload
     @abstractmethod
-    def __setitem__(self, i: int, o: _T) -> None: ...
+    def __setitem__(self, i: int, o) -> None: ...
 
     @overload
     @abstractmethod
-    def __setitem__(self, s: slice, o: Iterable[_T]) -> None: ...
+    def __setitem__(self, s: slice, o: Iterable) -> None: ...
 
-    def __setitem__(self, i: int, o: _T) -> None:
+    def __setitem__(self, i: int, o) -> None:
         self.__root__.__setitem__(i, o)
 
     @overload

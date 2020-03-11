@@ -1,0 +1,2171 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.7.5" />
+<title>mirai_core.bot API documentation</title>
+<meta name="description" content="" />
+<link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
+<link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
+<style>.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{font-weight:bold}#index h4 + ul{margin-bottom:.6em}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>mirai_core.bot</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">from typing import Union, List, Type, Dict
+from datetime import timedelta
+from pathlib import Path
+import json
+from .log import create_logger
+
+from .models.message import BotMessage, ImageType, MessageChain, \
+    Source, Image, Quote, Plain, BaseMessageComponent, LocalImage
+from .models.events import *
+from .models.entity import Friend, Group, GroupSetting, Member, MemberChangeableSetting
+from .network import HttpClient
+from .exceptions import AuthenticationException, MiraiException
+
+
+class Events(Enum):
+    &#34;&#34;&#34;
+    Internal use only
+    &#34;&#34;&#34;
+    BotOnlineEvent = BotOnlineEvent
+    BotOfflineEventActive = BotOfflineEventActive
+    BotOfflineEventForce = BotOfflineEventForce
+    BotOfflineEventDropped = BotOfflineEventDropped
+    BotReloginEvent = BotReloginEvent
+    BotGroupPermissionChangeEvent = BotGroupPermissionChangeEvent
+    BotMuteEvent = BotMuteEvent
+    BotUnmuteEvent = BotUnmuteEvent
+    BotJoinGroupEvent = BotJoinGroupEvent
+
+    GroupNameChangeEvent = GroupNameChangeEvent
+    GroupEntranceAnnouncementChangeEvent = GroupEntranceAnnouncementChangeEvent
+    GroupMuteAllEvent = GroupMuteAllEvent
+
+    # 群设置被修改事件
+    GroupAllowAnonymousChatEvent = GroupAllowAnonymousChatEvent  # 群设置 是否允许匿名聊天 被修改
+    GroupAllowConfessTalkEvent = GroupAllowConfessTalkEvent  # 坦白说
+    GroupAllowMemberInviteEvent = GroupAllowMemberInviteEvent  # 邀请进群
+
+    # 群事件(被 Bot 监听到的, 为被动事件, 其中 Bot 身份为第三方.)
+    MemberJoinEvent = MemberJoinEvent
+    MemberLeaveEventKick = MemberLeaveEventKick
+    MemberLeaveEventQuit = MemberLeaveEventQuit
+    MemberCardChangeEvent = MemberCardChangeEvent
+    MemberSpecialTitleChangeEvent = MemberSpecialTitleChangeEvent
+    MemberPermissionChangeEvent = MemberPermissionChangeEvent
+    MemberMuteEvent = MemberMuteEvent
+    MemberUnmuteEvent = MemberUnmuteEvent
+
+    FriendMessage = FriendMessage
+    GroupMessage = GroupMessage
+
+
+class Bot:
+    &#34;&#34;&#34;
+    See https://github.com/mamoe/mirai-api-http for details
+    &#34;&#34;&#34;
+
+    def __init__(self, qq: int, host: str = &#39;127.0.0.1&#39;, port: int = 8080, auth_key: str = &#39;abcdefgh&#39;, loop=None):
+        self.qq = qq
+        self.auth_key = auth_key
+        self.base_url = f&#39;http://{host}:{port}&#39;
+        self.loop = loop
+        self.session = HttpClient(self.base_url, loop=self.loop)
+        self.session_key = &#39;&#39;
+        self.logger = create_logger(&#39;Bot&#39;)
+
+    async def retry_once(self, task):
+        try:
+            return await task
+        except MiraiException:
+            self.logger.exception(&#39;Trying handshake due to the following exception&#39;)
+        try:
+            await self.handshake()
+            return await task
+        except MiraiException:
+            self.logger.exception(&#39;Unable to handshake&#39;)
+
+    async def handshake(self):
+        &#34;&#34;&#34;
+        Authenticate and verify the session_key
+        Automatically called if session_key needs to be updated
+        &#34;&#34;&#34;
+        await self.auth()
+        await self.verify()
+
+    async def auth(self) -&gt; None:
+        &#34;&#34;&#34;
+        Post auth_key, and get session_key
+        &#34;&#34;&#34;
+        result = await self.session.post(&#39;/auth&#39;, data={&#39;authKey&#39;: self.auth_key})
+        self.session_key = result.get(&#39;session&#39;)
+
+    async def verify(self) -&gt; None:
+        &#34;&#34;&#34;
+        Post session_key to verify the session
+        &#34;&#34;&#34;
+        await self.session.post(&#39;/verify&#39;,
+                                data={
+                                    &#39;sessionKey&#39;: self.session_key,
+                                    &#39;qq&#39;:         self.qq
+                                })
+
+    async def release(self) -&gt; None:
+        &#34;&#34;&#34;
+        Post session_key to release the session
+        Needs to be called manually if Updater is not used
+        &#34;&#34;&#34;
+        await self.session.post(&#39;/release&#39;,
+                                data={
+                                    &#39;sessionKey&#39;: self.session_key,
+                                    &#39;qq&#39;:         self.qq
+                                })
+
+    @staticmethod
+    def _handle_target_as(target: Union[Group, Friend, Member, int],
+                          as_type: Union[Type[Group], Type[Friend], Type[Member]]):
+        &#34;&#34;&#34;
+        Internal use only, convert target to id
+        :param target: Union[Group, Friend, Member, int]
+        :param as_type: Group, Friend or Member
+        :return: id, int
+        &#34;&#34;&#34;
+        if isinstance(target, int):
+            return target
+        elif isinstance(target, as_type):
+            return target.id
+        else:
+            raise ValueError(f&#39;Invalid target as {type(as_type)} object.&#39;)
+
+    async def send_friend_message(self,
+                                  friend: Union[Friend, int],
+                                  message: Union[
+                                      MessageChain,
+                                      BaseMessageComponent,
+                                      List[BaseMessageComponent],
+                                      str
+                                  ],
+                                  quote_source: Union[int, Source] = None) -&gt; BotMessage:
+        &#34;&#34;&#34;
+        Send friend message
+        :param friend: int or Friend object as target
+        :param message: MessageChain, BaseMessageComponent, List of BaseMessageComponent or str, the content to send
+        :param quote_source: int (the 64-bit int) or Source, the message to quote
+        :return: BotMessage (contains message id)
+        &#34;&#34;&#34;
+        data = {
+            &#39;sessionKey&#39;:   self.session_key,
+            &#39;target&#39;:       Bot._handle_target_as(friend, Friend),
+            &#39;messageChain&#39;: await self._handle_message_chain(message, Friend)
+        }
+        if quote_source:
+            if isinstance(quote_source, int):
+                data[&#39;quote&#39;] = quote_source
+            elif isinstance(quote_source, Source):
+                data[&#39;quote&#39;] = quote_source.id
+        result = await self.retry_once(self.session.post(&#39;/sendFriendMessage&#39;,
+                                                         data=data))
+
+        return BotMessage.parse_obj(result)
+
+    async def send_group_message(self,
+                                 group: Union[Group, int],
+                                 message: Union[
+                                     MessageChain,
+                                     BaseMessageComponent,
+                                     List[BaseMessageComponent],
+                                     str
+                                 ],
+                                 quote_source: Union[int, Source] = None) -&gt; BotMessage:
+        &#34;&#34;&#34;
+        Send group message
+        :param group: int or Group object as target
+        :param message: MessageChain, BaseMessageComponent, List of BaseMessageComponent or str, the content to send
+        :param quote_source: int (the 64-bit int) or Source, the message to quote
+        :return: BotMessage (contains message id)
+        &#34;&#34;&#34;
+        data = {
+            &#39;sessionKey&#39;:   self.session_key,
+            &#39;target&#39;:       Bot._handle_target_as(group, Group),
+            &#39;messageChain&#39;: await self._handle_message_chain(message, Group)
+        }
+        if quote_source:
+            if isinstance(quote_source, int):
+                data[&#39;quote&#39;] = quote_source
+            elif isinstance(quote_source, Source):
+                data[&#39;quote&#39;] = quote_source.id
+        result = await self.retry_once(self.session.post(&#39;/sendGroupMessage&#39;,
+                                                         data=data))
+        return BotMessage.parse_obj(result)
+
+    async def recall(self, source: Union[Source, int]) -&gt; None:
+        &#34;&#34;&#34;
+        Recall a message
+        Success if no exception is raised
+        :param source: int (the 64-bit int) or Source
+        &#34;&#34;&#34;
+        data = {
+            &#39;sessionKey&#39;: self.session_key,
+        }
+        if isinstance(source, int):
+            data[&#39;target&#39;] = source
+        elif isinstance(source, Source):
+            data[&#39;target&#39;] = source.id
+        else:
+            raise MiraiException(&#39;Invalid source argument&#39;)
+
+        await self.retry_once(self.session.post(&#39;/recall&#39;, data=data))
+
+    @property
+    async def groups(self) -&gt; List[Group]:
+        &#34;&#34;&#34;
+        Get list of joined groups
+        :return: List of Group
+        &#34;&#34;&#34;
+        params = {
+            &#39;sessionKey&#39;: self.session_key,
+        }
+        result = await self.retry_once(self.session.get(&#39;/groupList&#39;, params=params))
+        return [Group.parse_obj(group_info) for group_info in result]
+
+    @property
+    async def friends(self) -&gt; List[Friend]:
+        &#34;&#34;&#34;
+        Get list of friends
+        :return: List of Friend
+        &#34;&#34;&#34;
+        params = {
+            &#39;sessionKey&#39;: self.session_key,
+        }
+        result = await self.retry_once(self.session.get(&#39;/friendList&#39;, params=params))
+        return [Friend.parse_obj(friend_info) for friend_info in result]
+
+    async def get_members(self, target: Union[Group, int]) -&gt; List[Member]:
+        &#34;&#34;&#34;
+        Get list of members of a group
+        :param target: int or Group, the target group
+        :return: List of Member
+        &#34;&#34;&#34;
+        if isinstance(target, int):
+            group = target
+        else:
+            group = target.id
+        params = {
+            &#39;sessionKey&#39;: self.session_key,
+            &#39;target&#39;:     group
+        }
+        result = await self.retry_once(self.session.get(&#39;/memberList&#39;, params=params))
+        return [Member.parse_obj(member_info) for member_info in result]
+
+    async def upload_image(self, image_type: ImageType, image_path: Union[Path, str]) -&gt; Optional[Image]:
+        &#34;&#34;&#34;
+        Upload a image to QQ server. The image between group and friend is not exchangeable
+        This function can be called separately to acquire image uuids, or automatically if using LocalImage while sending
+        :param image_type: ImageType, Friend or Group
+        :param image_path: absolute path of the image
+        :return: Image object
+        &#34;&#34;&#34;
+        if isinstance(image_path, str):
+            image_path = Path(image_path)
+
+        if not image_path.exists():
+            raise FileNotFoundError(&#39;Image not found.&#39;)
+
+        data = {
+            &#39;sessionKey&#39;: self.session_key,
+            &#39;type&#39;:       image_type.value
+        }
+        result = await self.retry_once(self.session.upload(&#39;/uploadImage&#39;, file=image_path, data=data))
+        return Image.parse_obj(result)
+
+    async def fetch_message(self, count: int) -&gt; List[Event]:
+        &#34;&#34;&#34;
+        Fetch a list of messages
+        This function is called automatically if using polling instead of websocket
+        :param count: maximum count of one fetch
+        :return: List of Event
+        &#34;&#34;&#34;
+        params = {
+            &#39;sessionKey&#39;: self.session_key,
+            &#39;count&#39;:      count
+        }
+        result = await self.retry_once(self.session.get(&#39;/fetchMessage&#39;, params=params))
+
+        try:
+            for index in range(len(result)):
+                result[index] = self._parse_event(result[index])
+        except:
+            self.logger.exception(&#39;Unhandled exception&#39;)
+        return result
+
+    # async def message_from_id(self, source_id: Union[Source, Quote, int]):
+    #     &#34;&#34;&#34;
+    #     Deprecated function
+    #     :param source_id:
+    #     :return:
+    #     &#34;&#34;&#34;
+    #     if isinstance(source_id, Source):
+    #         source_id = source_id.id
+    #     elif isinstance(source_id, Quote):
+    #         source_id = source_id.id
+    #
+    #     params = {
+    #         &#39;sessionKey&#39;: self.session_key,
+    #         &#39;id&#39;:         source_id
+    #     }
+    #
+    #     result = await self.retry_once(self.session.get(&#39;/messageFromId&#39;, params=params))
+    #     if result.get(&#39;type&#39;) in (EventTypes.GroupMessageEvent.value, EventTypes.FriendMessageEvent.value):
+    #         if &#34;messageChain&#34; in result:
+    #             result[&#39;messageChain&#39;] = MessageChain.custom_parse(result[&#39;messageChain&#39;])
+    #
+    #         if result.get(&#39;type&#39;) == EventTypes.GroupMessageEvent.value:
+    #             return GroupMessage.parse_obj(result)
+    #         else:
+    #             return FriendMessage.parse_obj(result)
+    #     else:
+    #         raise TypeError(f&#39;Unknown message type&#39;)
+
+    async def mute_all(self, group: Union[Group, int]) -&gt; None:
+        &#34;&#34;&#34;
+        Mute all non admin members in group
+        :param group: int or Group, the target group
+        Success if no exception is raised
+        &#34;&#34;&#34;
+        params = {
+            &#39;sessionKey&#39;: self.session_key,
+            &#39;target&#39;:     Bot._handle_target_as(target=group, as_type=Group)
+        }
+
+        await self.retry_once(self.session.get(&#39;/muteAll&#39;, params=params))
+
+    async def unmute_all(self, group: Union[Group, int]) -&gt; None:
+        &#34;&#34;&#34;
+        Unmute all non admin members in group
+        :param group: int or Group, the target group
+        Success if no exception is raised
+        &#34;&#34;&#34;
+        params = {
+            &#39;sessionKey&#39;: self.session_key,
+            &#39;target&#39;:     Bot._handle_target_as(target=group, as_type=Group)
+        }
+
+        await self.retry_once(self.session.get(&#39;/unmuteAll&#39;, params=params))
+
+    async def get_member_info(self, group: Union[Group, int], member: Union[Member, int]) -&gt; MemberChangeableSetting:
+        &#34;&#34;&#34;
+        Get the info of a member
+        :param group: int or Group, target group
+        :param member: int or Member, target member
+        :return: MemberChangeableSetting
+        &#34;&#34;&#34;
+        params = {
+            &#39;sessionKey&#39;: self.session_key,
+            &#39;target&#39;:     Bot._handle_target_as(target=group, as_type=Group),
+            &#39;memberId&#39;:   self._handle_target_as(target=member, as_type=Member)
+        }
+
+        result = await self.retry_once(self.session.get(&#39;/memberInfo&#39;, params=params))
+        return MemberChangeableSetting.parse_obj(result)
+
+    async def get_bot_member_info(self, group: Union[Group, int]) -&gt; MemberChangeableSetting:
+        &#34;&#34;&#34;
+        Get the info of this bot
+        :param group: int or Group, target group
+        :return: MemberChangeableSetting
+        &#34;&#34;&#34;
+        return await self.retry_once(self.get_member_info(group, self.qq))
+
+    async def set_member_info(self, group: Union[Group, int],
+                              member: Union[Member, int],
+                              setting: MemberChangeableSetting) -&gt; None:
+        &#34;&#34;&#34;
+        Set the info of a member
+        :param group: int or Group, target group
+        :param member: int or Member, target member
+        :param setting: MemberChangeableSetting, the new settings
+        Success if no exception is raised
+        &#34;&#34;&#34;
+        data = {
+            &#39;sessionKey&#39;: self.session_key,
+            &#39;target&#39;:     Bot._handle_target_as(target=group, as_type=Group),
+            &#39;memberId&#39;:   self._handle_target_as(target=member, as_type=Member),
+            &#39;info&#39;:       json.loads(setting.json())
+        }
+
+        await self.retry_once(self.session.post(&#39;/memberInfo&#39;, data=data))
+
+    async def get_group_config(self, group: Union[Group, int]) -&gt; GroupSetting:
+        &#34;&#34;&#34;
+        Get the group config of a group
+        :param group: int or Group, target group
+        :return: GroupSetting
+        &#34;&#34;&#34;
+        params = {
+            &#39;sessionKey&#39;: self.session_key,
+            &#39;target&#39;:     Bot._handle_target_as(target=group, as_type=Group),
+        }
+        result = await self.retry_once(self.session.get(&#39;/groupConfig&#39;, params=params))
+        return GroupSetting.parse_obj(result)
+
+    async def set_group_config(self, group: Union[Group, int],
+                               config: GroupSetting) -&gt; None:
+        &#34;&#34;&#34;
+        Set  the group config of a group
+        :param group: int or Group, target group
+        :param config: GroupSetting
+        Success if no exception is raised
+        &#34;&#34;&#34;
+        data = {
+            &#39;sessionKey&#39;: self.session_key,
+            &#39;target&#39;:     Bot._handle_target_as(target=group, as_type=Group),
+            &#39;config&#39;:     json.loads(config.json())
+        }
+
+        await self.retry_once(self.session.post(&#39;/groupConfig&#39;, data=data))
+
+    async def mute(self, group: Union[Group, int],
+                   member: Union[Member, int],
+                   time: Union[timedelta, int]) -&gt; None:
+        &#34;&#34;&#34;
+        Mute a member of a group
+        :param group: int or Group, target group
+        :param member: int or Member, target member
+        :param time: int or datetime.timedelta, must between 1 minutes and 30 days
+        Success if no exception is raised
+        &#34;&#34;&#34;
+        if isinstance(time, timedelta):
+            time = int(time.total_seconds())
+        time = min(86400 * 30, max(60, time))  # time should between 1 minutes and 30 days
+        data = {
+            &#39;sessionKey&#39;: self.session_key,
+            &#39;target&#39;:     Bot._handle_target_as(target=group, as_type=Group),
+            &#39;MemberId&#39;:   Bot._handle_target_as(target=member, as_type=Member),
+            &#39;time&#39;:       time
+        }
+        await self.retry_once(self.session.post(&#39;/mute&#39;, data=data))
+
+    async def unmute(self, group: Union[Group, int],
+                     member: Union[Member, int]) -&gt; None:
+        &#34;&#34;&#34;
+        Unmute a member of a group
+        :param group: int or Group, target group
+        :param member: int or Member, target member
+        Success if no exception is raised
+        &#34;&#34;&#34;
+        data = {
+            &#39;sessionKey&#39;: self.session_key,
+            &#39;target&#39;:     Bot._handle_target_as(target=group, as_type=Group),
+            &#39;MemberId&#39;:   Bot._handle_target_as(target=member, as_type=Member)
+        }
+        await self.retry_once(self.session.post(&#39;/unmute&#39;, data=data))
+
+    async def kick(self, group: Union[Group, int],
+                   member: Union[Member, int],
+                   message: str = &#39;&#39;) -&gt; None:
+        &#34;&#34;&#34;
+        Kick a member of a group
+        :param group: int or Group, target group
+        :param member: int or Member, target member
+        :param message: string, message to the member
+        &#34;&#34;&#34;
+        data = {
+            &#39;sessionKey&#39;: self.session_key,
+            &#39;target&#39;:     Bot._handle_target_as(target=group, as_type=Group),
+            &#39;MemberId&#39;:   Bot._handle_target_as(target=member, as_type=Member)
+        }
+        if message:
+            data[&#39;msg&#39;] = message
+
+        await self.retry_once(self.session.post(&#39;/kick&#39;, data=data))
+
+    async def _handle_image(self, message: BaseMessageComponent, image_type: ImageType) -&gt; dict:
+        &#34;&#34;&#34;
+        Internal use only
+        Convert LocalImage to Image, and everything to json
+        :param message: BaseMessageComponent
+        :param image_type: ImageType
+        :return: json representation
+        &#34;&#34;&#34;
+        if not isinstance(message, LocalImage):
+            return json.loads(message.json())
+
+        image = await self.retry_once(self.upload_image(image_type, message.path))
+
+        return {
+            &#39;type&#39;:    &#39;Image&#39;,
+            &#39;imageId&#39;: image.imageId
+        }
+
+    async def _handle_message_chain(self, message: Union[
+        MessageChain,
+        BaseMessageComponent,
+        List[BaseMessageComponent],
+        str
+    ], as_type: Union[Type[Group], Type[Friend]]) -&gt; List:
+        &#34;&#34;&#34;
+        Internal use only
+        Convert MessageChain to json
+        :param message: MessageChain
+        :param as_type: Group or Friend
+        :return: list
+        &#34;&#34;&#34;
+        if isinstance(message, MessageChain):
+            return json.loads(message.json())
+        elif isinstance(message, str):
+            return [json.loads(Plain(text=message).json())]
+        elif isinstance(message, BaseMessageComponent):
+            if as_type == Group:
+                image_type = ImageType.Group
+            else:
+                image_type = ImageType.Friend
+            return [await self._handle_image(message, image_type)]
+        elif isinstance(message, (tuple, list)):
+            if as_type == Group:
+                image_type = ImageType.Group
+            else:
+                image_type = ImageType.Friend
+            result = [await self._handle_image(m, image_type=image_type) for m in message]
+            return result
+        else:
+            raise ValueError(&#39;Invalid message&#39;)
+
+    async def get_config(self) -&gt; dict:
+        &#34;&#34;&#34;
+        Get the config of http api
+        :return: config
+        &#34;&#34;&#34;
+        params = {
+            &#39;sessionKey&#39;: self.session_key
+        }
+
+        result = await self.retry_once(self.session.get(&#39;/config&#39;, params=params))
+        return result
+
+    async def set_config(self, cache_size: int = 4096, enable_websocket: bool = True) -&gt; None:
+        &#34;&#34;&#34;
+        Set the config of http api
+        :param cache_size: int, the size of message cache
+        :param enable_websocket: bool, whether to enable websocket (will disable fetch_message accordingly)
+        Success if no exception is raised
+        &#34;&#34;&#34;
+        data = {
+            &#39;sessionKey&#39;:      self.session_key,
+            &#39;cacheSize&#39;:       cache_size,
+            &#39;enableWebsocket&#39;: enable_websocket
+        }
+
+        await self.retry_once(self.session.post(&#39;/config&#39;, data=data))
+
+    def _parse_event(self, result) -&gt; Event:
+        &#34;&#34;&#34;
+        Internal use only
+        Parse event or message from json to Event
+        :param result: the json
+        :return: Event
+        &#34;&#34;&#34;
+        if hasattr(Events, result[&#39;type&#39;]):  # if Event
+            try:
+                if &#39;messageChain&#39; in result:  # construct message chain
+                    # parse quote first
+                    for idx, component in enumerate(result[&#39;messageChain&#39;]):
+                        if component[&#39;type&#39;] == &#39;Quote&#39;:
+                            result[&#39;messageChain&#39;][idx][&#39;origin&#39;] = MessageChain.custom_parse(
+                                result[&#39;messageChain&#39;][idx][&#39;origin&#39;])
+                    result[&#39;messageChain&#39;] = MessageChain.custom_parse(result[&#39;messageChain&#39;])
+                result = Events[result[&#39;type&#39;]].value.parse_obj(result)
+            except:
+                self.logger.exception(&#39;Unhandled exception&#39;)
+            return result
+        else:
+            raise ValueError(&#39;Invalid message chain&#39;)
+
+    def _websocket_handler(self, handler: callable) -&gt; callable:
+        &#34;&#34;&#34;
+        Internal use only
+        Wrap the handler, and convert json to Event
+        :param handler: callable, the handler
+        :return: wrapped handler
+        &#34;&#34;&#34;
+
+        async def _handler(result: Union[List, Dict]):
+            &#34;&#34;&#34;
+            an example handler for create_websocket
+            :param result: json
+            &#34;&#34;&#34;
+            result = self._parse_event(result)
+            await handler(result)
+
+        return _handler
+
+    async def create_websocket(self, handler, ws_close_handler=None, listen: str = &#39;all&#39;) -&gt; None:
+        &#34;&#34;&#34;
+        Register callback for websocket. Once an Event or Message is received, the handler will be invoked
+        :param handler: callable
+        :param ws_close_handler: callable, websocket shutdown hook
+        :param listen: &#39;all&#39;, &#39;event&#39; or &#39;message&#39;
+        &#34;&#34;&#34;
+        if listen not in (&#39;all&#39;, &#39;event&#39;, &#39;message&#39;):
+            raise ValueError(&#34;listen must be one of &#39;all&#39;, &#39;event&#39; or &#39;message&#39;&#34;)
+        if ws_close_handler is None:
+            async def ws_close_handler(event):
+                pass
+        await self.retry_once(self.session.websocket(f&#39;/{listen}?sessionKey={self.session_key}&#39;,
+                                                     self._websocket_handler(handler), ws_close_handler))</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="mirai_core.bot.Bot"><code class="flex name class">
+<span>class <span class="ident">Bot</span></span>
+<span>(</span><span>qq, host='127.0.0.1', port=8080, auth_key='abcdefgh', loop=None)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>See <a href="https://github.com/mamoe/mirai-api-http">https://github.com/mamoe/mirai-api-http</a> for details</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Bot:
+    &#34;&#34;&#34;
+    See https://github.com/mamoe/mirai-api-http for details
+    &#34;&#34;&#34;
+
+    def __init__(self, qq: int, host: str = &#39;127.0.0.1&#39;, port: int = 8080, auth_key: str = &#39;abcdefgh&#39;, loop=None):
+        self.qq = qq
+        self.auth_key = auth_key
+        self.base_url = f&#39;http://{host}:{port}&#39;
+        self.loop = loop
+        self.session = HttpClient(self.base_url, loop=self.loop)
+        self.session_key = &#39;&#39;
+        self.logger = create_logger(&#39;Bot&#39;)
+
+    async def retry_once(self, task):
+        try:
+            return await task
+        except MiraiException:
+            self.logger.exception(&#39;Trying handshake due to the following exception&#39;)
+        try:
+            await self.handshake()
+            return await task
+        except MiraiException:
+            self.logger.exception(&#39;Unable to handshake&#39;)
+
+    async def handshake(self):
+        &#34;&#34;&#34;
+        Authenticate and verify the session_key
+        Automatically called if session_key needs to be updated
+        &#34;&#34;&#34;
+        await self.auth()
+        await self.verify()
+
+    async def auth(self) -&gt; None:
+        &#34;&#34;&#34;
+        Post auth_key, and get session_key
+        &#34;&#34;&#34;
+        result = await self.session.post(&#39;/auth&#39;, data={&#39;authKey&#39;: self.auth_key})
+        self.session_key = result.get(&#39;session&#39;)
+
+    async def verify(self) -&gt; None:
+        &#34;&#34;&#34;
+        Post session_key to verify the session
+        &#34;&#34;&#34;
+        await self.session.post(&#39;/verify&#39;,
+                                data={
+                                    &#39;sessionKey&#39;: self.session_key,
+                                    &#39;qq&#39;:         self.qq
+                                })
+
+    async def release(self) -&gt; None:
+        &#34;&#34;&#34;
+        Post session_key to release the session
+        Needs to be called manually if Updater is not used
+        &#34;&#34;&#34;
+        await self.session.post(&#39;/release&#39;,
+                                data={
+                                    &#39;sessionKey&#39;: self.session_key,
+                                    &#39;qq&#39;:         self.qq
+                                })
+
+    @staticmethod
+    def _handle_target_as(target: Union[Group, Friend, Member, int],
+                          as_type: Union[Type[Group], Type[Friend], Type[Member]]):
+        &#34;&#34;&#34;
+        Internal use only, convert target to id
+        :param target: Union[Group, Friend, Member, int]
+        :param as_type: Group, Friend or Member
+        :return: id, int
+        &#34;&#34;&#34;
+        if isinstance(target, int):
+            return target
+        elif isinstance(target, as_type):
+            return target.id
+        else:
+            raise ValueError(f&#39;Invalid target as {type(as_type)} object.&#39;)
+
+    async def send_friend_message(self,
+                                  friend: Union[Friend, int],
+                                  message: Union[
+                                      MessageChain,
+                                      BaseMessageComponent,
+                                      List[BaseMessageComponent],
+                                      str
+                                  ],
+                                  quote_source: Union[int, Source] = None) -&gt; BotMessage:
+        &#34;&#34;&#34;
+        Send friend message
+        :param friend: int or Friend object as target
+        :param message: MessageChain, BaseMessageComponent, List of BaseMessageComponent or str, the content to send
+        :param quote_source: int (the 64-bit int) or Source, the message to quote
+        :return: BotMessage (contains message id)
+        &#34;&#34;&#34;
+        data = {
+            &#39;sessionKey&#39;:   self.session_key,
+            &#39;target&#39;:       Bot._handle_target_as(friend, Friend),
+            &#39;messageChain&#39;: await self._handle_message_chain(message, Friend)
+        }
+        if quote_source:
+            if isinstance(quote_source, int):
+                data[&#39;quote&#39;] = quote_source
+            elif isinstance(quote_source, Source):
+                data[&#39;quote&#39;] = quote_source.id
+        result = await self.retry_once(self.session.post(&#39;/sendFriendMessage&#39;,
+                                                         data=data))
+
+        return BotMessage.parse_obj(result)
+
+    async def send_group_message(self,
+                                 group: Union[Group, int],
+                                 message: Union[
+                                     MessageChain,
+                                     BaseMessageComponent,
+                                     List[BaseMessageComponent],
+                                     str
+                                 ],
+                                 quote_source: Union[int, Source] = None) -&gt; BotMessage:
+        &#34;&#34;&#34;
+        Send group message
+        :param group: int or Group object as target
+        :param message: MessageChain, BaseMessageComponent, List of BaseMessageComponent or str, the content to send
+        :param quote_source: int (the 64-bit int) or Source, the message to quote
+        :return: BotMessage (contains message id)
+        &#34;&#34;&#34;
+        data = {
+            &#39;sessionKey&#39;:   self.session_key,
+            &#39;target&#39;:       Bot._handle_target_as(group, Group),
+            &#39;messageChain&#39;: await self._handle_message_chain(message, Group)
+        }
+        if quote_source:
+            if isinstance(quote_source, int):
+                data[&#39;quote&#39;] = quote_source
+            elif isinstance(quote_source, Source):
+                data[&#39;quote&#39;] = quote_source.id
+        result = await self.retry_once(self.session.post(&#39;/sendGroupMessage&#39;,
+                                                         data=data))
+        return BotMessage.parse_obj(result)
+
+    async def recall(self, source: Union[Source, int]) -&gt; None:
+        &#34;&#34;&#34;
+        Recall a message
+        Success if no exception is raised
+        :param source: int (the 64-bit int) or Source
+        &#34;&#34;&#34;
+        data = {
+            &#39;sessionKey&#39;: self.session_key,
+        }
+        if isinstance(source, int):
+            data[&#39;target&#39;] = source
+        elif isinstance(source, Source):
+            data[&#39;target&#39;] = source.id
+        else:
+            raise MiraiException(&#39;Invalid source argument&#39;)
+
+        await self.retry_once(self.session.post(&#39;/recall&#39;, data=data))
+
+    @property
+    async def groups(self) -&gt; List[Group]:
+        &#34;&#34;&#34;
+        Get list of joined groups
+        :return: List of Group
+        &#34;&#34;&#34;
+        params = {
+            &#39;sessionKey&#39;: self.session_key,
+        }
+        result = await self.retry_once(self.session.get(&#39;/groupList&#39;, params=params))
+        return [Group.parse_obj(group_info) for group_info in result]
+
+    @property
+    async def friends(self) -&gt; List[Friend]:
+        &#34;&#34;&#34;
+        Get list of friends
+        :return: List of Friend
+        &#34;&#34;&#34;
+        params = {
+            &#39;sessionKey&#39;: self.session_key,
+        }
+        result = await self.retry_once(self.session.get(&#39;/friendList&#39;, params=params))
+        return [Friend.parse_obj(friend_info) for friend_info in result]
+
+    async def get_members(self, target: Union[Group, int]) -&gt; List[Member]:
+        &#34;&#34;&#34;
+        Get list of members of a group
+        :param target: int or Group, the target group
+        :return: List of Member
+        &#34;&#34;&#34;
+        if isinstance(target, int):
+            group = target
+        else:
+            group = target.id
+        params = {
+            &#39;sessionKey&#39;: self.session_key,
+            &#39;target&#39;:     group
+        }
+        result = await self.retry_once(self.session.get(&#39;/memberList&#39;, params=params))
+        return [Member.parse_obj(member_info) for member_info in result]
+
+    async def upload_image(self, image_type: ImageType, image_path: Union[Path, str]) -&gt; Optional[Image]:
+        &#34;&#34;&#34;
+        Upload a image to QQ server. The image between group and friend is not exchangeable
+        This function can be called separately to acquire image uuids, or automatically if using LocalImage while sending
+        :param image_type: ImageType, Friend or Group
+        :param image_path: absolute path of the image
+        :return: Image object
+        &#34;&#34;&#34;
+        if isinstance(image_path, str):
+            image_path = Path(image_path)
+
+        if not image_path.exists():
+            raise FileNotFoundError(&#39;Image not found.&#39;)
+
+        data = {
+            &#39;sessionKey&#39;: self.session_key,
+            &#39;type&#39;:       image_type.value
+        }
+        result = await self.retry_once(self.session.upload(&#39;/uploadImage&#39;, file=image_path, data=data))
+        return Image.parse_obj(result)
+
+    async def fetch_message(self, count: int) -&gt; List[Event]:
+        &#34;&#34;&#34;
+        Fetch a list of messages
+        This function is called automatically if using polling instead of websocket
+        :param count: maximum count of one fetch
+        :return: List of Event
+        &#34;&#34;&#34;
+        params = {
+            &#39;sessionKey&#39;: self.session_key,
+            &#39;count&#39;:      count
+        }
+        result = await self.retry_once(self.session.get(&#39;/fetchMessage&#39;, params=params))
+
+        try:
+            for index in range(len(result)):
+                result[index] = self._parse_event(result[index])
+        except:
+            self.logger.exception(&#39;Unhandled exception&#39;)
+        return result
+
+    # async def message_from_id(self, source_id: Union[Source, Quote, int]):
+    #     &#34;&#34;&#34;
+    #     Deprecated function
+    #     :param source_id:
+    #     :return:
+    #     &#34;&#34;&#34;
+    #     if isinstance(source_id, Source):
+    #         source_id = source_id.id
+    #     elif isinstance(source_id, Quote):
+    #         source_id = source_id.id
+    #
+    #     params = {
+    #         &#39;sessionKey&#39;: self.session_key,
+    #         &#39;id&#39;:         source_id
+    #     }
+    #
+    #     result = await self.retry_once(self.session.get(&#39;/messageFromId&#39;, params=params))
+    #     if result.get(&#39;type&#39;) in (EventTypes.GroupMessageEvent.value, EventTypes.FriendMessageEvent.value):
+    #         if &#34;messageChain&#34; in result:
+    #             result[&#39;messageChain&#39;] = MessageChain.custom_parse(result[&#39;messageChain&#39;])
+    #
+    #         if result.get(&#39;type&#39;) == EventTypes.GroupMessageEvent.value:
+    #             return GroupMessage.parse_obj(result)
+    #         else:
+    #             return FriendMessage.parse_obj(result)
+    #     else:
+    #         raise TypeError(f&#39;Unknown message type&#39;)
+
+    async def mute_all(self, group: Union[Group, int]) -&gt; None:
+        &#34;&#34;&#34;
+        Mute all non admin members in group
+        :param group: int or Group, the target group
+        Success if no exception is raised
+        &#34;&#34;&#34;
+        params = {
+            &#39;sessionKey&#39;: self.session_key,
+            &#39;target&#39;:     Bot._handle_target_as(target=group, as_type=Group)
+        }
+
+        await self.retry_once(self.session.get(&#39;/muteAll&#39;, params=params))
+
+    async def unmute_all(self, group: Union[Group, int]) -&gt; None:
+        &#34;&#34;&#34;
+        Unmute all non admin members in group
+        :param group: int or Group, the target group
+        Success if no exception is raised
+        &#34;&#34;&#34;
+        params = {
+            &#39;sessionKey&#39;: self.session_key,
+            &#39;target&#39;:     Bot._handle_target_as(target=group, as_type=Group)
+        }
+
+        await self.retry_once(self.session.get(&#39;/unmuteAll&#39;, params=params))
+
+    async def get_member_info(self, group: Union[Group, int], member: Union[Member, int]) -&gt; MemberChangeableSetting:
+        &#34;&#34;&#34;
+        Get the info of a member
+        :param group: int or Group, target group
+        :param member: int or Member, target member
+        :return: MemberChangeableSetting
+        &#34;&#34;&#34;
+        params = {
+            &#39;sessionKey&#39;: self.session_key,
+            &#39;target&#39;:     Bot._handle_target_as(target=group, as_type=Group),
+            &#39;memberId&#39;:   self._handle_target_as(target=member, as_type=Member)
+        }
+
+        result = await self.retry_once(self.session.get(&#39;/memberInfo&#39;, params=params))
+        return MemberChangeableSetting.parse_obj(result)
+
+    async def get_bot_member_info(self, group: Union[Group, int]) -&gt; MemberChangeableSetting:
+        &#34;&#34;&#34;
+        Get the info of this bot
+        :param group: int or Group, target group
+        :return: MemberChangeableSetting
+        &#34;&#34;&#34;
+        return await self.retry_once(self.get_member_info(group, self.qq))
+
+    async def set_member_info(self, group: Union[Group, int],
+                              member: Union[Member, int],
+                              setting: MemberChangeableSetting) -&gt; None:
+        &#34;&#34;&#34;
+        Set the info of a member
+        :param group: int or Group, target group
+        :param member: int or Member, target member
+        :param setting: MemberChangeableSetting, the new settings
+        Success if no exception is raised
+        &#34;&#34;&#34;
+        data = {
+            &#39;sessionKey&#39;: self.session_key,
+            &#39;target&#39;:     Bot._handle_target_as(target=group, as_type=Group),
+            &#39;memberId&#39;:   self._handle_target_as(target=member, as_type=Member),
+            &#39;info&#39;:       json.loads(setting.json())
+        }
+
+        await self.retry_once(self.session.post(&#39;/memberInfo&#39;, data=data))
+
+    async def get_group_config(self, group: Union[Group, int]) -&gt; GroupSetting:
+        &#34;&#34;&#34;
+        Get the group config of a group
+        :param group: int or Group, target group
+        :return: GroupSetting
+        &#34;&#34;&#34;
+        params = {
+            &#39;sessionKey&#39;: self.session_key,
+            &#39;target&#39;:     Bot._handle_target_as(target=group, as_type=Group),
+        }
+        result = await self.retry_once(self.session.get(&#39;/groupConfig&#39;, params=params))
+        return GroupSetting.parse_obj(result)
+
+    async def set_group_config(self, group: Union[Group, int],
+                               config: GroupSetting) -&gt; None:
+        &#34;&#34;&#34;
+        Set  the group config of a group
+        :param group: int or Group, target group
+        :param config: GroupSetting
+        Success if no exception is raised
+        &#34;&#34;&#34;
+        data = {
+            &#39;sessionKey&#39;: self.session_key,
+            &#39;target&#39;:     Bot._handle_target_as(target=group, as_type=Group),
+            &#39;config&#39;:     json.loads(config.json())
+        }
+
+        await self.retry_once(self.session.post(&#39;/groupConfig&#39;, data=data))
+
+    async def mute(self, group: Union[Group, int],
+                   member: Union[Member, int],
+                   time: Union[timedelta, int]) -&gt; None:
+        &#34;&#34;&#34;
+        Mute a member of a group
+        :param group: int or Group, target group
+        :param member: int or Member, target member
+        :param time: int or datetime.timedelta, must between 1 minutes and 30 days
+        Success if no exception is raised
+        &#34;&#34;&#34;
+        if isinstance(time, timedelta):
+            time = int(time.total_seconds())
+        time = min(86400 * 30, max(60, time))  # time should between 1 minutes and 30 days
+        data = {
+            &#39;sessionKey&#39;: self.session_key,
+            &#39;target&#39;:     Bot._handle_target_as(target=group, as_type=Group),
+            &#39;MemberId&#39;:   Bot._handle_target_as(target=member, as_type=Member),
+            &#39;time&#39;:       time
+        }
+        await self.retry_once(self.session.post(&#39;/mute&#39;, data=data))
+
+    async def unmute(self, group: Union[Group, int],
+                     member: Union[Member, int]) -&gt; None:
+        &#34;&#34;&#34;
+        Unmute a member of a group
+        :param group: int or Group, target group
+        :param member: int or Member, target member
+        Success if no exception is raised
+        &#34;&#34;&#34;
+        data = {
+            &#39;sessionKey&#39;: self.session_key,
+            &#39;target&#39;:     Bot._handle_target_as(target=group, as_type=Group),
+            &#39;MemberId&#39;:   Bot._handle_target_as(target=member, as_type=Member)
+        }
+        await self.retry_once(self.session.post(&#39;/unmute&#39;, data=data))
+
+    async def kick(self, group: Union[Group, int],
+                   member: Union[Member, int],
+                   message: str = &#39;&#39;) -&gt; None:
+        &#34;&#34;&#34;
+        Kick a member of a group
+        :param group: int or Group, target group
+        :param member: int or Member, target member
+        :param message: string, message to the member
+        &#34;&#34;&#34;
+        data = {
+            &#39;sessionKey&#39;: self.session_key,
+            &#39;target&#39;:     Bot._handle_target_as(target=group, as_type=Group),
+            &#39;MemberId&#39;:   Bot._handle_target_as(target=member, as_type=Member)
+        }
+        if message:
+            data[&#39;msg&#39;] = message
+
+        await self.retry_once(self.session.post(&#39;/kick&#39;, data=data))
+
+    async def _handle_image(self, message: BaseMessageComponent, image_type: ImageType) -&gt; dict:
+        &#34;&#34;&#34;
+        Internal use only
+        Convert LocalImage to Image, and everything to json
+        :param message: BaseMessageComponent
+        :param image_type: ImageType
+        :return: json representation
+        &#34;&#34;&#34;
+        if not isinstance(message, LocalImage):
+            return json.loads(message.json())
+
+        image = await self.retry_once(self.upload_image(image_type, message.path))
+
+        return {
+            &#39;type&#39;:    &#39;Image&#39;,
+            &#39;imageId&#39;: image.imageId
+        }
+
+    async def _handle_message_chain(self, message: Union[
+        MessageChain,
+        BaseMessageComponent,
+        List[BaseMessageComponent],
+        str
+    ], as_type: Union[Type[Group], Type[Friend]]) -&gt; List:
+        &#34;&#34;&#34;
+        Internal use only
+        Convert MessageChain to json
+        :param message: MessageChain
+        :param as_type: Group or Friend
+        :return: list
+        &#34;&#34;&#34;
+        if isinstance(message, MessageChain):
+            return json.loads(message.json())
+        elif isinstance(message, str):
+            return [json.loads(Plain(text=message).json())]
+        elif isinstance(message, BaseMessageComponent):
+            if as_type == Group:
+                image_type = ImageType.Group
+            else:
+                image_type = ImageType.Friend
+            return [await self._handle_image(message, image_type)]
+        elif isinstance(message, (tuple, list)):
+            if as_type == Group:
+                image_type = ImageType.Group
+            else:
+                image_type = ImageType.Friend
+            result = [await self._handle_image(m, image_type=image_type) for m in message]
+            return result
+        else:
+            raise ValueError(&#39;Invalid message&#39;)
+
+    async def get_config(self) -&gt; dict:
+        &#34;&#34;&#34;
+        Get the config of http api
+        :return: config
+        &#34;&#34;&#34;
+        params = {
+            &#39;sessionKey&#39;: self.session_key
+        }
+
+        result = await self.retry_once(self.session.get(&#39;/config&#39;, params=params))
+        return result
+
+    async def set_config(self, cache_size: int = 4096, enable_websocket: bool = True) -&gt; None:
+        &#34;&#34;&#34;
+        Set the config of http api
+        :param cache_size: int, the size of message cache
+        :param enable_websocket: bool, whether to enable websocket (will disable fetch_message accordingly)
+        Success if no exception is raised
+        &#34;&#34;&#34;
+        data = {
+            &#39;sessionKey&#39;:      self.session_key,
+            &#39;cacheSize&#39;:       cache_size,
+            &#39;enableWebsocket&#39;: enable_websocket
+        }
+
+        await self.retry_once(self.session.post(&#39;/config&#39;, data=data))
+
+    def _parse_event(self, result) -&gt; Event:
+        &#34;&#34;&#34;
+        Internal use only
+        Parse event or message from json to Event
+        :param result: the json
+        :return: Event
+        &#34;&#34;&#34;
+        if hasattr(Events, result[&#39;type&#39;]):  # if Event
+            try:
+                if &#39;messageChain&#39; in result:  # construct message chain
+                    # parse quote first
+                    for idx, component in enumerate(result[&#39;messageChain&#39;]):
+                        if component[&#39;type&#39;] == &#39;Quote&#39;:
+                            result[&#39;messageChain&#39;][idx][&#39;origin&#39;] = MessageChain.custom_parse(
+                                result[&#39;messageChain&#39;][idx][&#39;origin&#39;])
+                    result[&#39;messageChain&#39;] = MessageChain.custom_parse(result[&#39;messageChain&#39;])
+                result = Events[result[&#39;type&#39;]].value.parse_obj(result)
+            except:
+                self.logger.exception(&#39;Unhandled exception&#39;)
+            return result
+        else:
+            raise ValueError(&#39;Invalid message chain&#39;)
+
+    def _websocket_handler(self, handler: callable) -&gt; callable:
+        &#34;&#34;&#34;
+        Internal use only
+        Wrap the handler, and convert json to Event
+        :param handler: callable, the handler
+        :return: wrapped handler
+        &#34;&#34;&#34;
+
+        async def _handler(result: Union[List, Dict]):
+            &#34;&#34;&#34;
+            an example handler for create_websocket
+            :param result: json
+            &#34;&#34;&#34;
+            result = self._parse_event(result)
+            await handler(result)
+
+        return _handler
+
+    async def create_websocket(self, handler, ws_close_handler=None, listen: str = &#39;all&#39;) -&gt; None:
+        &#34;&#34;&#34;
+        Register callback for websocket. Once an Event or Message is received, the handler will be invoked
+        :param handler: callable
+        :param ws_close_handler: callable, websocket shutdown hook
+        :param listen: &#39;all&#39;, &#39;event&#39; or &#39;message&#39;
+        &#34;&#34;&#34;
+        if listen not in (&#39;all&#39;, &#39;event&#39;, &#39;message&#39;):
+            raise ValueError(&#34;listen must be one of &#39;all&#39;, &#39;event&#39; or &#39;message&#39;&#34;)
+        if ws_close_handler is None:
+            async def ws_close_handler(event):
+                pass
+        await self.retry_once(self.session.websocket(f&#39;/{listen}?sessionKey={self.session_key}&#39;,
+                                                     self._websocket_handler(handler), ws_close_handler))</code></pre>
+</details>
+<h3>Instance variables</h3>
+<dl>
+<dt id="mirai_core.bot.Bot.friends"><code class="name">var <span class="ident">friends</span></code></dt>
+<dd>
+<section class="desc"><p>Get list of friends
+:return: List of Friend</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+async def friends(self) -&gt; List[Friend]:
+    &#34;&#34;&#34;
+    Get list of friends
+    :return: List of Friend
+    &#34;&#34;&#34;
+    params = {
+        &#39;sessionKey&#39;: self.session_key,
+    }
+    result = await self.retry_once(self.session.get(&#39;/friendList&#39;, params=params))
+    return [Friend.parse_obj(friend_info) for friend_info in result]</code></pre>
+</details>
+</dd>
+<dt id="mirai_core.bot.Bot.groups"><code class="name">var <span class="ident">groups</span></code></dt>
+<dd>
+<section class="desc"><p>Get list of joined groups
+:return: List of Group</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+async def groups(self) -&gt; List[Group]:
+    &#34;&#34;&#34;
+    Get list of joined groups
+    :return: List of Group
+    &#34;&#34;&#34;
+    params = {
+        &#39;sessionKey&#39;: self.session_key,
+    }
+    result = await self.retry_once(self.session.get(&#39;/groupList&#39;, params=params))
+    return [Group.parse_obj(group_info) for group_info in result]</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="mirai_core.bot.Bot.auth"><code class="name flex">
+<span>async def <span class="ident">auth</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Post auth_key, and get session_key</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def auth(self) -&gt; None:
+    &#34;&#34;&#34;
+    Post auth_key, and get session_key
+    &#34;&#34;&#34;
+    result = await self.session.post(&#39;/auth&#39;, data={&#39;authKey&#39;: self.auth_key})
+    self.session_key = result.get(&#39;session&#39;)</code></pre>
+</details>
+</dd>
+<dt id="mirai_core.bot.Bot.create_websocket"><code class="name flex">
+<span>async def <span class="ident">create_websocket</span></span>(<span>self, handler, ws_close_handler=None, listen='all')</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Register callback for websocket. Once an Event or Message is received, the handler will be invoked
+:param handler: callable
+:param ws_close_handler: callable, websocket shutdown hook
+:param listen: 'all', 'event' or 'message'</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def create_websocket(self, handler, ws_close_handler=None, listen: str = &#39;all&#39;) -&gt; None:
+    &#34;&#34;&#34;
+    Register callback for websocket. Once an Event or Message is received, the handler will be invoked
+    :param handler: callable
+    :param ws_close_handler: callable, websocket shutdown hook
+    :param listen: &#39;all&#39;, &#39;event&#39; or &#39;message&#39;
+    &#34;&#34;&#34;
+    if listen not in (&#39;all&#39;, &#39;event&#39;, &#39;message&#39;):
+        raise ValueError(&#34;listen must be one of &#39;all&#39;, &#39;event&#39; or &#39;message&#39;&#34;)
+    if ws_close_handler is None:
+        async def ws_close_handler(event):
+            pass
+    await self.retry_once(self.session.websocket(f&#39;/{listen}?sessionKey={self.session_key}&#39;,
+                                                 self._websocket_handler(handler), ws_close_handler))</code></pre>
+</details>
+</dd>
+<dt id="mirai_core.bot.Bot.fetch_message"><code class="name flex">
+<span>async def <span class="ident">fetch_message</span></span>(<span>self, count)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Fetch a list of messages
+This function is called automatically if using polling instead of websocket
+:param count: maximum count of one fetch
+:return: List of Event</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def fetch_message(self, count: int) -&gt; List[Event]:
+    &#34;&#34;&#34;
+    Fetch a list of messages
+    This function is called automatically if using polling instead of websocket
+    :param count: maximum count of one fetch
+    :return: List of Event
+    &#34;&#34;&#34;
+    params = {
+        &#39;sessionKey&#39;: self.session_key,
+        &#39;count&#39;:      count
+    }
+    result = await self.retry_once(self.session.get(&#39;/fetchMessage&#39;, params=params))
+
+    try:
+        for index in range(len(result)):
+            result[index] = self._parse_event(result[index])
+    except:
+        self.logger.exception(&#39;Unhandled exception&#39;)
+    return result</code></pre>
+</details>
+</dd>
+<dt id="mirai_core.bot.Bot.get_bot_member_info"><code class="name flex">
+<span>async def <span class="ident">get_bot_member_info</span></span>(<span>self, group)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Get the info of this bot
+:param group: int or Group, target group
+:return: MemberChangeableSetting</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def get_bot_member_info(self, group: Union[Group, int]) -&gt; MemberChangeableSetting:
+    &#34;&#34;&#34;
+    Get the info of this bot
+    :param group: int or Group, target group
+    :return: MemberChangeableSetting
+    &#34;&#34;&#34;
+    return await self.retry_once(self.get_member_info(group, self.qq))</code></pre>
+</details>
+</dd>
+<dt id="mirai_core.bot.Bot.get_config"><code class="name flex">
+<span>async def <span class="ident">get_config</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Get the config of http api
+:return: config</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def get_config(self) -&gt; dict:
+    &#34;&#34;&#34;
+    Get the config of http api
+    :return: config
+    &#34;&#34;&#34;
+    params = {
+        &#39;sessionKey&#39;: self.session_key
+    }
+
+    result = await self.retry_once(self.session.get(&#39;/config&#39;, params=params))
+    return result</code></pre>
+</details>
+</dd>
+<dt id="mirai_core.bot.Bot.get_group_config"><code class="name flex">
+<span>async def <span class="ident">get_group_config</span></span>(<span>self, group)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Get the group config of a group
+:param group: int or Group, target group
+:return: GroupSetting</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def get_group_config(self, group: Union[Group, int]) -&gt; GroupSetting:
+    &#34;&#34;&#34;
+    Get the group config of a group
+    :param group: int or Group, target group
+    :return: GroupSetting
+    &#34;&#34;&#34;
+    params = {
+        &#39;sessionKey&#39;: self.session_key,
+        &#39;target&#39;:     Bot._handle_target_as(target=group, as_type=Group),
+    }
+    result = await self.retry_once(self.session.get(&#39;/groupConfig&#39;, params=params))
+    return GroupSetting.parse_obj(result)</code></pre>
+</details>
+</dd>
+<dt id="mirai_core.bot.Bot.get_member_info"><code class="name flex">
+<span>async def <span class="ident">get_member_info</span></span>(<span>self, group, member)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Get the info of a member
+:param group: int or Group, target group
+:param member: int or Member, target member
+:return: MemberChangeableSetting</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def get_member_info(self, group: Union[Group, int], member: Union[Member, int]) -&gt; MemberChangeableSetting:
+    &#34;&#34;&#34;
+    Get the info of a member
+    :param group: int or Group, target group
+    :param member: int or Member, target member
+    :return: MemberChangeableSetting
+    &#34;&#34;&#34;
+    params = {
+        &#39;sessionKey&#39;: self.session_key,
+        &#39;target&#39;:     Bot._handle_target_as(target=group, as_type=Group),
+        &#39;memberId&#39;:   self._handle_target_as(target=member, as_type=Member)
+    }
+
+    result = await self.retry_once(self.session.get(&#39;/memberInfo&#39;, params=params))
+    return MemberChangeableSetting.parse_obj(result)</code></pre>
+</details>
+</dd>
+<dt id="mirai_core.bot.Bot.get_members"><code class="name flex">
+<span>async def <span class="ident">get_members</span></span>(<span>self, target)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Get list of members of a group
+:param target: int or Group, the target group
+:return: List of Member</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def get_members(self, target: Union[Group, int]) -&gt; List[Member]:
+    &#34;&#34;&#34;
+    Get list of members of a group
+    :param target: int or Group, the target group
+    :return: List of Member
+    &#34;&#34;&#34;
+    if isinstance(target, int):
+        group = target
+    else:
+        group = target.id
+    params = {
+        &#39;sessionKey&#39;: self.session_key,
+        &#39;target&#39;:     group
+    }
+    result = await self.retry_once(self.session.get(&#39;/memberList&#39;, params=params))
+    return [Member.parse_obj(member_info) for member_info in result]</code></pre>
+</details>
+</dd>
+<dt id="mirai_core.bot.Bot.handshake"><code class="name flex">
+<span>async def <span class="ident">handshake</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Authenticate and verify the session_key
+Automatically called if session_key needs to be updated</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def handshake(self):
+    &#34;&#34;&#34;
+    Authenticate and verify the session_key
+    Automatically called if session_key needs to be updated
+    &#34;&#34;&#34;
+    await self.auth()
+    await self.verify()</code></pre>
+</details>
+</dd>
+<dt id="mirai_core.bot.Bot.kick"><code class="name flex">
+<span>async def <span class="ident">kick</span></span>(<span>self, group, member, message='')</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Kick a member of a group
+:param group: int or Group, target group
+:param member: int or Member, target member
+:param message: string, message to the member</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def kick(self, group: Union[Group, int],
+               member: Union[Member, int],
+               message: str = &#39;&#39;) -&gt; None:
+    &#34;&#34;&#34;
+    Kick a member of a group
+    :param group: int or Group, target group
+    :param member: int or Member, target member
+    :param message: string, message to the member
+    &#34;&#34;&#34;
+    data = {
+        &#39;sessionKey&#39;: self.session_key,
+        &#39;target&#39;:     Bot._handle_target_as(target=group, as_type=Group),
+        &#39;MemberId&#39;:   Bot._handle_target_as(target=member, as_type=Member)
+    }
+    if message:
+        data[&#39;msg&#39;] = message
+
+    await self.retry_once(self.session.post(&#39;/kick&#39;, data=data))</code></pre>
+</details>
+</dd>
+<dt id="mirai_core.bot.Bot.mute"><code class="name flex">
+<span>async def <span class="ident">mute</span></span>(<span>self, group, member, time)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Mute a member of a group
+:param group: int or Group, target group
+:param member: int or Member, target member
+:param time: int or datetime.timedelta, must between 1 minutes and 30 days
+Success if no exception is raised</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def mute(self, group: Union[Group, int],
+               member: Union[Member, int],
+               time: Union[timedelta, int]) -&gt; None:
+    &#34;&#34;&#34;
+    Mute a member of a group
+    :param group: int or Group, target group
+    :param member: int or Member, target member
+    :param time: int or datetime.timedelta, must between 1 minutes and 30 days
+    Success if no exception is raised
+    &#34;&#34;&#34;
+    if isinstance(time, timedelta):
+        time = int(time.total_seconds())
+    time = min(86400 * 30, max(60, time))  # time should between 1 minutes and 30 days
+    data = {
+        &#39;sessionKey&#39;: self.session_key,
+        &#39;target&#39;:     Bot._handle_target_as(target=group, as_type=Group),
+        &#39;MemberId&#39;:   Bot._handle_target_as(target=member, as_type=Member),
+        &#39;time&#39;:       time
+    }
+    await self.retry_once(self.session.post(&#39;/mute&#39;, data=data))</code></pre>
+</details>
+</dd>
+<dt id="mirai_core.bot.Bot.mute_all"><code class="name flex">
+<span>async def <span class="ident">mute_all</span></span>(<span>self, group)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Mute all non admin members in group
+:param group: int or Group, the target group
+Success if no exception is raised</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def mute_all(self, group: Union[Group, int]) -&gt; None:
+    &#34;&#34;&#34;
+    Mute all non admin members in group
+    :param group: int or Group, the target group
+    Success if no exception is raised
+    &#34;&#34;&#34;
+    params = {
+        &#39;sessionKey&#39;: self.session_key,
+        &#39;target&#39;:     Bot._handle_target_as(target=group, as_type=Group)
+    }
+
+    await self.retry_once(self.session.get(&#39;/muteAll&#39;, params=params))</code></pre>
+</details>
+</dd>
+<dt id="mirai_core.bot.Bot.recall"><code class="name flex">
+<span>async def <span class="ident">recall</span></span>(<span>self, source)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Recall a message
+Success if no exception is raised
+:param source: int (the 64-bit int) or Source</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def recall(self, source: Union[Source, int]) -&gt; None:
+    &#34;&#34;&#34;
+    Recall a message
+    Success if no exception is raised
+    :param source: int (the 64-bit int) or Source
+    &#34;&#34;&#34;
+    data = {
+        &#39;sessionKey&#39;: self.session_key,
+    }
+    if isinstance(source, int):
+        data[&#39;target&#39;] = source
+    elif isinstance(source, Source):
+        data[&#39;target&#39;] = source.id
+    else:
+        raise MiraiException(&#39;Invalid source argument&#39;)
+
+    await self.retry_once(self.session.post(&#39;/recall&#39;, data=data))</code></pre>
+</details>
+</dd>
+<dt id="mirai_core.bot.Bot.release"><code class="name flex">
+<span>async def <span class="ident">release</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Post session_key to release the session
+Needs to be called manually if Updater is not used</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def release(self) -&gt; None:
+    &#34;&#34;&#34;
+    Post session_key to release the session
+    Needs to be called manually if Updater is not used
+    &#34;&#34;&#34;
+    await self.session.post(&#39;/release&#39;,
+                            data={
+                                &#39;sessionKey&#39;: self.session_key,
+                                &#39;qq&#39;:         self.qq
+                            })</code></pre>
+</details>
+</dd>
+<dt id="mirai_core.bot.Bot.retry_once"><code class="name flex">
+<span>async def <span class="ident">retry_once</span></span>(<span>self, task)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def retry_once(self, task):
+    try:
+        return await task
+    except MiraiException:
+        self.logger.exception(&#39;Trying handshake due to the following exception&#39;)
+    try:
+        await self.handshake()
+        return await task
+    except MiraiException:
+        self.logger.exception(&#39;Unable to handshake&#39;)</code></pre>
+</details>
+</dd>
+<dt id="mirai_core.bot.Bot.send_friend_message"><code class="name flex">
+<span>async def <span class="ident">send_friend_message</span></span>(<span>self, friend, message, quote_source=None)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Send friend message
+:param friend: int or Friend object as target
+:param message: MessageChain, BaseMessageComponent, List of BaseMessageComponent or str, the content to send
+:param quote_source: int (the 64-bit int) or Source, the message to quote
+:return: BotMessage (contains message id)</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def send_friend_message(self,
+                              friend: Union[Friend, int],
+                              message: Union[
+                                  MessageChain,
+                                  BaseMessageComponent,
+                                  List[BaseMessageComponent],
+                                  str
+                              ],
+                              quote_source: Union[int, Source] = None) -&gt; BotMessage:
+    &#34;&#34;&#34;
+    Send friend message
+    :param friend: int or Friend object as target
+    :param message: MessageChain, BaseMessageComponent, List of BaseMessageComponent or str, the content to send
+    :param quote_source: int (the 64-bit int) or Source, the message to quote
+    :return: BotMessage (contains message id)
+    &#34;&#34;&#34;
+    data = {
+        &#39;sessionKey&#39;:   self.session_key,
+        &#39;target&#39;:       Bot._handle_target_as(friend, Friend),
+        &#39;messageChain&#39;: await self._handle_message_chain(message, Friend)
+    }
+    if quote_source:
+        if isinstance(quote_source, int):
+            data[&#39;quote&#39;] = quote_source
+        elif isinstance(quote_source, Source):
+            data[&#39;quote&#39;] = quote_source.id
+    result = await self.retry_once(self.session.post(&#39;/sendFriendMessage&#39;,
+                                                     data=data))
+
+    return BotMessage.parse_obj(result)</code></pre>
+</details>
+</dd>
+<dt id="mirai_core.bot.Bot.send_group_message"><code class="name flex">
+<span>async def <span class="ident">send_group_message</span></span>(<span>self, group, message, quote_source=None)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Send group message
+:param group: int or Group object as target
+:param message: MessageChain, BaseMessageComponent, List of BaseMessageComponent or str, the content to send
+:param quote_source: int (the 64-bit int) or Source, the message to quote
+:return: BotMessage (contains message id)</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def send_group_message(self,
+                             group: Union[Group, int],
+                             message: Union[
+                                 MessageChain,
+                                 BaseMessageComponent,
+                                 List[BaseMessageComponent],
+                                 str
+                             ],
+                             quote_source: Union[int, Source] = None) -&gt; BotMessage:
+    &#34;&#34;&#34;
+    Send group message
+    :param group: int or Group object as target
+    :param message: MessageChain, BaseMessageComponent, List of BaseMessageComponent or str, the content to send
+    :param quote_source: int (the 64-bit int) or Source, the message to quote
+    :return: BotMessage (contains message id)
+    &#34;&#34;&#34;
+    data = {
+        &#39;sessionKey&#39;:   self.session_key,
+        &#39;target&#39;:       Bot._handle_target_as(group, Group),
+        &#39;messageChain&#39;: await self._handle_message_chain(message, Group)
+    }
+    if quote_source:
+        if isinstance(quote_source, int):
+            data[&#39;quote&#39;] = quote_source
+        elif isinstance(quote_source, Source):
+            data[&#39;quote&#39;] = quote_source.id
+    result = await self.retry_once(self.session.post(&#39;/sendGroupMessage&#39;,
+                                                     data=data))
+    return BotMessage.parse_obj(result)</code></pre>
+</details>
+</dd>
+<dt id="mirai_core.bot.Bot.set_config"><code class="name flex">
+<span>async def <span class="ident">set_config</span></span>(<span>self, cache_size=4096, enable_websocket=True)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Set the config of http api
+:param cache_size: int, the size of message cache
+:param enable_websocket: bool, whether to enable websocket (will disable fetch_message accordingly)
+Success if no exception is raised</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def set_config(self, cache_size: int = 4096, enable_websocket: bool = True) -&gt; None:
+    &#34;&#34;&#34;
+    Set the config of http api
+    :param cache_size: int, the size of message cache
+    :param enable_websocket: bool, whether to enable websocket (will disable fetch_message accordingly)
+    Success if no exception is raised
+    &#34;&#34;&#34;
+    data = {
+        &#39;sessionKey&#39;:      self.session_key,
+        &#39;cacheSize&#39;:       cache_size,
+        &#39;enableWebsocket&#39;: enable_websocket
+    }
+
+    await self.retry_once(self.session.post(&#39;/config&#39;, data=data))</code></pre>
+</details>
+</dd>
+<dt id="mirai_core.bot.Bot.set_group_config"><code class="name flex">
+<span>async def <span class="ident">set_group_config</span></span>(<span>self, group, config)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Set
+the group config of a group
+:param group: int or Group, target group
+:param config: GroupSetting
+Success if no exception is raised</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def set_group_config(self, group: Union[Group, int],
+                           config: GroupSetting) -&gt; None:
+    &#34;&#34;&#34;
+    Set  the group config of a group
+    :param group: int or Group, target group
+    :param config: GroupSetting
+    Success if no exception is raised
+    &#34;&#34;&#34;
+    data = {
+        &#39;sessionKey&#39;: self.session_key,
+        &#39;target&#39;:     Bot._handle_target_as(target=group, as_type=Group),
+        &#39;config&#39;:     json.loads(config.json())
+    }
+
+    await self.retry_once(self.session.post(&#39;/groupConfig&#39;, data=data))</code></pre>
+</details>
+</dd>
+<dt id="mirai_core.bot.Bot.set_member_info"><code class="name flex">
+<span>async def <span class="ident">set_member_info</span></span>(<span>self, group, member, setting)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Set the info of a member
+:param group: int or Group, target group
+:param member: int or Member, target member
+:param setting: MemberChangeableSetting, the new settings
+Success if no exception is raised</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def set_member_info(self, group: Union[Group, int],
+                          member: Union[Member, int],
+                          setting: MemberChangeableSetting) -&gt; None:
+    &#34;&#34;&#34;
+    Set the info of a member
+    :param group: int or Group, target group
+    :param member: int or Member, target member
+    :param setting: MemberChangeableSetting, the new settings
+    Success if no exception is raised
+    &#34;&#34;&#34;
+    data = {
+        &#39;sessionKey&#39;: self.session_key,
+        &#39;target&#39;:     Bot._handle_target_as(target=group, as_type=Group),
+        &#39;memberId&#39;:   self._handle_target_as(target=member, as_type=Member),
+        &#39;info&#39;:       json.loads(setting.json())
+    }
+
+    await self.retry_once(self.session.post(&#39;/memberInfo&#39;, data=data))</code></pre>
+</details>
+</dd>
+<dt id="mirai_core.bot.Bot.unmute"><code class="name flex">
+<span>async def <span class="ident">unmute</span></span>(<span>self, group, member)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Unmute a member of a group
+:param group: int or Group, target group
+:param member: int or Member, target member
+Success if no exception is raised</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def unmute(self, group: Union[Group, int],
+                 member: Union[Member, int]) -&gt; None:
+    &#34;&#34;&#34;
+    Unmute a member of a group
+    :param group: int or Group, target group
+    :param member: int or Member, target member
+    Success if no exception is raised
+    &#34;&#34;&#34;
+    data = {
+        &#39;sessionKey&#39;: self.session_key,
+        &#39;target&#39;:     Bot._handle_target_as(target=group, as_type=Group),
+        &#39;MemberId&#39;:   Bot._handle_target_as(target=member, as_type=Member)
+    }
+    await self.retry_once(self.session.post(&#39;/unmute&#39;, data=data))</code></pre>
+</details>
+</dd>
+<dt id="mirai_core.bot.Bot.unmute_all"><code class="name flex">
+<span>async def <span class="ident">unmute_all</span></span>(<span>self, group)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Unmute all non admin members in group
+:param group: int or Group, the target group
+Success if no exception is raised</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def unmute_all(self, group: Union[Group, int]) -&gt; None:
+    &#34;&#34;&#34;
+    Unmute all non admin members in group
+    :param group: int or Group, the target group
+    Success if no exception is raised
+    &#34;&#34;&#34;
+    params = {
+        &#39;sessionKey&#39;: self.session_key,
+        &#39;target&#39;:     Bot._handle_target_as(target=group, as_type=Group)
+    }
+
+    await self.retry_once(self.session.get(&#39;/unmuteAll&#39;, params=params))</code></pre>
+</details>
+</dd>
+<dt id="mirai_core.bot.Bot.upload_image"><code class="name flex">
+<span>async def <span class="ident">upload_image</span></span>(<span>self, image_type, image_path)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Upload a image to QQ server. The image between group and friend is not exchangeable
+This function can be called separately to acquire image uuids, or automatically if using LocalImage while sending
+:param image_type: ImageType, Friend or Group
+:param image_path: absolute path of the image
+:return: Image object</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def upload_image(self, image_type: ImageType, image_path: Union[Path, str]) -&gt; Optional[Image]:
+    &#34;&#34;&#34;
+    Upload a image to QQ server. The image between group and friend is not exchangeable
+    This function can be called separately to acquire image uuids, or automatically if using LocalImage while sending
+    :param image_type: ImageType, Friend or Group
+    :param image_path: absolute path of the image
+    :return: Image object
+    &#34;&#34;&#34;
+    if isinstance(image_path, str):
+        image_path = Path(image_path)
+
+    if not image_path.exists():
+        raise FileNotFoundError(&#39;Image not found.&#39;)
+
+    data = {
+        &#39;sessionKey&#39;: self.session_key,
+        &#39;type&#39;:       image_type.value
+    }
+    result = await self.retry_once(self.session.upload(&#39;/uploadImage&#39;, file=image_path, data=data))
+    return Image.parse_obj(result)</code></pre>
+</details>
+</dd>
+<dt id="mirai_core.bot.Bot.verify"><code class="name flex">
+<span>async def <span class="ident">verify</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Post session_key to verify the session</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def verify(self) -&gt; None:
+    &#34;&#34;&#34;
+    Post session_key to verify the session
+    &#34;&#34;&#34;
+    await self.session.post(&#39;/verify&#39;,
+                            data={
+                                &#39;sessionKey&#39;: self.session_key,
+                                &#39;qq&#39;:         self.qq
+                            })</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="mirai_core.bot.Events"><code class="flex name class">
+<span>class <span class="ident">Events</span></span>
+<span>(</span><span>value, names=None, *, module=None, qualname=None, type=None, start=1)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Internal use only</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Events(Enum):
+    &#34;&#34;&#34;
+    Internal use only
+    &#34;&#34;&#34;
+    BotOnlineEvent = BotOnlineEvent
+    BotOfflineEventActive = BotOfflineEventActive
+    BotOfflineEventForce = BotOfflineEventForce
+    BotOfflineEventDropped = BotOfflineEventDropped
+    BotReloginEvent = BotReloginEvent
+    BotGroupPermissionChangeEvent = BotGroupPermissionChangeEvent
+    BotMuteEvent = BotMuteEvent
+    BotUnmuteEvent = BotUnmuteEvent
+    BotJoinGroupEvent = BotJoinGroupEvent
+
+    GroupNameChangeEvent = GroupNameChangeEvent
+    GroupEntranceAnnouncementChangeEvent = GroupEntranceAnnouncementChangeEvent
+    GroupMuteAllEvent = GroupMuteAllEvent
+
+    # 群设置被修改事件
+    GroupAllowAnonymousChatEvent = GroupAllowAnonymousChatEvent  # 群设置 是否允许匿名聊天 被修改
+    GroupAllowConfessTalkEvent = GroupAllowConfessTalkEvent  # 坦白说
+    GroupAllowMemberInviteEvent = GroupAllowMemberInviteEvent  # 邀请进群
+
+    # 群事件(被 Bot 监听到的, 为被动事件, 其中 Bot 身份为第三方.)
+    MemberJoinEvent = MemberJoinEvent
+    MemberLeaveEventKick = MemberLeaveEventKick
+    MemberLeaveEventQuit = MemberLeaveEventQuit
+    MemberCardChangeEvent = MemberCardChangeEvent
+    MemberSpecialTitleChangeEvent = MemberSpecialTitleChangeEvent
+    MemberPermissionChangeEvent = MemberPermissionChangeEvent
+    MemberMuteEvent = MemberMuteEvent
+    MemberUnmuteEvent = MemberUnmuteEvent
+
+    FriendMessage = FriendMessage
+    GroupMessage = GroupMessage</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>enum.Enum</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="mirai_core.bot.Events.BotGroupPermissionChangeEvent"><code class="name">var <span class="ident">BotGroupPermissionChangeEvent</span></code></dt>
+<dd>
+<section class="desc"></section>
+</dd>
+<dt id="mirai_core.bot.Events.BotJoinGroupEvent"><code class="name">var <span class="ident">BotJoinGroupEvent</span></code></dt>
+<dd>
+<section class="desc"></section>
+</dd>
+<dt id="mirai_core.bot.Events.BotMuteEvent"><code class="name">var <span class="ident">BotMuteEvent</span></code></dt>
+<dd>
+<section class="desc"></section>
+</dd>
+<dt id="mirai_core.bot.Events.BotOfflineEventActive"><code class="name">var <span class="ident">BotOfflineEventActive</span></code></dt>
+<dd>
+<section class="desc"></section>
+</dd>
+<dt id="mirai_core.bot.Events.BotOfflineEventDropped"><code class="name">var <span class="ident">BotOfflineEventDropped</span></code></dt>
+<dd>
+<section class="desc"></section>
+</dd>
+<dt id="mirai_core.bot.Events.BotOfflineEventForce"><code class="name">var <span class="ident">BotOfflineEventForce</span></code></dt>
+<dd>
+<section class="desc"></section>
+</dd>
+<dt id="mirai_core.bot.Events.BotOnlineEvent"><code class="name">var <span class="ident">BotOnlineEvent</span></code></dt>
+<dd>
+<section class="desc"></section>
+</dd>
+<dt id="mirai_core.bot.Events.BotReloginEvent"><code class="name">var <span class="ident">BotReloginEvent</span></code></dt>
+<dd>
+<section class="desc"></section>
+</dd>
+<dt id="mirai_core.bot.Events.BotUnmuteEvent"><code class="name">var <span class="ident">BotUnmuteEvent</span></code></dt>
+<dd>
+<section class="desc"></section>
+</dd>
+<dt id="mirai_core.bot.Events.FriendMessage"><code class="name">var <span class="ident">FriendMessage</span></code></dt>
+<dd>
+<section class="desc"></section>
+</dd>
+<dt id="mirai_core.bot.Events.GroupAllowAnonymousChatEvent"><code class="name">var <span class="ident">GroupAllowAnonymousChatEvent</span></code></dt>
+<dd>
+<section class="desc"></section>
+</dd>
+<dt id="mirai_core.bot.Events.GroupAllowConfessTalkEvent"><code class="name">var <span class="ident">GroupAllowConfessTalkEvent</span></code></dt>
+<dd>
+<section class="desc"></section>
+</dd>
+<dt id="mirai_core.bot.Events.GroupAllowMemberInviteEvent"><code class="name">var <span class="ident">GroupAllowMemberInviteEvent</span></code></dt>
+<dd>
+<section class="desc"></section>
+</dd>
+<dt id="mirai_core.bot.Events.GroupEntranceAnnouncementChangeEvent"><code class="name">var <span class="ident">GroupEntranceAnnouncementChangeEvent</span></code></dt>
+<dd>
+<section class="desc"></section>
+</dd>
+<dt id="mirai_core.bot.Events.GroupMessage"><code class="name">var <span class="ident">GroupMessage</span></code></dt>
+<dd>
+<section class="desc"></section>
+</dd>
+<dt id="mirai_core.bot.Events.GroupMuteAllEvent"><code class="name">var <span class="ident">GroupMuteAllEvent</span></code></dt>
+<dd>
+<section class="desc"></section>
+</dd>
+<dt id="mirai_core.bot.Events.GroupNameChangeEvent"><code class="name">var <span class="ident">GroupNameChangeEvent</span></code></dt>
+<dd>
+<section class="desc"></section>
+</dd>
+<dt id="mirai_core.bot.Events.MemberCardChangeEvent"><code class="name">var <span class="ident">MemberCardChangeEvent</span></code></dt>
+<dd>
+<section class="desc"></section>
+</dd>
+<dt id="mirai_core.bot.Events.MemberJoinEvent"><code class="name">var <span class="ident">MemberJoinEvent</span></code></dt>
+<dd>
+<section class="desc"></section>
+</dd>
+<dt id="mirai_core.bot.Events.MemberLeaveEventKick"><code class="name">var <span class="ident">MemberLeaveEventKick</span></code></dt>
+<dd>
+<section class="desc"></section>
+</dd>
+<dt id="mirai_core.bot.Events.MemberLeaveEventQuit"><code class="name">var <span class="ident">MemberLeaveEventQuit</span></code></dt>
+<dd>
+<section class="desc"></section>
+</dd>
+<dt id="mirai_core.bot.Events.MemberMuteEvent"><code class="name">var <span class="ident">MemberMuteEvent</span></code></dt>
+<dd>
+<section class="desc"></section>
+</dd>
+<dt id="mirai_core.bot.Events.MemberPermissionChangeEvent"><code class="name">var <span class="ident">MemberPermissionChangeEvent</span></code></dt>
+<dd>
+<section class="desc"></section>
+</dd>
+<dt id="mirai_core.bot.Events.MemberSpecialTitleChangeEvent"><code class="name">var <span class="ident">MemberSpecialTitleChangeEvent</span></code></dt>
+<dd>
+<section class="desc"></section>
+</dd>
+<dt id="mirai_core.bot.Events.MemberUnmuteEvent"><code class="name">var <span class="ident">MemberUnmuteEvent</span></code></dt>
+<dd>
+<section class="desc"></section>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="mirai_core" href="index.html">mirai_core</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="mirai_core.bot.Bot" href="#mirai_core.bot.Bot">Bot</a></code></h4>
+<ul class="two-column">
+<li><code><a title="mirai_core.bot.Bot.auth" href="#mirai_core.bot.Bot.auth">auth</a></code></li>
+<li><code><a title="mirai_core.bot.Bot.create_websocket" href="#mirai_core.bot.Bot.create_websocket">create_websocket</a></code></li>
+<li><code><a title="mirai_core.bot.Bot.fetch_message" href="#mirai_core.bot.Bot.fetch_message">fetch_message</a></code></li>
+<li><code><a title="mirai_core.bot.Bot.friends" href="#mirai_core.bot.Bot.friends">friends</a></code></li>
+<li><code><a title="mirai_core.bot.Bot.get_bot_member_info" href="#mirai_core.bot.Bot.get_bot_member_info">get_bot_member_info</a></code></li>
+<li><code><a title="mirai_core.bot.Bot.get_config" href="#mirai_core.bot.Bot.get_config">get_config</a></code></li>
+<li><code><a title="mirai_core.bot.Bot.get_group_config" href="#mirai_core.bot.Bot.get_group_config">get_group_config</a></code></li>
+<li><code><a title="mirai_core.bot.Bot.get_member_info" href="#mirai_core.bot.Bot.get_member_info">get_member_info</a></code></li>
+<li><code><a title="mirai_core.bot.Bot.get_members" href="#mirai_core.bot.Bot.get_members">get_members</a></code></li>
+<li><code><a title="mirai_core.bot.Bot.groups" href="#mirai_core.bot.Bot.groups">groups</a></code></li>
+<li><code><a title="mirai_core.bot.Bot.handshake" href="#mirai_core.bot.Bot.handshake">handshake</a></code></li>
+<li><code><a title="mirai_core.bot.Bot.kick" href="#mirai_core.bot.Bot.kick">kick</a></code></li>
+<li><code><a title="mirai_core.bot.Bot.mute" href="#mirai_core.bot.Bot.mute">mute</a></code></li>
+<li><code><a title="mirai_core.bot.Bot.mute_all" href="#mirai_core.bot.Bot.mute_all">mute_all</a></code></li>
+<li><code><a title="mirai_core.bot.Bot.recall" href="#mirai_core.bot.Bot.recall">recall</a></code></li>
+<li><code><a title="mirai_core.bot.Bot.release" href="#mirai_core.bot.Bot.release">release</a></code></li>
+<li><code><a title="mirai_core.bot.Bot.retry_once" href="#mirai_core.bot.Bot.retry_once">retry_once</a></code></li>
+<li><code><a title="mirai_core.bot.Bot.send_friend_message" href="#mirai_core.bot.Bot.send_friend_message">send_friend_message</a></code></li>
+<li><code><a title="mirai_core.bot.Bot.send_group_message" href="#mirai_core.bot.Bot.send_group_message">send_group_message</a></code></li>
+<li><code><a title="mirai_core.bot.Bot.set_config" href="#mirai_core.bot.Bot.set_config">set_config</a></code></li>
+<li><code><a title="mirai_core.bot.Bot.set_group_config" href="#mirai_core.bot.Bot.set_group_config">set_group_config</a></code></li>
+<li><code><a title="mirai_core.bot.Bot.set_member_info" href="#mirai_core.bot.Bot.set_member_info">set_member_info</a></code></li>
+<li><code><a title="mirai_core.bot.Bot.unmute" href="#mirai_core.bot.Bot.unmute">unmute</a></code></li>
+<li><code><a title="mirai_core.bot.Bot.unmute_all" href="#mirai_core.bot.Bot.unmute_all">unmute_all</a></code></li>
+<li><code><a title="mirai_core.bot.Bot.upload_image" href="#mirai_core.bot.Bot.upload_image">upload_image</a></code></li>
+<li><code><a title="mirai_core.bot.Bot.verify" href="#mirai_core.bot.Bot.verify">verify</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="mirai_core.bot.Events" href="#mirai_core.bot.Events">Events</a></code></h4>
+<ul class="">
+<li><code><a title="mirai_core.bot.Events.BotGroupPermissionChangeEvent" href="#mirai_core.bot.Events.BotGroupPermissionChangeEvent">BotGroupPermissionChangeEvent</a></code></li>
+<li><code><a title="mirai_core.bot.Events.BotJoinGroupEvent" href="#mirai_core.bot.Events.BotJoinGroupEvent">BotJoinGroupEvent</a></code></li>
+<li><code><a title="mirai_core.bot.Events.BotMuteEvent" href="#mirai_core.bot.Events.BotMuteEvent">BotMuteEvent</a></code></li>
+<li><code><a title="mirai_core.bot.Events.BotOfflineEventActive" href="#mirai_core.bot.Events.BotOfflineEventActive">BotOfflineEventActive</a></code></li>
+<li><code><a title="mirai_core.bot.Events.BotOfflineEventDropped" href="#mirai_core.bot.Events.BotOfflineEventDropped">BotOfflineEventDropped</a></code></li>
+<li><code><a title="mirai_core.bot.Events.BotOfflineEventForce" href="#mirai_core.bot.Events.BotOfflineEventForce">BotOfflineEventForce</a></code></li>
+<li><code><a title="mirai_core.bot.Events.BotOnlineEvent" href="#mirai_core.bot.Events.BotOnlineEvent">BotOnlineEvent</a></code></li>
+<li><code><a title="mirai_core.bot.Events.BotReloginEvent" href="#mirai_core.bot.Events.BotReloginEvent">BotReloginEvent</a></code></li>
+<li><code><a title="mirai_core.bot.Events.BotUnmuteEvent" href="#mirai_core.bot.Events.BotUnmuteEvent">BotUnmuteEvent</a></code></li>
+<li><code><a title="mirai_core.bot.Events.FriendMessage" href="#mirai_core.bot.Events.FriendMessage">FriendMessage</a></code></li>
+<li><code><a title="mirai_core.bot.Events.GroupAllowAnonymousChatEvent" href="#mirai_core.bot.Events.GroupAllowAnonymousChatEvent">GroupAllowAnonymousChatEvent</a></code></li>
+<li><code><a title="mirai_core.bot.Events.GroupAllowConfessTalkEvent" href="#mirai_core.bot.Events.GroupAllowConfessTalkEvent">GroupAllowConfessTalkEvent</a></code></li>
+<li><code><a title="mirai_core.bot.Events.GroupAllowMemberInviteEvent" href="#mirai_core.bot.Events.GroupAllowMemberInviteEvent">GroupAllowMemberInviteEvent</a></code></li>
+<li><code><a title="mirai_core.bot.Events.GroupEntranceAnnouncementChangeEvent" href="#mirai_core.bot.Events.GroupEntranceAnnouncementChangeEvent">GroupEntranceAnnouncementChangeEvent</a></code></li>
+<li><code><a title="mirai_core.bot.Events.GroupMessage" href="#mirai_core.bot.Events.GroupMessage">GroupMessage</a></code></li>
+<li><code><a title="mirai_core.bot.Events.GroupMuteAllEvent" href="#mirai_core.bot.Events.GroupMuteAllEvent">GroupMuteAllEvent</a></code></li>
+<li><code><a title="mirai_core.bot.Events.GroupNameChangeEvent" href="#mirai_core.bot.Events.GroupNameChangeEvent">GroupNameChangeEvent</a></code></li>
+<li><code><a title="mirai_core.bot.Events.MemberCardChangeEvent" href="#mirai_core.bot.Events.MemberCardChangeEvent">MemberCardChangeEvent</a></code></li>
+<li><code><a title="mirai_core.bot.Events.MemberJoinEvent" href="#mirai_core.bot.Events.MemberJoinEvent">MemberJoinEvent</a></code></li>
+<li><code><a title="mirai_core.bot.Events.MemberLeaveEventKick" href="#mirai_core.bot.Events.MemberLeaveEventKick">MemberLeaveEventKick</a></code></li>
+<li><code><a title="mirai_core.bot.Events.MemberLeaveEventQuit" href="#mirai_core.bot.Events.MemberLeaveEventQuit">MemberLeaveEventQuit</a></code></li>
+<li><code><a title="mirai_core.bot.Events.MemberMuteEvent" href="#mirai_core.bot.Events.MemberMuteEvent">MemberMuteEvent</a></code></li>
+<li><code><a title="mirai_core.bot.Events.MemberPermissionChangeEvent" href="#mirai_core.bot.Events.MemberPermissionChangeEvent">MemberPermissionChangeEvent</a></code></li>
+<li><code><a title="mirai_core.bot.Events.MemberSpecialTitleChangeEvent" href="#mirai_core.bot.Events.MemberSpecialTitleChangeEvent">MemberSpecialTitleChangeEvent</a></code></li>
+<li><code><a title="mirai_core.bot.Events.MemberUnmuteEvent" href="#mirai_core.bot.Events.MemberUnmuteEvent">MemberUnmuteEvent</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.7.5</a>.</p>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad()</script>
+</body>
+</html>
