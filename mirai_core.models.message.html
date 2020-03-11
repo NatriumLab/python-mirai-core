@@ -1,0 +1,630 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>mirai_core.models.message package &mdash; Python Mirai Core 0.6.4 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="mirai_core.models.entity package" href="mirai_core.models.entity.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Python Mirai Core
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="mirai_core.html">mirai_core package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="mirai_core.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="mirai_core.models.html">mirai_core.models package</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="mirai_core.models.html#subpackages">Subpackages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mirai_core.models.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mirai_core.models.html#module-mirai_core.models.events">mirai_core.models.events module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mirai_core.models.html#module-mirai_core.models">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mirai_core.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mirai_core.html#module-mirai_core.bot">mirai_core.bot module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mirai_core.html#module-mirai_core.exceptions">mirai_core.exceptions module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mirai_core.html#module-mirai_core.log">mirai_core.log module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mirai_core.html#module-mirai_core.network">mirai_core.network module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mirai_core.html#module-mirai_core.updater">mirai_core.updater module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mirai_core.html#module-mirai_core">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Python Mirai Core</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="mirai_core.html">mirai_core package</a> &raquo;</li>
+        
+          <li><a href="mirai_core.models.html">mirai_core.models package</a> &raquo;</li>
+        
+      <li>mirai_core.models.message package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/mirai_core.models.message.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="mirai-core-models-message-package">
+<h1>mirai_core.models.message package<a class="headerlink" href="#mirai-core-models-message-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="mirai-core-models-message-base-module">
+<h2>mirai_core.models.message.base module<a class="headerlink" href="#mirai-core-models-message-base-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="mirai-core-models-message-components-module">
+<h2>mirai_core.models.message.components module<a class="headerlink" href="#mirai-core-models-message-components-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="mirai-core-models-message-types-module">
+<h2>mirai_core.models.message.types module<a class="headerlink" href="#mirai-core-models-message-types-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-mirai_core.models.message">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-mirai_core.models.message" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="mirai_core.models.message.MessageComponentTypes">
+<em class="property">class </em><code class="sig-prename descclassname">mirai_core.models.message.</code><code class="sig-name descname">MessageComponentTypes</code><a class="reference internal" href="_modules/mirai_core/models/message.html#MessageComponentTypes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.models.message.MessageComponentTypes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">enum.Enum</span></code></p>
+<p>An enumeration.</p>
+<dl class="attribute">
+<dt id="mirai_core.models.message.MessageComponentTypes.Source">
+<code class="sig-name descname">Source</code><em class="property"> = 'Source'</em><a class="headerlink" href="#mirai_core.models.message.MessageComponentTypes.Source" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.message.MessageComponentTypes.Plain">
+<code class="sig-name descname">Plain</code><em class="property"> = 'Plain'</em><a class="headerlink" href="#mirai_core.models.message.MessageComponentTypes.Plain" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.message.MessageComponentTypes.Face">
+<code class="sig-name descname">Face</code><em class="property"> = 'Face'</em><a class="headerlink" href="#mirai_core.models.message.MessageComponentTypes.Face" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.message.MessageComponentTypes.At">
+<code class="sig-name descname">At</code><em class="property"> = 'At'</em><a class="headerlink" href="#mirai_core.models.message.MessageComponentTypes.At" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.message.MessageComponentTypes.AtAll">
+<code class="sig-name descname">AtAll</code><em class="property"> = 'AtAll'</em><a class="headerlink" href="#mirai_core.models.message.MessageComponentTypes.AtAll" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.message.MessageComponentTypes.Image">
+<code class="sig-name descname">Image</code><em class="property"> = 'Image'</em><a class="headerlink" href="#mirai_core.models.message.MessageComponentTypes.Image" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.message.MessageComponentTypes.Quote">
+<code class="sig-name descname">Quote</code><em class="property"> = 'Quote'</em><a class="headerlink" href="#mirai_core.models.message.MessageComponentTypes.Quote" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.message.MessageComponentTypes.Xml">
+<code class="sig-name descname">Xml</code><em class="property"> = 'Xml'</em><a class="headerlink" href="#mirai_core.models.message.MessageComponentTypes.Xml" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.message.MessageComponentTypes.Json">
+<code class="sig-name descname">Json</code><em class="property"> = 'Json'</em><a class="headerlink" href="#mirai_core.models.message.MessageComponentTypes.Json" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.message.MessageComponentTypes.App">
+<code class="sig-name descname">App</code><em class="property"> = 'App'</em><a class="headerlink" href="#mirai_core.models.message.MessageComponentTypes.App" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.message.MessageComponentTypes.Unknown">
+<code class="sig-name descname">Unknown</code><em class="property"> = 'Unknown'</em><a class="headerlink" href="#mirai_core.models.message.MessageComponentTypes.Unknown" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="mirai_core.models.message.BaseMessageComponent">
+<em class="property">class </em><code class="sig-prename descclassname">mirai_core.models.message.</code><code class="sig-name descname">BaseMessageComponent</code><span class="sig-paren">(</span><em class="sig-param">**data: Any</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mirai_core/models/message.html#BaseMessageComponent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.models.message.BaseMessageComponent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pydantic.main.BaseModel</span></code></p>
+<dl class="attribute">
+<dt id="mirai_core.models.message.BaseMessageComponent.type">
+<code class="sig-name descname">type</code><em class="property">: MessageComponentTypes</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.message.BaseMessageComponent.type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="mirai_core.models.message.MessageChain">
+<em class="property">class </em><code class="sig-prename descclassname">mirai_core.models.message.</code><code class="sig-name descname">MessageChain</code><span class="sig-paren">(</span><em class="sig-param">**data: Any</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mirai_core/models/message.html#MessageChain"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.models.message.MessageChain" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pydantic.main.BaseModel</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">collections.abc.MutableSequence</span></code></p>
+<dl class="method">
+<dt id="mirai_core.models.message.MessageChain.insert">
+<code class="sig-name descname">insert</code><span class="sig-paren">(</span><em class="sig-param">index: int</em>, <em class="sig-param">object</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/mirai_core/models/message.html#MessageChain.insert"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.models.message.MessageChain.insert" title="Permalink to this definition">¶</a></dt>
+<dd><p>S.insert(index, value) – insert value before index</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mirai_core.models.message.MessageChain.custom_parse">
+<em class="property">classmethod </em><code class="sig-name descname">custom_parse</code><span class="sig-paren">(</span><em class="sig-param">value: List[Dict]</em><span class="sig-paren">)</span> &#x2192; mirai_core.models.message.MessageChain<a class="reference internal" href="_modules/mirai_core/models/message.html#MessageChain.custom_parse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.models.message.MessageChain.custom_parse" title="Permalink to this definition">¶</a></dt>
+<dd><p>construct message chain from dict
+used only when receiving messages from mirai</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>value</strong> – dict contains message components</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>MessageChain</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="mirai_core.models.message.MessageChain.has">
+<code class="sig-name descname">has</code><span class="sig-paren">(</span><em class="sig-param">component_class</em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/mirai_core/models/message.html#MessageChain.has"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.models.message.MessageChain.has" title="Permalink to this definition">¶</a></dt>
+<dd><p>test if any item in MessageChain is component_class</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>component_class</strong> – the class for the component</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>boolean</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="mirai_core.models.message.MessageChain.get_first">
+<code class="sig-name descname">get_first</code><span class="sig-paren">(</span><em class="sig-param">component_class</em><span class="sig-paren">)</span> &#x2192; Optional[mirai_core.models.message.BaseMessageComponent]<a class="reference internal" href="_modules/mirai_core/models/message.html#MessageChain.get_first"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.models.message.MessageChain.get_first" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the first component with component_class</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>component_class</strong> – the class for the component</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None or the component</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="mirai_core.models.message.MessageChain.get_all">
+<code class="sig-name descname">get_all</code><span class="sig-paren">(</span><em class="sig-param">component_class</em><span class="sig-paren">)</span> &#x2192; List[mirai_core.models.message.BaseMessageComponent]<a class="reference internal" href="_modules/mirai_core/models/message.html#MessageChain.get_all"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.models.message.MessageChain.get_all" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="mirai_core.models.message.MessageChain.get_source">
+<code class="sig-name descname">get_source</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; mirai_core.models.message.Source<a class="reference internal" href="_modules/mirai_core/models/message.html#MessageChain.get_source"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.models.message.MessageChain.get_source" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="mirai_core.models.message.MessageChain.get_quote">
+<code class="sig-name descname">get_quote</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; mirai_core.models.message.Quote<a class="reference internal" href="_modules/mirai_core/models/message.html#MessageChain.get_quote"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.models.message.MessageChain.get_quote" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="mirai_core.models.message.Source">
+<em class="property">class </em><code class="sig-prename descclassname">mirai_core.models.message.</code><code class="sig-name descname">Source</code><span class="sig-paren">(</span><em class="sig-param">**data: Any</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mirai_core/models/message.html#Source"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.models.message.Source" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mirai_core.models.message.BaseMessageComponent" title="mirai_core.models.message.BaseMessageComponent"><code class="xref py py-class docutils literal notranslate"><span class="pre">mirai_core.models.message.BaseMessageComponent</span></code></a></p>
+<p>The source of the message
+Not a valid component for outbound message</p>
+<dl class="attribute">
+<dt id="mirai_core.models.message.Source.id">
+<code class="sig-name descname">id</code><em class="property">: int</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.message.Source.id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.message.Source.time">
+<code class="sig-name descname">time</code><em class="property">: datetime.datetime</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.message.Source.time" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="mirai_core.models.message.Plain">
+<em class="property">class </em><code class="sig-prename descclassname">mirai_core.models.message.</code><code class="sig-name descname">Plain</code><span class="sig-paren">(</span><em class="sig-param">text: str</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mirai_core/models/message.html#Plain"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.models.message.Plain" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mirai_core.models.message.BaseMessageComponent" title="mirai_core.models.message.BaseMessageComponent"><code class="xref py py-class docutils literal notranslate"><span class="pre">mirai_core.models.message.BaseMessageComponent</span></code></a></p>
+<p>Text component
+Available for outbound message</p>
+<p>Construct text component</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>text</strong> – message text</p>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="mirai_core.models.message.Plain.text">
+<code class="sig-name descname">text</code><em class="property">: str</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.message.Plain.text" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="mirai_core.models.message.Quote">
+<em class="property">class </em><code class="sig-prename descclassname">mirai_core.models.message.</code><code class="sig-name descname">Quote</code><span class="sig-paren">(</span><em class="sig-param">**data: Any</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mirai_core/models/message.html#Quote"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.models.message.Quote" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mirai_core.models.message.BaseMessageComponent" title="mirai_core.models.message.BaseMessageComponent"><code class="xref py py-class docutils literal notranslate"><span class="pre">mirai_core.models.message.BaseMessageComponent</span></code></a></p>
+<p>Quote component
+Not a valid component for outbound message</p>
+<dl class="attribute">
+<dt id="mirai_core.models.message.Quote.id">
+<code class="sig-name descname">id</code><em class="property">: int</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.message.Quote.id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.message.Quote.groupId">
+<code class="sig-name descname">groupId</code><em class="property">: int</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.message.Quote.groupId" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.message.Quote.senderId">
+<code class="sig-name descname">senderId</code><em class="property">: int</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.message.Quote.senderId" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.message.Quote.origin">
+<code class="sig-name descname">origin</code><em class="property">: MessageChain</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.message.Quote.origin" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="mirai_core.models.message.At">
+<em class="property">class </em><code class="sig-prename descclassname">mirai_core.models.message.</code><code class="sig-name descname">At</code><span class="sig-paren">(</span><em class="sig-param">target</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mirai_core/models/message.html#At"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.models.message.At" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pydantic.generics.GenericModel</span></code>, <a class="reference internal" href="#mirai_core.models.message.BaseMessageComponent" title="mirai_core.models.message.BaseMessageComponent"><code class="xref py py-class docutils literal notranslate"><span class="pre">mirai_core.models.message.BaseMessageComponent</span></code></a></p>
+<p>At component
+Available for outbound message</p>
+<p>Construct at component</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>target</strong> – target qq number</p>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="mirai_core.models.message.At.target">
+<code class="sig-name descname">target</code><em class="property">: int</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.message.At.target" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.message.At.display">
+<code class="sig-name descname">display</code><em class="property">: str</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.message.At.display" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="mirai_core.models.message.AtAll">
+<em class="property">class </em><code class="sig-prename descclassname">mirai_core.models.message.</code><code class="sig-name descname">AtAll</code><span class="sig-paren">(</span><em class="sig-param">**data: Any</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mirai_core/models/message.html#AtAll"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.models.message.AtAll" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mirai_core.models.message.BaseMessageComponent" title="mirai_core.models.message.BaseMessageComponent"><code class="xref py py-class docutils literal notranslate"><span class="pre">mirai_core.models.message.BaseMessageComponent</span></code></a></p>
+<p>AtAll component
+Available for outbound message</p>
+<dl class="attribute">
+<dt id="mirai_core.models.message.AtAll.type">
+<code class="sig-name descname">type</code><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.message.AtAll.type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="mirai_core.models.message.Face">
+<em class="property">class </em><code class="sig-prename descclassname">mirai_core.models.message.</code><code class="sig-name descname">Face</code><span class="sig-paren">(</span><em class="sig-param">face_id</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mirai_core/models/message.html#Face"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.models.message.Face" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mirai_core.models.message.BaseMessageComponent" title="mirai_core.models.message.BaseMessageComponent"><code class="xref py py-class docutils literal notranslate"><span class="pre">mirai_core.models.message.BaseMessageComponent</span></code></a></p>
+<p>Face component
+Available for outbound message</p>
+<p>Construct Face component</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>face_id</strong> – unsigned 8-bit face id</p>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="mirai_core.models.message.Face.faceId">
+<code class="sig-name descname">faceId</code><em class="property">: int</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.message.Face.faceId" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="mirai_core.models.message.Image">
+<em class="property">class </em><code class="sig-prename descclassname">mirai_core.models.message.</code><code class="sig-name descname">Image</code><span class="sig-paren">(</span><em class="sig-param">imageId</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mirai_core/models/message.html#Image"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.models.message.Image" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mirai_core.models.message.BaseMessageComponent" title="mirai_core.models.message.BaseMessageComponent"><code class="xref py py-class docutils literal notranslate"><span class="pre">mirai_core.models.message.BaseMessageComponent</span></code></a></p>
+<p>Received image component
+Available for outbound message</p>
+<p>Construct Image from mirai styled uuid</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>imageId</strong> – uuid as str (see <a class="reference external" href="https://github.com/mamoe/mirai-api-http/blob/master/MessageType.md#image">https://github.com/mamoe/mirai-api-http/blob/master/MessageType.md#image</a>)</p>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="mirai_core.models.message.Image.imageId">
+<code class="sig-name descname">imageId</code><em class="property">: str</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.message.Image.imageId" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.message.Image.url">
+<code class="sig-name descname">url</code><em class="property">: Optional[HttpUrl]</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.message.Image.url" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="mirai_core.models.message.Image.image_type">
+<em class="property">property </em><code class="sig-name descname">image_type</code><a class="headerlink" href="#mirai_core.models.message.Image.image_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>get image type from pattern</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>‘friend’ or ‘group’, if uuid is invalid format, return ‘unknown’</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="mirai_core.models.message.LocalImage">
+<em class="property">class </em><code class="sig-prename descclassname">mirai_core.models.message.</code><code class="sig-name descname">LocalImage</code><span class="sig-paren">(</span><em class="sig-param">path=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mirai_core/models/message.html#LocalImage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.models.message.LocalImage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Local image component
+Available for outbound message</p>
+<p>Construct LocalImage component</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>path</strong> – absolute path on disk</p>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="mirai_core.models.message.LocalImage.path">
+<code class="sig-name descname">path</code><em class="property">: Path</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.message.LocalImage.path" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="mirai_core.models.message.Unknown">
+<em class="property">class </em><code class="sig-prename descclassname">mirai_core.models.message.</code><code class="sig-name descname">Unknown</code><span class="sig-paren">(</span><em class="sig-param">**data: Any</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mirai_core/models/message.html#Unknown"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.models.message.Unknown" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mirai_core.models.message.BaseMessageComponent" title="mirai_core.models.message.BaseMessageComponent"><code class="xref py py-class docutils literal notranslate"><span class="pre">mirai_core.models.message.BaseMessageComponent</span></code></a></p>
+<p>Unknown component
+Not a valid component for outbound message</p>
+<dl class="attribute">
+<dt id="mirai_core.models.message.Unknown.text">
+<code class="sig-name descname">text</code><em class="property">: str</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.message.Unknown.text" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="mirai_core.models.message.ComponentTypes">
+<em class="property">class </em><code class="sig-prename descclassname">mirai_core.models.message.</code><code class="sig-name descname">ComponentTypes</code><a class="reference internal" href="_modules/mirai_core/models/message.html#ComponentTypes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.models.message.ComponentTypes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">enum.Enum</span></code></p>
+<p>An enumeration.</p>
+<dl class="attribute">
+<dt id="mirai_core.models.message.ComponentTypes.Plain">
+<code class="sig-name descname">Plain</code><em class="property"> = &lt;class 'mirai_core.models.message.Plain'&gt;</em><a class="headerlink" href="#mirai_core.models.message.ComponentTypes.Plain" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.message.ComponentTypes.Source">
+<code class="sig-name descname">Source</code><em class="property"> = &lt;class 'mirai_core.models.message.Source'&gt;</em><a class="headerlink" href="#mirai_core.models.message.ComponentTypes.Source" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.message.ComponentTypes.At">
+<code class="sig-name descname">At</code><em class="property"> = &lt;class 'mirai_core.models.message.At'&gt;</em><a class="headerlink" href="#mirai_core.models.message.ComponentTypes.At" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.message.ComponentTypes.AtAll">
+<code class="sig-name descname">AtAll</code><em class="property"> = &lt;class 'mirai_core.models.message.AtAll'&gt;</em><a class="headerlink" href="#mirai_core.models.message.ComponentTypes.AtAll" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.message.ComponentTypes.Face">
+<code class="sig-name descname">Face</code><em class="property"> = &lt;class 'mirai_core.models.message.Face'&gt;</em><a class="headerlink" href="#mirai_core.models.message.ComponentTypes.Face" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.message.ComponentTypes.Image">
+<code class="sig-name descname">Image</code><em class="property"> = &lt;class 'mirai_core.models.message.Image'&gt;</em><a class="headerlink" href="#mirai_core.models.message.ComponentTypes.Image" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.message.ComponentTypes.Quote">
+<code class="sig-name descname">Quote</code><em class="property"> = &lt;class 'mirai_core.models.message.Quote'&gt;</em><a class="headerlink" href="#mirai_core.models.message.ComponentTypes.Quote" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.message.ComponentTypes.Xml">
+<code class="sig-name descname">Xml</code><em class="property"> = &lt;class 'mirai_core.models.message.Xml'&gt;</em><a class="headerlink" href="#mirai_core.models.message.ComponentTypes.Xml" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.message.ComponentTypes.Json">
+<code class="sig-name descname">Json</code><em class="property"> = &lt;class 'mirai_core.models.message.Json'&gt;</em><a class="headerlink" href="#mirai_core.models.message.ComponentTypes.Json" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.message.ComponentTypes.App">
+<code class="sig-name descname">App</code><em class="property"> = &lt;class 'mirai_core.models.message.App'&gt;</em><a class="headerlink" href="#mirai_core.models.message.ComponentTypes.App" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.message.ComponentTypes.Unknown">
+<code class="sig-name descname">Unknown</code><em class="property"> = &lt;class 'mirai_core.models.message.Unknown'&gt;</em><a class="headerlink" href="#mirai_core.models.message.ComponentTypes.Unknown" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="mirai_core.models.entity.html" class="btn btn-neutral float-left" title="mirai_core.models.entity package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, jqqqqqqqqqq, Chenwe-i-lin
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

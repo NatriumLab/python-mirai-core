@@ -1,0 +1,487 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>mirai_core.models.events &mdash; Python Mirai Core 0.6.4 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Python Mirai Core
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../mirai_core.html">mirai_core package</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Python Mirai Core</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>mirai_core.models.events</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for mirai_core.models.events</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span>
+<span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">BaseModel</span>
+<span class="kn">from</span> <span class="nn">.entity</span> <span class="kn">import</span> <span class="n">Permission</span><span class="p">,</span> <span class="n">Group</span><span class="p">,</span> <span class="n">Member</span><span class="p">,</span> <span class="n">Friend</span>
+<span class="kn">from</span> <span class="nn">.message</span> <span class="kn">import</span> <span class="n">MessageChain</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
+
+
+<div class="viewcode-block" id="EventTypes"><a class="viewcode-back" href="../../../mirai_core.models.html#mirai_core.models.events.EventTypes">[docs]</a><span class="k">class</span> <span class="nc">EventTypes</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    EventTypes is used for registering handlers</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Bot events</span>
+    <span class="n">BotOnlineEvent</span> <span class="o">=</span> <span class="s1">&#39;BotOnlineEvent&#39;</span>
+    <span class="n">BotOfflineEventActive</span> <span class="o">=</span> <span class="s1">&#39;BotOfflineEventActive&#39;</span>
+    <span class="n">BotOfflineEventForce</span> <span class="o">=</span> <span class="s1">&#39;BotOfflineEventForce&#39;</span>
+    <span class="n">BotOfflineEventDropped</span> <span class="o">=</span> <span class="s1">&#39;BotOfflineEventDropped&#39;</span>
+    <span class="n">BotReloginEvent</span> <span class="o">=</span> <span class="s1">&#39;BotReloginEvent&#39;</span>
+    <span class="n">BotGroupPermissionChangeEvent</span> <span class="o">=</span> <span class="s1">&#39;BotGroupPermissionChangeEvent&#39;</span>
+    <span class="n">BotMuteEvent</span> <span class="o">=</span> <span class="s1">&#39;BotMuteEvent&#39;</span>
+    <span class="n">BotUnmuteEvent</span> <span class="o">=</span> <span class="s1">&#39;BotUnmuteEvent&#39;</span>
+    <span class="n">BotJoinGroupEvent</span> <span class="o">=</span> <span class="s1">&#39;BotJoinGroupEvent&#39;</span>
+
+    <span class="c1"># Group events</span>
+    <span class="n">GroupNameChangeEvent</span> <span class="o">=</span> <span class="s1">&#39;GroupNameChangeEvent&#39;</span>
+    <span class="n">GroupEntranceAnnouncementChangeEvent</span> <span class="o">=</span> <span class="s1">&#39;GroupEntranceAnnouncementChangeEvent&#39;</span>
+    <span class="n">GroupMuteAllEvent</span> <span class="o">=</span> <span class="s1">&#39;GroupMuteAllEvent&#39;</span>
+
+    <span class="c1"># Group permission events</span>
+    <span class="n">GroupAllowAnonymousChatEvent</span> <span class="o">=</span> <span class="s1">&#39;GroupAllowAnonymousChatEvent&#39;</span>  <span class="c1"># 群设置 是否允许匿名聊天 被修改</span>
+    <span class="n">GroupAllowConfessTalkEvent</span> <span class="o">=</span> <span class="s1">&#39;GroupAllowConfessTalkEvent&#39;</span>  <span class="c1"># 坦白说</span>
+    <span class="n">GroupAllowMemberInviteEvent</span> <span class="o">=</span> <span class="s1">&#39;GroupAllowMemberInviteEvent&#39;</span>  <span class="c1"># 邀请进群</span>
+
+    <span class="c1"># Group member events</span>
+    <span class="n">MemberJoinEvent</span> <span class="o">=</span> <span class="s1">&#39;MemberJoinEvent&#39;</span>
+    <span class="n">MemberLeaveEventKick</span> <span class="o">=</span> <span class="s1">&#39;MemberLeaveEventKick&#39;</span>
+    <span class="n">MemberLeaveEventQuit</span> <span class="o">=</span> <span class="s1">&#39;MemberLeaveEventQuit&#39;</span>
+    <span class="n">MemberCardChangeEvent</span> <span class="o">=</span> <span class="s1">&#39;MemberCardChangeEvent&#39;</span>
+    <span class="n">MemberSpecialTitleChangeEvent</span> <span class="o">=</span> <span class="s1">&#39;MemberSpecialTitleChangeEvent&#39;</span>
+    <span class="n">MemberPermissionChangeEvent</span> <span class="o">=</span> <span class="s1">&#39;MemberPermissionChangeEvent&#39;</span>
+    <span class="n">MemberMuteEvent</span> <span class="o">=</span> <span class="s1">&#39;MemberMuteEvent&#39;</span>
+    <span class="n">MemberUnmuteEvent</span> <span class="o">=</span> <span class="s1">&#39;MemberUnmuteEvent&#39;</span>
+
+    <span class="c1"># Message events</span>
+    <span class="n">FriendMessage</span> <span class="o">=</span> <span class="s1">&#39;FriendMessage&#39;</span>
+    <span class="n">GroupMessage</span> <span class="o">=</span> <span class="s1">&#39;GroupMessage&#39;</span></div>
+
+
+<div class="viewcode-block" id="Event"><a class="viewcode-back" href="../../../mirai_core.models.html#mirai_core.models.events.Event">[docs]</a><span class="k">class</span> <span class="nc">Event</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="nb">type</span><span class="p">:</span> <span class="n">EventTypes</span></div>
+
+
+<div class="viewcode-block" id="BotOnlineEvent"><a class="viewcode-back" href="../../../mirai_core.models.html#mirai_core.models.events.BotOnlineEvent">[docs]</a><span class="k">class</span> <span class="nc">BotOnlineEvent</span><span class="p">(</span><span class="n">Event</span><span class="p">):</span>
+    <span class="nb">type</span> <span class="o">=</span> <span class="n">EventTypes</span><span class="o">.</span><span class="n">BotOnlineEvent</span>
+    <span class="n">qq</span><span class="p">:</span> <span class="nb">int</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;[</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s1">: qq=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">qq</span><span class="si">}</span><span class="s1">]&#39;</span></div>
+
+
+<div class="viewcode-block" id="BotOfflineEventActive"><a class="viewcode-back" href="../../../mirai_core.models.html#mirai_core.models.events.BotOfflineEventActive">[docs]</a><span class="k">class</span> <span class="nc">BotOfflineEventActive</span><span class="p">(</span><span class="n">Event</span><span class="p">):</span>
+    <span class="nb">type</span> <span class="o">=</span> <span class="n">EventTypes</span><span class="o">.</span><span class="n">BotOfflineEventActive</span>
+    <span class="n">qq</span><span class="p">:</span> <span class="nb">int</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;[</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s1">: qq=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">qq</span><span class="si">}</span><span class="s1">]&#39;</span></div>
+
+
+<div class="viewcode-block" id="BotOfflineEventForce"><a class="viewcode-back" href="../../../mirai_core.models.html#mirai_core.models.events.BotOfflineEventForce">[docs]</a><span class="k">class</span> <span class="nc">BotOfflineEventForce</span><span class="p">(</span><span class="n">Event</span><span class="p">):</span>
+    <span class="nb">type</span> <span class="o">=</span> <span class="n">EventTypes</span><span class="o">.</span><span class="n">BotOfflineEventForce</span>
+    <span class="n">qq</span><span class="p">:</span> <span class="nb">int</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;[</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s1">: qq=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">qq</span><span class="si">}</span><span class="s1">]&#39;</span></div>
+
+
+<div class="viewcode-block" id="BotOfflineEventDropped"><a class="viewcode-back" href="../../../mirai_core.models.html#mirai_core.models.events.BotOfflineEventDropped">[docs]</a><span class="k">class</span> <span class="nc">BotOfflineEventDropped</span><span class="p">(</span><span class="n">Event</span><span class="p">):</span>
+    <span class="nb">type</span> <span class="o">=</span> <span class="n">EventTypes</span><span class="o">.</span><span class="n">BotOfflineEventDropped</span>
+    <span class="n">qq</span><span class="p">:</span> <span class="nb">int</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;[</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s1">: qq=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">qq</span><span class="si">}</span><span class="s1">]&#39;</span></div>
+
+
+<div class="viewcode-block" id="BotReloginEvent"><a class="viewcode-back" href="../../../mirai_core.models.html#mirai_core.models.events.BotReloginEvent">[docs]</a><span class="k">class</span> <span class="nc">BotReloginEvent</span><span class="p">(</span><span class="n">Event</span><span class="p">):</span>
+    <span class="nb">type</span> <span class="o">=</span> <span class="n">EventTypes</span><span class="o">.</span><span class="n">BotReloginEvent</span>
+    <span class="n">qq</span><span class="p">:</span> <span class="nb">int</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;[</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s1">: qq=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">qq</span><span class="si">}</span><span class="s1">]&#39;</span></div>
+
+
+<div class="viewcode-block" id="BotGroupPermissionChangeEvent"><a class="viewcode-back" href="../../../mirai_core.models.html#mirai_core.models.events.BotGroupPermissionChangeEvent">[docs]</a><span class="k">class</span> <span class="nc">BotGroupPermissionChangeEvent</span><span class="p">(</span><span class="n">Event</span><span class="p">):</span>
+    <span class="nb">type</span> <span class="o">=</span> <span class="n">EventTypes</span><span class="o">.</span><span class="n">BotGroupPermissionChangeEvent</span>
+    <span class="n">origin</span><span class="p">:</span> <span class="n">Permission</span>
+    <span class="n">new</span><span class="p">:</span> <span class="n">Permission</span>
+    <span class="n">group</span><span class="p">:</span> <span class="n">Group</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;[</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s1">: &#39;</span> \
+               <span class="sa">f</span><span class="s1">&#39;origin=</span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">origin</span><span class="p">)</span><span class="si">}</span><span class="s1">, new=</span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">new</span><span class="p">)</span><span class="si">}</span><span class="s1">, group=</span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">group</span><span class="p">)</span><span class="si">}</span><span class="s1">]&#39;</span></div>
+
+
+<div class="viewcode-block" id="BotMuteEvent"><a class="viewcode-back" href="../../../mirai_core.models.html#mirai_core.models.events.BotMuteEvent">[docs]</a><span class="k">class</span> <span class="nc">BotMuteEvent</span><span class="p">(</span><span class="n">Event</span><span class="p">):</span>
+    <span class="nb">type</span> <span class="o">=</span> <span class="n">EventTypes</span><span class="o">.</span><span class="n">BotMuteEvent</span>
+    <span class="n">durationSeconds</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">operator</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Member</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;[</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s1">: durationSeconds=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">durationSeconds</span><span class="si">}</span><span class="s1">, operator=</span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">operator</span><span class="p">)</span><span class="si">}</span><span class="s1">]&#39;</span></div>
+
+
+<div class="viewcode-block" id="BotUnmuteEvent"><a class="viewcode-back" href="../../../mirai_core.models.html#mirai_core.models.events.BotUnmuteEvent">[docs]</a><span class="k">class</span> <span class="nc">BotUnmuteEvent</span><span class="p">(</span><span class="n">Event</span><span class="p">):</span>
+    <span class="nb">type</span> <span class="o">=</span> <span class="n">EventTypes</span><span class="o">.</span><span class="n">BotUnmuteEvent</span>
+    <span class="n">operator</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Member</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;[</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s1">: operator=</span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">operator</span><span class="p">)</span><span class="si">}</span><span class="s1">]&#39;</span></div>
+
+
+<div class="viewcode-block" id="BotJoinGroupEvent"><a class="viewcode-back" href="../../../mirai_core.models.html#mirai_core.models.events.BotJoinGroupEvent">[docs]</a><span class="k">class</span> <span class="nc">BotJoinGroupEvent</span><span class="p">(</span><span class="n">Event</span><span class="p">):</span>
+    <span class="nb">type</span> <span class="o">=</span> <span class="n">EventTypes</span><span class="o">.</span><span class="n">BotJoinGroupEvent</span>
+    <span class="n">group</span><span class="p">:</span> <span class="n">Group</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;[</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s1">: group=</span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">group</span><span class="p">)</span><span class="si">}</span><span class="s1">]&#39;</span></div>
+
+
+<div class="viewcode-block" id="GroupNameChangeEvent"><a class="viewcode-back" href="../../../mirai_core.models.html#mirai_core.models.events.GroupNameChangeEvent">[docs]</a><span class="k">class</span> <span class="nc">GroupNameChangeEvent</span><span class="p">(</span><span class="n">Event</span><span class="p">):</span>
+    <span class="nb">type</span> <span class="o">=</span> <span class="n">EventTypes</span><span class="o">.</span><span class="n">GroupNameChangeEvent</span>
+    <span class="n">origin</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">new</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">group</span><span class="p">:</span> <span class="n">Group</span>
+    <span class="n">isByBot</span><span class="p">:</span> <span class="nb">bool</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;[</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s1">: &#39;</span> \
+               <span class="sa">f</span><span class="s1">&#39;origin=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">origin</span><span class="si">}</span><span class="s1">, new=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">new</span><span class="si">}</span><span class="s1">, group=</span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">group</span><span class="p">)</span><span class="si">}</span><span class="s1">, isByBot=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">isByBot</span><span class="si">}</span><span class="s1">]&#39;</span></div>
+
+
+<div class="viewcode-block" id="GroupEntranceAnnouncementChangeEvent"><a class="viewcode-back" href="../../../mirai_core.models.html#mirai_core.models.events.GroupEntranceAnnouncementChangeEvent">[docs]</a><span class="k">class</span> <span class="nc">GroupEntranceAnnouncementChangeEvent</span><span class="p">(</span><span class="n">Event</span><span class="p">):</span>
+    <span class="nb">type</span> <span class="o">=</span> <span class="n">EventTypes</span><span class="o">.</span><span class="n">GroupEntranceAnnouncementChangeEvent</span>
+    <span class="n">origin</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">new</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">group</span><span class="p">:</span> <span class="n">Group</span>
+    <span class="n">operator</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Member</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;[</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s1">: &#39;</span> \
+               <span class="sa">f</span><span class="s1">&#39;origin=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">origin</span><span class="si">}</span><span class="s1">, new=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">new</span><span class="si">}</span><span class="s1">, group=</span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">group</span><span class="p">)</span><span class="si">}</span><span class="s1">, operator=</span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">operator</span><span class="p">)</span><span class="si">}</span><span class="s1">]&#39;</span></div>
+
+
+<div class="viewcode-block" id="GroupMuteAllEvent"><a class="viewcode-back" href="../../../mirai_core.models.html#mirai_core.models.events.GroupMuteAllEvent">[docs]</a><span class="k">class</span> <span class="nc">GroupMuteAllEvent</span><span class="p">(</span><span class="n">Event</span><span class="p">):</span>
+    <span class="nb">type</span> <span class="o">=</span> <span class="n">EventTypes</span><span class="o">.</span><span class="n">GroupMuteAllEvent</span>
+    <span class="n">origin</span><span class="p">:</span> <span class="nb">bool</span>
+    <span class="n">new</span><span class="p">:</span> <span class="nb">bool</span>
+    <span class="n">group</span><span class="p">:</span> <span class="n">Group</span>
+    <span class="n">operator</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Member</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;[</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s1">: &#39;</span> \
+               <span class="sa">f</span><span class="s1">&#39;origin=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">origin</span><span class="si">}</span><span class="s1">, new=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">new</span><span class="si">}</span><span class="s1">, group=</span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">group</span><span class="p">)</span><span class="si">}</span><span class="s1">, operator=</span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">operator</span><span class="p">)</span><span class="si">}</span><span class="s1">]&#39;</span></div>
+
+
+<div class="viewcode-block" id="GroupAllowAnonymousChatEvent"><a class="viewcode-back" href="../../../mirai_core.models.html#mirai_core.models.events.GroupAllowAnonymousChatEvent">[docs]</a><span class="k">class</span> <span class="nc">GroupAllowAnonymousChatEvent</span><span class="p">(</span><span class="n">Event</span><span class="p">):</span>
+    <span class="nb">type</span> <span class="o">=</span> <span class="n">EventTypes</span><span class="o">.</span><span class="n">GroupAllowAnonymousChatEvent</span>
+    <span class="n">origin</span><span class="p">:</span> <span class="nb">bool</span>
+    <span class="n">new</span><span class="p">:</span> <span class="nb">bool</span>
+    <span class="n">group</span><span class="p">:</span> <span class="n">Group</span>
+    <span class="n">operator</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Member</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;[</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s1">: &#39;</span> \
+               <span class="sa">f</span><span class="s1">&#39;origin=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">origin</span><span class="si">}</span><span class="s1">, new=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">new</span><span class="si">}</span><span class="s1">, group=</span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">group</span><span class="p">)</span><span class="si">}</span><span class="s1">, operator=</span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">operator</span><span class="p">)</span><span class="si">}</span><span class="s1">]&#39;</span></div>
+
+
+<div class="viewcode-block" id="GroupAllowConfessTalkEvent"><a class="viewcode-back" href="../../../mirai_core.models.html#mirai_core.models.events.GroupAllowConfessTalkEvent">[docs]</a><span class="k">class</span> <span class="nc">GroupAllowConfessTalkEvent</span><span class="p">(</span><span class="n">Event</span><span class="p">):</span>
+    <span class="nb">type</span> <span class="o">=</span> <span class="n">EventTypes</span><span class="o">.</span><span class="n">GroupAllowAnonymousChatEvent</span>
+    <span class="n">origin</span><span class="p">:</span> <span class="nb">bool</span>
+    <span class="n">new</span><span class="p">:</span> <span class="nb">bool</span>
+    <span class="n">group</span><span class="p">:</span> <span class="n">Group</span>
+    <span class="n">isByBot</span><span class="p">:</span> <span class="nb">bool</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;[</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s1">: &#39;</span> \
+               <span class="sa">f</span><span class="s1">&#39;origin=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">origin</span><span class="si">}</span><span class="s1">, new=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">new</span><span class="si">}</span><span class="s1">, group=</span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">group</span><span class="p">)</span><span class="si">}</span><span class="s1">, isByBot=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">isByBot</span><span class="si">}</span><span class="s1">]&#39;</span></div>
+
+
+<div class="viewcode-block" id="GroupAllowMemberInviteEvent"><a class="viewcode-back" href="../../../mirai_core.models.html#mirai_core.models.events.GroupAllowMemberInviteEvent">[docs]</a><span class="k">class</span> <span class="nc">GroupAllowMemberInviteEvent</span><span class="p">(</span><span class="n">Event</span><span class="p">):</span>
+    <span class="nb">type</span> <span class="o">=</span> <span class="n">EventTypes</span><span class="o">.</span><span class="n">GroupAllowMemberInviteEvent</span>
+    <span class="n">origin</span><span class="p">:</span> <span class="nb">bool</span>
+    <span class="n">new</span><span class="p">:</span> <span class="nb">bool</span>
+    <span class="n">group</span><span class="p">:</span> <span class="n">Group</span>
+    <span class="n">operator</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Member</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;[</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s1">: &#39;</span> \
+               <span class="sa">f</span><span class="s1">&#39;origin=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">origin</span><span class="si">}</span><span class="s1">, new=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">new</span><span class="si">}</span><span class="s1">, group=</span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">group</span><span class="p">)</span><span class="si">}</span><span class="s1">, operator=</span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">operator</span><span class="p">)</span><span class="si">}</span><span class="s1">]&#39;</span></div>
+
+
+<div class="viewcode-block" id="MemberJoinEvent"><a class="viewcode-back" href="../../../mirai_core.models.html#mirai_core.models.events.MemberJoinEvent">[docs]</a><span class="k">class</span> <span class="nc">MemberJoinEvent</span><span class="p">(</span><span class="n">Event</span><span class="p">):</span>
+    <span class="nb">type</span> <span class="o">=</span> <span class="n">EventTypes</span><span class="o">.</span><span class="n">MemberJoinEvent</span>
+    <span class="n">member</span><span class="p">:</span> <span class="n">Member</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;[</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s1">: &#39;</span> \
+               <span class="sa">f</span><span class="s1">&#39;member=</span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">member</span><span class="p">)</span><span class="si">}</span><span class="s1">]&#39;</span></div>
+
+
+<div class="viewcode-block" id="MemberLeaveEventKick"><a class="viewcode-back" href="../../../mirai_core.models.html#mirai_core.models.events.MemberLeaveEventKick">[docs]</a><span class="k">class</span> <span class="nc">MemberLeaveEventKick</span><span class="p">(</span><span class="n">Event</span><span class="p">):</span>
+    <span class="nb">type</span> <span class="o">=</span> <span class="n">EventTypes</span><span class="o">.</span><span class="n">MemberLeaveEventKick</span>
+    <span class="n">member</span><span class="p">:</span> <span class="n">Member</span>
+    <span class="n">operator</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Member</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;[</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s1">: &#39;</span> \
+               <span class="sa">f</span><span class="s1">&#39;member=</span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">member</span><span class="p">)</span><span class="si">}</span><span class="s1">, operator=</span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">operator</span><span class="p">)</span><span class="si">}</span><span class="s1">]&#39;</span></div>
+
+
+<div class="viewcode-block" id="MemberLeaveEventQuit"><a class="viewcode-back" href="../../../mirai_core.models.html#mirai_core.models.events.MemberLeaveEventQuit">[docs]</a><span class="k">class</span> <span class="nc">MemberLeaveEventQuit</span><span class="p">(</span><span class="n">Event</span><span class="p">):</span>
+    <span class="nb">type</span> <span class="o">=</span> <span class="n">EventTypes</span><span class="o">.</span><span class="n">MemberLeaveEventQuit</span>
+    <span class="n">member</span><span class="p">:</span> <span class="n">Member</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;[</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s1">: &#39;</span> \
+               <span class="sa">f</span><span class="s1">&#39;member=</span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">member</span><span class="p">)</span><span class="si">}</span><span class="s1">]&#39;</span></div>
+
+
+<div class="viewcode-block" id="MemberCardChangeEvent"><a class="viewcode-back" href="../../../mirai_core.models.html#mirai_core.models.events.MemberCardChangeEvent">[docs]</a><span class="k">class</span> <span class="nc">MemberCardChangeEvent</span><span class="p">(</span><span class="n">Event</span><span class="p">):</span>
+    <span class="nb">type</span> <span class="o">=</span> <span class="n">EventTypes</span><span class="o">.</span><span class="n">MemberCardChangeEvent</span>
+    <span class="n">origin</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">new</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">member</span><span class="p">:</span> <span class="n">Member</span>
+    <span class="n">operator</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Member</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;[</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s1">: &#39;</span> \
+               <span class="sa">f</span><span class="s1">&#39;origin=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">origin</span><span class="si">}</span><span class="s1">, new=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">new</span><span class="si">}</span><span class="s1">, member=</span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">member</span><span class="p">)</span><span class="si">}</span><span class="s1">, operator=</span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">operator</span><span class="p">)</span><span class="si">}</span><span class="s1">]&#39;</span></div>
+
+
+<div class="viewcode-block" id="MemberSpecialTitleChangeEvent"><a class="viewcode-back" href="../../../mirai_core.models.html#mirai_core.models.events.MemberSpecialTitleChangeEvent">[docs]</a><span class="k">class</span> <span class="nc">MemberSpecialTitleChangeEvent</span><span class="p">(</span><span class="n">Event</span><span class="p">):</span>
+    <span class="nb">type</span> <span class="o">=</span> <span class="n">EventTypes</span><span class="o">.</span><span class="n">MemberSpecialTitleChangeEvent</span>
+    <span class="n">origin</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">new</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">member</span><span class="p">:</span> <span class="n">Member</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;[</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s1">: &#39;</span> \
+               <span class="sa">f</span><span class="s1">&#39;origin=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">origin</span><span class="si">}</span><span class="s1">, new=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">new</span><span class="si">}</span><span class="s1">, member=</span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">member</span><span class="p">)</span><span class="si">}</span><span class="s1">]&#39;</span></div>
+
+
+<div class="viewcode-block" id="MemberPermissionChangeEvent"><a class="viewcode-back" href="../../../mirai_core.models.html#mirai_core.models.events.MemberPermissionChangeEvent">[docs]</a><span class="k">class</span> <span class="nc">MemberPermissionChangeEvent</span><span class="p">(</span><span class="n">Event</span><span class="p">):</span>
+    <span class="nb">type</span> <span class="o">=</span> <span class="n">EventTypes</span><span class="o">.</span><span class="n">MemberPermissionChangeEvent</span>
+    <span class="n">origin</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">new</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">member</span><span class="p">:</span> <span class="n">Member</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;[</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s1">: &#39;</span> \
+               <span class="sa">f</span><span class="s1">&#39;origin=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">origin</span><span class="si">}</span><span class="s1">, new=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">new</span><span class="si">}</span><span class="s1">, member=</span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">member</span><span class="p">)</span><span class="si">}</span><span class="s1">]&#39;</span></div>
+
+
+<div class="viewcode-block" id="MemberMuteEvent"><a class="viewcode-back" href="../../../mirai_core.models.html#mirai_core.models.events.MemberMuteEvent">[docs]</a><span class="k">class</span> <span class="nc">MemberMuteEvent</span><span class="p">(</span><span class="n">Event</span><span class="p">):</span>
+    <span class="nb">type</span> <span class="o">=</span> <span class="n">EventTypes</span><span class="o">.</span><span class="n">MemberMuteEvent</span>
+    <span class="n">durationSeconds</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">member</span><span class="p">:</span> <span class="n">Member</span>
+    <span class="n">operator</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Member</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;[</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s1">: &#39;</span> \
+               <span class="sa">f</span><span class="s1">&#39;durationSeconds=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">durationSeconds</span><span class="si">}</span><span class="s1">, member=</span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">member</span><span class="p">)</span><span class="si">}</span><span class="s1">, operator=</span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">operator</span><span class="p">)</span><span class="si">}</span><span class="s1">]&#39;</span></div>
+
+
+<div class="viewcode-block" id="MemberUnmuteEvent"><a class="viewcode-back" href="../../../mirai_core.models.html#mirai_core.models.events.MemberUnmuteEvent">[docs]</a><span class="k">class</span> <span class="nc">MemberUnmuteEvent</span><span class="p">(</span><span class="n">Event</span><span class="p">):</span>
+    <span class="nb">type</span> <span class="o">=</span> <span class="n">EventTypes</span><span class="o">.</span><span class="n">MemberUnmuteEvent</span>
+    <span class="n">member</span><span class="p">:</span> <span class="n">Member</span>
+    <span class="n">operator</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Member</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;[</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s1">: &#39;</span> \
+               <span class="sa">f</span><span class="s1">&#39;member=</span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">member</span><span class="p">)</span><span class="si">}</span><span class="s1">, operator=</span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">operator</span><span class="p">)</span><span class="si">}</span><span class="s1">]&#39;</span></div>
+
+
+<div class="viewcode-block" id="FriendMessage"><a class="viewcode-back" href="../../../mirai_core.models.html#mirai_core.models.events.FriendMessage">[docs]</a><span class="k">class</span> <span class="nc">FriendMessage</span><span class="p">(</span><span class="n">Event</span><span class="p">):</span>
+    <span class="nb">type</span><span class="p">:</span> <span class="n">EventTypes</span> <span class="o">=</span> <span class="n">EventTypes</span><span class="o">.</span><span class="n">FriendMessage</span>
+    <span class="n">messageChain</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">MessageChain</span><span class="p">]</span>
+    <span class="n">sender</span><span class="p">:</span> <span class="n">Friend</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;[</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s1">: &#39;</span> \
+               <span class="sa">f</span><span class="s1">&#39;messageChain=</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">messageChain</span><span class="p">)</span><span class="si">}</span><span class="s1">, sender=</span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sender</span><span class="p">)</span><span class="si">}</span><span class="s1">]&#39;</span></div>
+
+
+<div class="viewcode-block" id="GroupMessage"><a class="viewcode-back" href="../../../mirai_core.models.html#mirai_core.models.events.GroupMessage">[docs]</a><span class="k">class</span> <span class="nc">GroupMessage</span><span class="p">(</span><span class="n">Event</span><span class="p">):</span>
+    <span class="nb">type</span><span class="p">:</span> <span class="n">EventTypes</span> <span class="o">=</span> <span class="n">EventTypes</span><span class="o">.</span><span class="n">GroupMessage</span>
+    <span class="n">messageChain</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">MessageChain</span><span class="p">]</span>
+    <span class="n">sender</span><span class="p">:</span> <span class="n">Member</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;[</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s1">: &#39;</span> \
+               <span class="sa">f</span><span class="s1">&#39;messageChain=</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">messageChain</span><span class="p">)</span><span class="si">}</span><span class="s1">, sender=</span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sender</span><span class="p">)</span><span class="si">}</span><span class="s1">]&#39;</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, jqqqqqqqqqq, Chenwe-i-lin
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,38 @@
+mirai\_core.models.message package
+==================================
+
+Submodules
+----------
+
+mirai\_core.models.message.base module
+--------------------------------------
+
+.. automodule:: mirai_core.models.message.base
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+mirai\_core.models.message.components module
+--------------------------------------------
+
+.. automodule:: mirai_core.models.message.components
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+mirai\_core.models.message.types module
+---------------------------------------
+
+.. automodule:: mirai_core.models.message.types
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: mirai_core.models.message
+   :members:
+   :undoc-members:
+   :show-inheritance:

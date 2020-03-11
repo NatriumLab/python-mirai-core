@@ -1,0 +1,1394 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>mirai_core.models package &mdash; Python Mirai Core 0.6.4 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="mirai_core package" href="mirai_core.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Python Mirai Core
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="mirai_core.html">mirai_core package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="mirai_core.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">mirai_core.models package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-mirai_core.models.entity">mirai_core.models.entity module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-mirai_core.models.events">mirai_core.models.events module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-mirai_core.models.message">mirai_core.models.message module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-mirai_core.models">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mirai_core.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mirai_core.html#module-mirai_core.bot">mirai_core.bot module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mirai_core.html#module-mirai_core.exceptions">mirai_core.exceptions module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mirai_core.html#module-mirai_core.log">mirai_core.log module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mirai_core.html#module-mirai_core.network">mirai_core.network module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mirai_core.html#module-mirai_core.updater">mirai_core.updater module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mirai_core.html#module-mirai_core">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Python Mirai Core</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="mirai_core.html">mirai_core package</a> &raquo;</li>
+        
+      <li>mirai_core.models package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/mirai_core.models.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="mirai-core-models-package">
+<h1>mirai_core.models package<a class="headerlink" href="#mirai-core-models-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-mirai_core.models.entity">
+<span id="mirai-core-models-entity-module"></span><h2>mirai_core.models.entity module<a class="headerlink" href="#module-mirai_core.models.entity" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="mirai_core.models.entity.Friend">
+<em class="property">class </em><code class="sig-prename descclassname">mirai_core.models.entity.</code><code class="sig-name descname">Friend</code><span class="sig-paren">(</span><em class="sig-param">**data: Any</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mirai_core/models/entity.html#Friend"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.models.entity.Friend" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pydantic.main.BaseModel</span></code></p>
+<dl class="attribute">
+<dt id="mirai_core.models.entity.Friend.id">
+<code class="sig-name descname">id</code><em class="property">: int</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.entity.Friend.id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.entity.Friend.nickname">
+<code class="sig-name descname">nickname</code><em class="property">: Optional[str]</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.entity.Friend.nickname" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.entity.Friend.remark">
+<code class="sig-name descname">remark</code><em class="property">: Optional[str]</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.entity.Friend.remark" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="mirai_core.models.entity.Friend.get_avatar_url">
+<code class="sig-name descname">get_avatar_url</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="_modules/mirai_core/models/entity.html#Friend.get_avatar_url"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.models.entity.Friend.get_avatar_url" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="mirai_core.models.entity.Permission">
+<em class="property">class </em><code class="sig-prename descclassname">mirai_core.models.entity.</code><code class="sig-name descname">Permission</code><a class="reference internal" href="_modules/mirai_core/models/entity.html#Permission"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.models.entity.Permission" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">enum.Enum</span></code></p>
+<p>An enumeration.</p>
+<dl class="attribute">
+<dt id="mirai_core.models.entity.Permission.Member">
+<code class="sig-name descname">Member</code><em class="property"> = 'MEMBER'</em><a class="headerlink" href="#mirai_core.models.entity.Permission.Member" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.entity.Permission.Administrator">
+<code class="sig-name descname">Administrator</code><em class="property"> = 'ADMINISTRATOR'</em><a class="headerlink" href="#mirai_core.models.entity.Permission.Administrator" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.entity.Permission.Owner">
+<code class="sig-name descname">Owner</code><em class="property"> = 'OWNER'</em><a class="headerlink" href="#mirai_core.models.entity.Permission.Owner" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="mirai_core.models.entity.Group">
+<em class="property">class </em><code class="sig-prename descclassname">mirai_core.models.entity.</code><code class="sig-name descname">Group</code><span class="sig-paren">(</span><em class="sig-param">**data: Any</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mirai_core/models/entity.html#Group"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.models.entity.Group" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pydantic.main.BaseModel</span></code></p>
+<dl class="attribute">
+<dt id="mirai_core.models.entity.Group.id">
+<code class="sig-name descname">id</code><em class="property">: int</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.entity.Group.id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.entity.Group.name">
+<code class="sig-name descname">name</code><em class="property">: str</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.entity.Group.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.entity.Group.permission">
+<code class="sig-name descname">permission</code><em class="property">: Permission</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.entity.Group.permission" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="mirai_core.models.entity.Group.get_avatar_url">
+<code class="sig-name descname">get_avatar_url</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="_modules/mirai_core/models/entity.html#Group.get_avatar_url"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.models.entity.Group.get_avatar_url" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="mirai_core.models.entity.Member">
+<em class="property">class </em><code class="sig-prename descclassname">mirai_core.models.entity.</code><code class="sig-name descname">Member</code><span class="sig-paren">(</span><em class="sig-param">**data: Any</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mirai_core/models/entity.html#Member"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.models.entity.Member" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pydantic.main.BaseModel</span></code></p>
+<dl class="attribute">
+<dt id="mirai_core.models.entity.Member.id">
+<code class="sig-name descname">id</code><em class="property">: int</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.entity.Member.id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.entity.Member.memberName">
+<code class="sig-name descname">memberName</code><em class="property">: str</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.entity.Member.memberName" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.entity.Member.permission">
+<code class="sig-name descname">permission</code><em class="property">: Permission</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.entity.Member.permission" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.entity.Member.group">
+<code class="sig-name descname">group</code><em class="property">: Group</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.entity.Member.group" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="mirai_core.models.entity.Member.get_avatar_url">
+<code class="sig-name descname">get_avatar_url</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="_modules/mirai_core/models/entity.html#Member.get_avatar_url"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.models.entity.Member.get_avatar_url" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="mirai_core.models.entity.MemberChangeableSetting">
+<em class="property">class </em><code class="sig-prename descclassname">mirai_core.models.entity.</code><code class="sig-name descname">MemberChangeableSetting</code><span class="sig-paren">(</span><em class="sig-param">**data: Any</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mirai_core/models/entity.html#MemberChangeableSetting"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.models.entity.MemberChangeableSetting" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pydantic.main.BaseModel</span></code></p>
+<dl class="attribute">
+<dt id="mirai_core.models.entity.MemberChangeableSetting.name">
+<code class="sig-name descname">name</code><em class="property">: str</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.entity.MemberChangeableSetting.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.entity.MemberChangeableSetting.specialTitle">
+<code class="sig-name descname">specialTitle</code><em class="property">: str</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.entity.MemberChangeableSetting.specialTitle" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="mirai_core.models.entity.MemberChangeableSetting.modify">
+<code class="sig-name descname">modify</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mirai_core/models/entity.html#MemberChangeableSetting.modify"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.models.entity.MemberChangeableSetting.modify" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="mirai_core.models.entity.GroupSetting">
+<em class="property">class </em><code class="sig-prename descclassname">mirai_core.models.entity.</code><code class="sig-name descname">GroupSetting</code><span class="sig-paren">(</span><em class="sig-param">**data: Any</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mirai_core/models/entity.html#GroupSetting"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.models.entity.GroupSetting" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pydantic.main.BaseModel</span></code></p>
+<dl class="attribute">
+<dt id="mirai_core.models.entity.GroupSetting.name">
+<code class="sig-name descname">name</code><em class="property">: str</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.entity.GroupSetting.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.entity.GroupSetting.announcement">
+<code class="sig-name descname">announcement</code><em class="property">: str</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.entity.GroupSetting.announcement" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.entity.GroupSetting.confessTalk">
+<code class="sig-name descname">confessTalk</code><em class="property">: bool</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.entity.GroupSetting.confessTalk" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.entity.GroupSetting.allowMemberInvite">
+<code class="sig-name descname">allowMemberInvite</code><em class="property">: bool</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.entity.GroupSetting.allowMemberInvite" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.entity.GroupSetting.autoApprove">
+<code class="sig-name descname">autoApprove</code><em class="property">: bool</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.entity.GroupSetting.autoApprove" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.entity.GroupSetting.anonymousChat">
+<code class="sig-name descname">anonymousChat</code><em class="property">: bool</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.entity.GroupSetting.anonymousChat" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="mirai_core.models.entity.GroupSetting.modify">
+<code class="sig-name descname">modify</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mirai_core/models/entity.html#GroupSetting.modify"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.models.entity.GroupSetting.modify" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-mirai_core.models.events">
+<span id="mirai-core-models-events-module"></span><h2>mirai_core.models.events module<a class="headerlink" href="#module-mirai_core.models.events" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="mirai_core.models.events.EventTypes">
+<em class="property">class </em><code class="sig-prename descclassname">mirai_core.models.events.</code><code class="sig-name descname">EventTypes</code><a class="reference internal" href="_modules/mirai_core/models/events.html#EventTypes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.models.events.EventTypes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">enum.Enum</span></code></p>
+<p>EventTypes is used for registering handlers</p>
+<dl class="attribute">
+<dt id="mirai_core.models.events.EventTypes.BotOnlineEvent">
+<code class="sig-name descname">BotOnlineEvent</code><em class="property"> = 'BotOnlineEvent'</em><a class="headerlink" href="#mirai_core.models.events.EventTypes.BotOnlineEvent" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.events.EventTypes.BotOfflineEventActive">
+<code class="sig-name descname">BotOfflineEventActive</code><em class="property"> = 'BotOfflineEventActive'</em><a class="headerlink" href="#mirai_core.models.events.EventTypes.BotOfflineEventActive" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.events.EventTypes.BotOfflineEventForce">
+<code class="sig-name descname">BotOfflineEventForce</code><em class="property"> = 'BotOfflineEventForce'</em><a class="headerlink" href="#mirai_core.models.events.EventTypes.BotOfflineEventForce" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.events.EventTypes.BotOfflineEventDropped">
+<code class="sig-name descname">BotOfflineEventDropped</code><em class="property"> = 'BotOfflineEventDropped'</em><a class="headerlink" href="#mirai_core.models.events.EventTypes.BotOfflineEventDropped" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.events.EventTypes.BotReloginEvent">
+<code class="sig-name descname">BotReloginEvent</code><em class="property"> = 'BotReloginEvent'</em><a class="headerlink" href="#mirai_core.models.events.EventTypes.BotReloginEvent" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.events.EventTypes.BotGroupPermissionChangeEvent">
+<code class="sig-name descname">BotGroupPermissionChangeEvent</code><em class="property"> = 'BotGroupPermissionChangeEvent'</em><a class="headerlink" href="#mirai_core.models.events.EventTypes.BotGroupPermissionChangeEvent" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.events.EventTypes.BotMuteEvent">
+<code class="sig-name descname">BotMuteEvent</code><em class="property"> = 'BotMuteEvent'</em><a class="headerlink" href="#mirai_core.models.events.EventTypes.BotMuteEvent" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.events.EventTypes.BotUnmuteEvent">
+<code class="sig-name descname">BotUnmuteEvent</code><em class="property"> = 'BotUnmuteEvent'</em><a class="headerlink" href="#mirai_core.models.events.EventTypes.BotUnmuteEvent" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.events.EventTypes.BotJoinGroupEvent">
+<code class="sig-name descname">BotJoinGroupEvent</code><em class="property"> = 'BotJoinGroupEvent'</em><a class="headerlink" href="#mirai_core.models.events.EventTypes.BotJoinGroupEvent" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.events.EventTypes.GroupNameChangeEvent">
+<code class="sig-name descname">GroupNameChangeEvent</code><em class="property"> = 'GroupNameChangeEvent'</em><a class="headerlink" href="#mirai_core.models.events.EventTypes.GroupNameChangeEvent" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.events.EventTypes.GroupEntranceAnnouncementChangeEvent">
+<code class="sig-name descname">GroupEntranceAnnouncementChangeEvent</code><em class="property"> = 'GroupEntranceAnnouncementChangeEvent'</em><a class="headerlink" href="#mirai_core.models.events.EventTypes.GroupEntranceAnnouncementChangeEvent" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.events.EventTypes.GroupMuteAllEvent">
+<code class="sig-name descname">GroupMuteAllEvent</code><em class="property"> = 'GroupMuteAllEvent'</em><a class="headerlink" href="#mirai_core.models.events.EventTypes.GroupMuteAllEvent" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.events.EventTypes.GroupAllowAnonymousChatEvent">
+<code class="sig-name descname">GroupAllowAnonymousChatEvent</code><em class="property"> = 'GroupAllowAnonymousChatEvent'</em><a class="headerlink" href="#mirai_core.models.events.EventTypes.GroupAllowAnonymousChatEvent" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.events.EventTypes.GroupAllowConfessTalkEvent">
+<code class="sig-name descname">GroupAllowConfessTalkEvent</code><em class="property"> = 'GroupAllowConfessTalkEvent'</em><a class="headerlink" href="#mirai_core.models.events.EventTypes.GroupAllowConfessTalkEvent" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.events.EventTypes.GroupAllowMemberInviteEvent">
+<code class="sig-name descname">GroupAllowMemberInviteEvent</code><em class="property"> = 'GroupAllowMemberInviteEvent'</em><a class="headerlink" href="#mirai_core.models.events.EventTypes.GroupAllowMemberInviteEvent" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.events.EventTypes.MemberJoinEvent">
+<code class="sig-name descname">MemberJoinEvent</code><em class="property"> = 'MemberJoinEvent'</em><a class="headerlink" href="#mirai_core.models.events.EventTypes.MemberJoinEvent" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.events.EventTypes.MemberLeaveEventKick">
+<code class="sig-name descname">MemberLeaveEventKick</code><em class="property"> = 'MemberLeaveEventKick'</em><a class="headerlink" href="#mirai_core.models.events.EventTypes.MemberLeaveEventKick" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.events.EventTypes.MemberLeaveEventQuit">
+<code class="sig-name descname">MemberLeaveEventQuit</code><em class="property"> = 'MemberLeaveEventQuit'</em><a class="headerlink" href="#mirai_core.models.events.EventTypes.MemberLeaveEventQuit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.events.EventTypes.MemberCardChangeEvent">
+<code class="sig-name descname">MemberCardChangeEvent</code><em class="property"> = 'MemberCardChangeEvent'</em><a class="headerlink" href="#mirai_core.models.events.EventTypes.MemberCardChangeEvent" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.events.EventTypes.MemberSpecialTitleChangeEvent">
+<code class="sig-name descname">MemberSpecialTitleChangeEvent</code><em class="property"> = 'MemberSpecialTitleChangeEvent'</em><a class="headerlink" href="#mirai_core.models.events.EventTypes.MemberSpecialTitleChangeEvent" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.events.EventTypes.MemberPermissionChangeEvent">
+<code class="sig-name descname">MemberPermissionChangeEvent</code><em class="property"> = 'MemberPermissionChangeEvent'</em><a class="headerlink" href="#mirai_core.models.events.EventTypes.MemberPermissionChangeEvent" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.events.EventTypes.MemberMuteEvent">
+<code class="sig-name descname">MemberMuteEvent</code><em class="property"> = 'MemberMuteEvent'</em><a class="headerlink" href="#mirai_core.models.events.EventTypes.MemberMuteEvent" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.events.EventTypes.MemberUnmuteEvent">
+<code class="sig-name descname">MemberUnmuteEvent</code><em class="property"> = 'MemberUnmuteEvent'</em><a class="headerlink" href="#mirai_core.models.events.EventTypes.MemberUnmuteEvent" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.events.EventTypes.FriendMessage">
+<code class="sig-name descname">FriendMessage</code><em class="property"> = 'FriendMessage'</em><a class="headerlink" href="#mirai_core.models.events.EventTypes.FriendMessage" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.events.EventTypes.GroupMessage">
+<code class="sig-name descname">GroupMessage</code><em class="property"> = 'GroupMessage'</em><a class="headerlink" href="#mirai_core.models.events.EventTypes.GroupMessage" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="mirai_core.models.events.Event">
+<em class="property">class </em><code class="sig-prename descclassname">mirai_core.models.events.</code><code class="sig-name descname">Event</code><span class="sig-paren">(</span><em class="sig-param">**data: Any</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mirai_core/models/events.html#Event"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.models.events.Event" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pydantic.main.BaseModel</span></code></p>
+<dl class="attribute">
+<dt id="mirai_core.models.events.Event.type">
+<code class="sig-name descname">type</code><em class="property">: EventTypes</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.events.Event.type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="mirai_core.models.events.BotOnlineEvent">
+<em class="property">class </em><code class="sig-prename descclassname">mirai_core.models.events.</code><code class="sig-name descname">BotOnlineEvent</code><span class="sig-paren">(</span><em class="sig-param">**data: Any</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mirai_core/models/events.html#BotOnlineEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.models.events.BotOnlineEvent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mirai_core.models.events.Event" title="mirai_core.models.events.Event"><code class="xref py py-class docutils literal notranslate"><span class="pre">mirai_core.models.events.Event</span></code></a></p>
+<dl class="attribute">
+<dt id="mirai_core.models.events.BotOnlineEvent.qq">
+<code class="sig-name descname">qq</code><em class="property">: int</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.events.BotOnlineEvent.qq" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="mirai_core.models.events.BotOfflineEventActive">
+<em class="property">class </em><code class="sig-prename descclassname">mirai_core.models.events.</code><code class="sig-name descname">BotOfflineEventActive</code><span class="sig-paren">(</span><em class="sig-param">**data: Any</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mirai_core/models/events.html#BotOfflineEventActive"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.models.events.BotOfflineEventActive" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mirai_core.models.events.Event" title="mirai_core.models.events.Event"><code class="xref py py-class docutils literal notranslate"><span class="pre">mirai_core.models.events.Event</span></code></a></p>
+<dl class="attribute">
+<dt id="mirai_core.models.events.BotOfflineEventActive.qq">
+<code class="sig-name descname">qq</code><em class="property">: int</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.events.BotOfflineEventActive.qq" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="mirai_core.models.events.BotOfflineEventForce">
+<em class="property">class </em><code class="sig-prename descclassname">mirai_core.models.events.</code><code class="sig-name descname">BotOfflineEventForce</code><span class="sig-paren">(</span><em class="sig-param">**data: Any</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mirai_core/models/events.html#BotOfflineEventForce"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.models.events.BotOfflineEventForce" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mirai_core.models.events.Event" title="mirai_core.models.events.Event"><code class="xref py py-class docutils literal notranslate"><span class="pre">mirai_core.models.events.Event</span></code></a></p>
+<dl class="attribute">
+<dt id="mirai_core.models.events.BotOfflineEventForce.qq">
+<code class="sig-name descname">qq</code><em class="property">: int</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.events.BotOfflineEventForce.qq" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="mirai_core.models.events.BotOfflineEventDropped">
+<em class="property">class </em><code class="sig-prename descclassname">mirai_core.models.events.</code><code class="sig-name descname">BotOfflineEventDropped</code><span class="sig-paren">(</span><em class="sig-param">**data: Any</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mirai_core/models/events.html#BotOfflineEventDropped"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.models.events.BotOfflineEventDropped" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mirai_core.models.events.Event" title="mirai_core.models.events.Event"><code class="xref py py-class docutils literal notranslate"><span class="pre">mirai_core.models.events.Event</span></code></a></p>
+<dl class="attribute">
+<dt id="mirai_core.models.events.BotOfflineEventDropped.qq">
+<code class="sig-name descname">qq</code><em class="property">: int</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.events.BotOfflineEventDropped.qq" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="mirai_core.models.events.BotReloginEvent">
+<em class="property">class </em><code class="sig-prename descclassname">mirai_core.models.events.</code><code class="sig-name descname">BotReloginEvent</code><span class="sig-paren">(</span><em class="sig-param">**data: Any</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mirai_core/models/events.html#BotReloginEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.models.events.BotReloginEvent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mirai_core.models.events.Event" title="mirai_core.models.events.Event"><code class="xref py py-class docutils literal notranslate"><span class="pre">mirai_core.models.events.Event</span></code></a></p>
+<dl class="attribute">
+<dt id="mirai_core.models.events.BotReloginEvent.qq">
+<code class="sig-name descname">qq</code><em class="property">: int</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.events.BotReloginEvent.qq" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="mirai_core.models.events.BotGroupPermissionChangeEvent">
+<em class="property">class </em><code class="sig-prename descclassname">mirai_core.models.events.</code><code class="sig-name descname">BotGroupPermissionChangeEvent</code><span class="sig-paren">(</span><em class="sig-param">**data: Any</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mirai_core/models/events.html#BotGroupPermissionChangeEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.models.events.BotGroupPermissionChangeEvent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mirai_core.models.events.Event" title="mirai_core.models.events.Event"><code class="xref py py-class docutils literal notranslate"><span class="pre">mirai_core.models.events.Event</span></code></a></p>
+<dl class="attribute">
+<dt id="mirai_core.models.events.BotGroupPermissionChangeEvent.origin">
+<code class="sig-name descname">origin</code><em class="property">: Permission</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.events.BotGroupPermissionChangeEvent.origin" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.events.BotGroupPermissionChangeEvent.new">
+<code class="sig-name descname">new</code><em class="property">: Permission</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.events.BotGroupPermissionChangeEvent.new" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.events.BotGroupPermissionChangeEvent.group">
+<code class="sig-name descname">group</code><em class="property">: Group</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.events.BotGroupPermissionChangeEvent.group" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="mirai_core.models.events.BotMuteEvent">
+<em class="property">class </em><code class="sig-prename descclassname">mirai_core.models.events.</code><code class="sig-name descname">BotMuteEvent</code><span class="sig-paren">(</span><em class="sig-param">**data: Any</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mirai_core/models/events.html#BotMuteEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.models.events.BotMuteEvent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mirai_core.models.events.Event" title="mirai_core.models.events.Event"><code class="xref py py-class docutils literal notranslate"><span class="pre">mirai_core.models.events.Event</span></code></a></p>
+<dl class="attribute">
+<dt id="mirai_core.models.events.BotMuteEvent.durationSeconds">
+<code class="sig-name descname">durationSeconds</code><em class="property">: int</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.events.BotMuteEvent.durationSeconds" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.events.BotMuteEvent.operator">
+<code class="sig-name descname">operator</code><em class="property">: Optional[Member]</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.events.BotMuteEvent.operator" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="mirai_core.models.events.BotUnmuteEvent">
+<em class="property">class </em><code class="sig-prename descclassname">mirai_core.models.events.</code><code class="sig-name descname">BotUnmuteEvent</code><span class="sig-paren">(</span><em class="sig-param">**data: Any</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mirai_core/models/events.html#BotUnmuteEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.models.events.BotUnmuteEvent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mirai_core.models.events.Event" title="mirai_core.models.events.Event"><code class="xref py py-class docutils literal notranslate"><span class="pre">mirai_core.models.events.Event</span></code></a></p>
+<dl class="attribute">
+<dt id="mirai_core.models.events.BotUnmuteEvent.operator">
+<code class="sig-name descname">operator</code><em class="property">: Optional[Member]</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.events.BotUnmuteEvent.operator" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="mirai_core.models.events.BotJoinGroupEvent">
+<em class="property">class </em><code class="sig-prename descclassname">mirai_core.models.events.</code><code class="sig-name descname">BotJoinGroupEvent</code><span class="sig-paren">(</span><em class="sig-param">**data: Any</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mirai_core/models/events.html#BotJoinGroupEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.models.events.BotJoinGroupEvent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mirai_core.models.events.Event" title="mirai_core.models.events.Event"><code class="xref py py-class docutils literal notranslate"><span class="pre">mirai_core.models.events.Event</span></code></a></p>
+<dl class="attribute">
+<dt id="mirai_core.models.events.BotJoinGroupEvent.group">
+<code class="sig-name descname">group</code><em class="property">: Group</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.events.BotJoinGroupEvent.group" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="mirai_core.models.events.GroupNameChangeEvent">
+<em class="property">class </em><code class="sig-prename descclassname">mirai_core.models.events.</code><code class="sig-name descname">GroupNameChangeEvent</code><span class="sig-paren">(</span><em class="sig-param">**data: Any</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mirai_core/models/events.html#GroupNameChangeEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.models.events.GroupNameChangeEvent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mirai_core.models.events.Event" title="mirai_core.models.events.Event"><code class="xref py py-class docutils literal notranslate"><span class="pre">mirai_core.models.events.Event</span></code></a></p>
+<dl class="attribute">
+<dt id="mirai_core.models.events.GroupNameChangeEvent.origin">
+<code class="sig-name descname">origin</code><em class="property">: str</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.events.GroupNameChangeEvent.origin" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.events.GroupNameChangeEvent.new">
+<code class="sig-name descname">new</code><em class="property">: str</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.events.GroupNameChangeEvent.new" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.events.GroupNameChangeEvent.group">
+<code class="sig-name descname">group</code><em class="property">: Group</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.events.GroupNameChangeEvent.group" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.events.GroupNameChangeEvent.isByBot">
+<code class="sig-name descname">isByBot</code><em class="property">: bool</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.events.GroupNameChangeEvent.isByBot" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="mirai_core.models.events.GroupEntranceAnnouncementChangeEvent">
+<em class="property">class </em><code class="sig-prename descclassname">mirai_core.models.events.</code><code class="sig-name descname">GroupEntranceAnnouncementChangeEvent</code><span class="sig-paren">(</span><em class="sig-param">**data: Any</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mirai_core/models/events.html#GroupEntranceAnnouncementChangeEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.models.events.GroupEntranceAnnouncementChangeEvent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mirai_core.models.events.Event" title="mirai_core.models.events.Event"><code class="xref py py-class docutils literal notranslate"><span class="pre">mirai_core.models.events.Event</span></code></a></p>
+<dl class="attribute">
+<dt id="mirai_core.models.events.GroupEntranceAnnouncementChangeEvent.origin">
+<code class="sig-name descname">origin</code><em class="property">: str</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.events.GroupEntranceAnnouncementChangeEvent.origin" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.events.GroupEntranceAnnouncementChangeEvent.new">
+<code class="sig-name descname">new</code><em class="property">: str</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.events.GroupEntranceAnnouncementChangeEvent.new" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.events.GroupEntranceAnnouncementChangeEvent.group">
+<code class="sig-name descname">group</code><em class="property">: Group</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.events.GroupEntranceAnnouncementChangeEvent.group" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.events.GroupEntranceAnnouncementChangeEvent.operator">
+<code class="sig-name descname">operator</code><em class="property">: Optional[Member]</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.events.GroupEntranceAnnouncementChangeEvent.operator" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="mirai_core.models.events.GroupMuteAllEvent">
+<em class="property">class </em><code class="sig-prename descclassname">mirai_core.models.events.</code><code class="sig-name descname">GroupMuteAllEvent</code><span class="sig-paren">(</span><em class="sig-param">**data: Any</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mirai_core/models/events.html#GroupMuteAllEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.models.events.GroupMuteAllEvent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mirai_core.models.events.Event" title="mirai_core.models.events.Event"><code class="xref py py-class docutils literal notranslate"><span class="pre">mirai_core.models.events.Event</span></code></a></p>
+<dl class="attribute">
+<dt id="mirai_core.models.events.GroupMuteAllEvent.origin">
+<code class="sig-name descname">origin</code><em class="property">: bool</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.events.GroupMuteAllEvent.origin" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.events.GroupMuteAllEvent.new">
+<code class="sig-name descname">new</code><em class="property">: bool</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.events.GroupMuteAllEvent.new" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.events.GroupMuteAllEvent.group">
+<code class="sig-name descname">group</code><em class="property">: Group</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.events.GroupMuteAllEvent.group" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.events.GroupMuteAllEvent.operator">
+<code class="sig-name descname">operator</code><em class="property">: Optional[Member]</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.events.GroupMuteAllEvent.operator" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="mirai_core.models.events.GroupAllowAnonymousChatEvent">
+<em class="property">class </em><code class="sig-prename descclassname">mirai_core.models.events.</code><code class="sig-name descname">GroupAllowAnonymousChatEvent</code><span class="sig-paren">(</span><em class="sig-param">**data: Any</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mirai_core/models/events.html#GroupAllowAnonymousChatEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.models.events.GroupAllowAnonymousChatEvent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mirai_core.models.events.Event" title="mirai_core.models.events.Event"><code class="xref py py-class docutils literal notranslate"><span class="pre">mirai_core.models.events.Event</span></code></a></p>
+<dl class="attribute">
+<dt id="mirai_core.models.events.GroupAllowAnonymousChatEvent.origin">
+<code class="sig-name descname">origin</code><em class="property">: bool</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.events.GroupAllowAnonymousChatEvent.origin" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.events.GroupAllowAnonymousChatEvent.new">
+<code class="sig-name descname">new</code><em class="property">: bool</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.events.GroupAllowAnonymousChatEvent.new" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.events.GroupAllowAnonymousChatEvent.group">
+<code class="sig-name descname">group</code><em class="property">: Group</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.events.GroupAllowAnonymousChatEvent.group" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.events.GroupAllowAnonymousChatEvent.operator">
+<code class="sig-name descname">operator</code><em class="property">: Optional[Member]</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.events.GroupAllowAnonymousChatEvent.operator" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="mirai_core.models.events.GroupAllowConfessTalkEvent">
+<em class="property">class </em><code class="sig-prename descclassname">mirai_core.models.events.</code><code class="sig-name descname">GroupAllowConfessTalkEvent</code><span class="sig-paren">(</span><em class="sig-param">**data: Any</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mirai_core/models/events.html#GroupAllowConfessTalkEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.models.events.GroupAllowConfessTalkEvent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mirai_core.models.events.Event" title="mirai_core.models.events.Event"><code class="xref py py-class docutils literal notranslate"><span class="pre">mirai_core.models.events.Event</span></code></a></p>
+<dl class="attribute">
+<dt id="mirai_core.models.events.GroupAllowConfessTalkEvent.origin">
+<code class="sig-name descname">origin</code><em class="property">: bool</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.events.GroupAllowConfessTalkEvent.origin" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.events.GroupAllowConfessTalkEvent.new">
+<code class="sig-name descname">new</code><em class="property">: bool</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.events.GroupAllowConfessTalkEvent.new" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.events.GroupAllowConfessTalkEvent.group">
+<code class="sig-name descname">group</code><em class="property">: Group</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.events.GroupAllowConfessTalkEvent.group" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.events.GroupAllowConfessTalkEvent.isByBot">
+<code class="sig-name descname">isByBot</code><em class="property">: bool</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.events.GroupAllowConfessTalkEvent.isByBot" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="mirai_core.models.events.GroupAllowMemberInviteEvent">
+<em class="property">class </em><code class="sig-prename descclassname">mirai_core.models.events.</code><code class="sig-name descname">GroupAllowMemberInviteEvent</code><span class="sig-paren">(</span><em class="sig-param">**data: Any</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mirai_core/models/events.html#GroupAllowMemberInviteEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.models.events.GroupAllowMemberInviteEvent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mirai_core.models.events.Event" title="mirai_core.models.events.Event"><code class="xref py py-class docutils literal notranslate"><span class="pre">mirai_core.models.events.Event</span></code></a></p>
+<dl class="attribute">
+<dt id="mirai_core.models.events.GroupAllowMemberInviteEvent.origin">
+<code class="sig-name descname">origin</code><em class="property">: bool</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.events.GroupAllowMemberInviteEvent.origin" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.events.GroupAllowMemberInviteEvent.new">
+<code class="sig-name descname">new</code><em class="property">: bool</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.events.GroupAllowMemberInviteEvent.new" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.events.GroupAllowMemberInviteEvent.group">
+<code class="sig-name descname">group</code><em class="property">: Group</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.events.GroupAllowMemberInviteEvent.group" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.events.GroupAllowMemberInviteEvent.operator">
+<code class="sig-name descname">operator</code><em class="property">: Optional[Member]</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.events.GroupAllowMemberInviteEvent.operator" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="mirai_core.models.events.MemberJoinEvent">
+<em class="property">class </em><code class="sig-prename descclassname">mirai_core.models.events.</code><code class="sig-name descname">MemberJoinEvent</code><span class="sig-paren">(</span><em class="sig-param">**data: Any</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mirai_core/models/events.html#MemberJoinEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.models.events.MemberJoinEvent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mirai_core.models.events.Event" title="mirai_core.models.events.Event"><code class="xref py py-class docutils literal notranslate"><span class="pre">mirai_core.models.events.Event</span></code></a></p>
+<dl class="attribute">
+<dt id="mirai_core.models.events.MemberJoinEvent.member">
+<code class="sig-name descname">member</code><em class="property">: Member</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.events.MemberJoinEvent.member" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="mirai_core.models.events.MemberLeaveEventKick">
+<em class="property">class </em><code class="sig-prename descclassname">mirai_core.models.events.</code><code class="sig-name descname">MemberLeaveEventKick</code><span class="sig-paren">(</span><em class="sig-param">**data: Any</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mirai_core/models/events.html#MemberLeaveEventKick"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.models.events.MemberLeaveEventKick" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mirai_core.models.events.Event" title="mirai_core.models.events.Event"><code class="xref py py-class docutils literal notranslate"><span class="pre">mirai_core.models.events.Event</span></code></a></p>
+<dl class="attribute">
+<dt id="mirai_core.models.events.MemberLeaveEventKick.member">
+<code class="sig-name descname">member</code><em class="property">: Member</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.events.MemberLeaveEventKick.member" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.events.MemberLeaveEventKick.operator">
+<code class="sig-name descname">operator</code><em class="property">: Optional[Member]</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.events.MemberLeaveEventKick.operator" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="mirai_core.models.events.MemberLeaveEventQuit">
+<em class="property">class </em><code class="sig-prename descclassname">mirai_core.models.events.</code><code class="sig-name descname">MemberLeaveEventQuit</code><span class="sig-paren">(</span><em class="sig-param">**data: Any</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mirai_core/models/events.html#MemberLeaveEventQuit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.models.events.MemberLeaveEventQuit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mirai_core.models.events.Event" title="mirai_core.models.events.Event"><code class="xref py py-class docutils literal notranslate"><span class="pre">mirai_core.models.events.Event</span></code></a></p>
+<dl class="attribute">
+<dt id="mirai_core.models.events.MemberLeaveEventQuit.member">
+<code class="sig-name descname">member</code><em class="property">: Member</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.events.MemberLeaveEventQuit.member" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="mirai_core.models.events.MemberCardChangeEvent">
+<em class="property">class </em><code class="sig-prename descclassname">mirai_core.models.events.</code><code class="sig-name descname">MemberCardChangeEvent</code><span class="sig-paren">(</span><em class="sig-param">**data: Any</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mirai_core/models/events.html#MemberCardChangeEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.models.events.MemberCardChangeEvent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mirai_core.models.events.Event" title="mirai_core.models.events.Event"><code class="xref py py-class docutils literal notranslate"><span class="pre">mirai_core.models.events.Event</span></code></a></p>
+<dl class="attribute">
+<dt id="mirai_core.models.events.MemberCardChangeEvent.origin">
+<code class="sig-name descname">origin</code><em class="property">: str</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.events.MemberCardChangeEvent.origin" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.events.MemberCardChangeEvent.new">
+<code class="sig-name descname">new</code><em class="property">: str</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.events.MemberCardChangeEvent.new" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.events.MemberCardChangeEvent.member">
+<code class="sig-name descname">member</code><em class="property">: Member</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.events.MemberCardChangeEvent.member" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.events.MemberCardChangeEvent.operator">
+<code class="sig-name descname">operator</code><em class="property">: Optional[Member]</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.events.MemberCardChangeEvent.operator" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="mirai_core.models.events.MemberSpecialTitleChangeEvent">
+<em class="property">class </em><code class="sig-prename descclassname">mirai_core.models.events.</code><code class="sig-name descname">MemberSpecialTitleChangeEvent</code><span class="sig-paren">(</span><em class="sig-param">**data: Any</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mirai_core/models/events.html#MemberSpecialTitleChangeEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.models.events.MemberSpecialTitleChangeEvent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mirai_core.models.events.Event" title="mirai_core.models.events.Event"><code class="xref py py-class docutils literal notranslate"><span class="pre">mirai_core.models.events.Event</span></code></a></p>
+<dl class="attribute">
+<dt id="mirai_core.models.events.MemberSpecialTitleChangeEvent.origin">
+<code class="sig-name descname">origin</code><em class="property">: str</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.events.MemberSpecialTitleChangeEvent.origin" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.events.MemberSpecialTitleChangeEvent.new">
+<code class="sig-name descname">new</code><em class="property">: str</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.events.MemberSpecialTitleChangeEvent.new" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.events.MemberSpecialTitleChangeEvent.member">
+<code class="sig-name descname">member</code><em class="property">: Member</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.events.MemberSpecialTitleChangeEvent.member" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="mirai_core.models.events.MemberPermissionChangeEvent">
+<em class="property">class </em><code class="sig-prename descclassname">mirai_core.models.events.</code><code class="sig-name descname">MemberPermissionChangeEvent</code><span class="sig-paren">(</span><em class="sig-param">**data: Any</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mirai_core/models/events.html#MemberPermissionChangeEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.models.events.MemberPermissionChangeEvent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mirai_core.models.events.Event" title="mirai_core.models.events.Event"><code class="xref py py-class docutils literal notranslate"><span class="pre">mirai_core.models.events.Event</span></code></a></p>
+<dl class="attribute">
+<dt id="mirai_core.models.events.MemberPermissionChangeEvent.origin">
+<code class="sig-name descname">origin</code><em class="property">: str</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.events.MemberPermissionChangeEvent.origin" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.events.MemberPermissionChangeEvent.new">
+<code class="sig-name descname">new</code><em class="property">: str</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.events.MemberPermissionChangeEvent.new" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.events.MemberPermissionChangeEvent.member">
+<code class="sig-name descname">member</code><em class="property">: Member</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.events.MemberPermissionChangeEvent.member" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="mirai_core.models.events.MemberMuteEvent">
+<em class="property">class </em><code class="sig-prename descclassname">mirai_core.models.events.</code><code class="sig-name descname">MemberMuteEvent</code><span class="sig-paren">(</span><em class="sig-param">**data: Any</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mirai_core/models/events.html#MemberMuteEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.models.events.MemberMuteEvent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mirai_core.models.events.Event" title="mirai_core.models.events.Event"><code class="xref py py-class docutils literal notranslate"><span class="pre">mirai_core.models.events.Event</span></code></a></p>
+<dl class="attribute">
+<dt id="mirai_core.models.events.MemberMuteEvent.durationSeconds">
+<code class="sig-name descname">durationSeconds</code><em class="property">: int</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.events.MemberMuteEvent.durationSeconds" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.events.MemberMuteEvent.member">
+<code class="sig-name descname">member</code><em class="property">: Member</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.events.MemberMuteEvent.member" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.events.MemberMuteEvent.operator">
+<code class="sig-name descname">operator</code><em class="property">: Optional[Member]</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.events.MemberMuteEvent.operator" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="mirai_core.models.events.MemberUnmuteEvent">
+<em class="property">class </em><code class="sig-prename descclassname">mirai_core.models.events.</code><code class="sig-name descname">MemberUnmuteEvent</code><span class="sig-paren">(</span><em class="sig-param">**data: Any</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mirai_core/models/events.html#MemberUnmuteEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.models.events.MemberUnmuteEvent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mirai_core.models.events.Event" title="mirai_core.models.events.Event"><code class="xref py py-class docutils literal notranslate"><span class="pre">mirai_core.models.events.Event</span></code></a></p>
+<dl class="attribute">
+<dt id="mirai_core.models.events.MemberUnmuteEvent.member">
+<code class="sig-name descname">member</code><em class="property">: Member</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.events.MemberUnmuteEvent.member" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.events.MemberUnmuteEvent.operator">
+<code class="sig-name descname">operator</code><em class="property">: Optional[Member]</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.events.MemberUnmuteEvent.operator" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="mirai_core.models.events.FriendMessage">
+<em class="property">class </em><code class="sig-prename descclassname">mirai_core.models.events.</code><code class="sig-name descname">FriendMessage</code><span class="sig-paren">(</span><em class="sig-param">**data: Any</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mirai_core/models/events.html#FriendMessage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.models.events.FriendMessage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mirai_core.models.events.Event" title="mirai_core.models.events.Event"><code class="xref py py-class docutils literal notranslate"><span class="pre">mirai_core.models.events.Event</span></code></a></p>
+<dl class="attribute">
+<dt id="mirai_core.models.events.FriendMessage.type">
+<code class="sig-name descname">type</code><em class="property">: EventTypes</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.events.FriendMessage.type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.events.FriendMessage.messageChain">
+<code class="sig-name descname">messageChain</code><em class="property">: Optional[MessageChain]</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.events.FriendMessage.messageChain" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.events.FriendMessage.sender">
+<code class="sig-name descname">sender</code><em class="property">: Friend</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.events.FriendMessage.sender" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="mirai_core.models.events.GroupMessage">
+<em class="property">class </em><code class="sig-prename descclassname">mirai_core.models.events.</code><code class="sig-name descname">GroupMessage</code><span class="sig-paren">(</span><em class="sig-param">**data: Any</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mirai_core/models/events.html#GroupMessage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.models.events.GroupMessage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mirai_core.models.events.Event" title="mirai_core.models.events.Event"><code class="xref py py-class docutils literal notranslate"><span class="pre">mirai_core.models.events.Event</span></code></a></p>
+<dl class="attribute">
+<dt id="mirai_core.models.events.GroupMessage.type">
+<code class="sig-name descname">type</code><em class="property">: EventTypes</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.events.GroupMessage.type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.events.GroupMessage.messageChain">
+<code class="sig-name descname">messageChain</code><em class="property">: Optional[MessageChain]</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.events.GroupMessage.messageChain" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.events.GroupMessage.sender">
+<code class="sig-name descname">sender</code><em class="property">: Member</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.events.GroupMessage.sender" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-mirai_core.models.message">
+<span id="mirai-core-models-message-module"></span><h2>mirai_core.models.message module<a class="headerlink" href="#module-mirai_core.models.message" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="mirai_core.models.message.MessageComponentTypes">
+<em class="property">class </em><code class="sig-prename descclassname">mirai_core.models.message.</code><code class="sig-name descname">MessageComponentTypes</code><a class="reference internal" href="_modules/mirai_core/models/message.html#MessageComponentTypes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.models.message.MessageComponentTypes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">enum.Enum</span></code></p>
+<p>An enumeration.</p>
+<dl class="attribute">
+<dt id="mirai_core.models.message.MessageComponentTypes.Source">
+<code class="sig-name descname">Source</code><em class="property"> = 'Source'</em><a class="headerlink" href="#mirai_core.models.message.MessageComponentTypes.Source" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.message.MessageComponentTypes.Plain">
+<code class="sig-name descname">Plain</code><em class="property"> = 'Plain'</em><a class="headerlink" href="#mirai_core.models.message.MessageComponentTypes.Plain" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.message.MessageComponentTypes.Face">
+<code class="sig-name descname">Face</code><em class="property"> = 'Face'</em><a class="headerlink" href="#mirai_core.models.message.MessageComponentTypes.Face" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.message.MessageComponentTypes.At">
+<code class="sig-name descname">At</code><em class="property"> = 'At'</em><a class="headerlink" href="#mirai_core.models.message.MessageComponentTypes.At" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.message.MessageComponentTypes.AtAll">
+<code class="sig-name descname">AtAll</code><em class="property"> = 'AtAll'</em><a class="headerlink" href="#mirai_core.models.message.MessageComponentTypes.AtAll" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.message.MessageComponentTypes.Image">
+<code class="sig-name descname">Image</code><em class="property"> = 'Image'</em><a class="headerlink" href="#mirai_core.models.message.MessageComponentTypes.Image" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.message.MessageComponentTypes.Quote">
+<code class="sig-name descname">Quote</code><em class="property"> = 'Quote'</em><a class="headerlink" href="#mirai_core.models.message.MessageComponentTypes.Quote" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.message.MessageComponentTypes.Xml">
+<code class="sig-name descname">Xml</code><em class="property"> = 'Xml'</em><a class="headerlink" href="#mirai_core.models.message.MessageComponentTypes.Xml" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.message.MessageComponentTypes.Json">
+<code class="sig-name descname">Json</code><em class="property"> = 'Json'</em><a class="headerlink" href="#mirai_core.models.message.MessageComponentTypes.Json" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.message.MessageComponentTypes.App">
+<code class="sig-name descname">App</code><em class="property"> = 'App'</em><a class="headerlink" href="#mirai_core.models.message.MessageComponentTypes.App" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.message.MessageComponentTypes.Unknown">
+<code class="sig-name descname">Unknown</code><em class="property"> = 'Unknown'</em><a class="headerlink" href="#mirai_core.models.message.MessageComponentTypes.Unknown" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="mirai_core.models.message.BaseMessageComponent">
+<em class="property">class </em><code class="sig-prename descclassname">mirai_core.models.message.</code><code class="sig-name descname">BaseMessageComponent</code><span class="sig-paren">(</span><em class="sig-param">**data: Any</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mirai_core/models/message.html#BaseMessageComponent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.models.message.BaseMessageComponent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pydantic.main.BaseModel</span></code></p>
+<dl class="attribute">
+<dt id="mirai_core.models.message.BaseMessageComponent.type">
+<code class="sig-name descname">type</code><em class="property">: MessageComponentTypes</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.message.BaseMessageComponent.type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="mirai_core.models.message.MessageChain">
+<em class="property">class </em><code class="sig-prename descclassname">mirai_core.models.message.</code><code class="sig-name descname">MessageChain</code><span class="sig-paren">(</span><em class="sig-param">**data: Any</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mirai_core/models/message.html#MessageChain"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.models.message.MessageChain" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pydantic.main.BaseModel</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">collections.abc.MutableSequence</span></code></p>
+<dl class="method">
+<dt id="mirai_core.models.message.MessageChain.insert">
+<code class="sig-name descname">insert</code><span class="sig-paren">(</span><em class="sig-param">index: int</em>, <em class="sig-param">object</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/mirai_core/models/message.html#MessageChain.insert"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.models.message.MessageChain.insert" title="Permalink to this definition">¶</a></dt>
+<dd><p>S.insert(index, value) – insert value before index</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mirai_core.models.message.MessageChain.custom_parse">
+<em class="property">classmethod </em><code class="sig-name descname">custom_parse</code><span class="sig-paren">(</span><em class="sig-param">value: List[Dict]</em><span class="sig-paren">)</span> &#x2192; mirai_core.models.message.MessageChain<a class="reference internal" href="_modules/mirai_core/models/message.html#MessageChain.custom_parse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.models.message.MessageChain.custom_parse" title="Permalink to this definition">¶</a></dt>
+<dd><p>construct message chain from dict
+used only when receiving messages from mirai</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>value</strong> – dict contains message components</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>MessageChain</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="mirai_core.models.message.MessageChain.has">
+<code class="sig-name descname">has</code><span class="sig-paren">(</span><em class="sig-param">component_class</em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/mirai_core/models/message.html#MessageChain.has"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.models.message.MessageChain.has" title="Permalink to this definition">¶</a></dt>
+<dd><p>test if any item in MessageChain is component_class</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>component_class</strong> – the class for the component</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>boolean</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="mirai_core.models.message.MessageChain.get_first">
+<code class="sig-name descname">get_first</code><span class="sig-paren">(</span><em class="sig-param">component_class</em><span class="sig-paren">)</span> &#x2192; Optional[mirai_core.models.message.BaseMessageComponent]<a class="reference internal" href="_modules/mirai_core/models/message.html#MessageChain.get_first"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.models.message.MessageChain.get_first" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the first component with component_class</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>component_class</strong> – the class for the component</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None or the component</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="mirai_core.models.message.MessageChain.get_all">
+<code class="sig-name descname">get_all</code><span class="sig-paren">(</span><em class="sig-param">component_class</em><span class="sig-paren">)</span> &#x2192; List[mirai_core.models.message.BaseMessageComponent]<a class="reference internal" href="_modules/mirai_core/models/message.html#MessageChain.get_all"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.models.message.MessageChain.get_all" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="mirai_core.models.message.MessageChain.get_source">
+<code class="sig-name descname">get_source</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; mirai_core.models.message.Source<a class="reference internal" href="_modules/mirai_core/models/message.html#MessageChain.get_source"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.models.message.MessageChain.get_source" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="mirai_core.models.message.MessageChain.get_quote">
+<code class="sig-name descname">get_quote</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; mirai_core.models.message.Quote<a class="reference internal" href="_modules/mirai_core/models/message.html#MessageChain.get_quote"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.models.message.MessageChain.get_quote" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="mirai_core.models.message.Source">
+<em class="property">class </em><code class="sig-prename descclassname">mirai_core.models.message.</code><code class="sig-name descname">Source</code><span class="sig-paren">(</span><em class="sig-param">**data: Any</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mirai_core/models/message.html#Source"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.models.message.Source" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mirai_core.models.message.BaseMessageComponent" title="mirai_core.models.message.BaseMessageComponent"><code class="xref py py-class docutils literal notranslate"><span class="pre">mirai_core.models.message.BaseMessageComponent</span></code></a></p>
+<p>The source of the message
+Not a valid component for outbound message</p>
+<dl class="attribute">
+<dt id="mirai_core.models.message.Source.id">
+<code class="sig-name descname">id</code><em class="property">: int</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.message.Source.id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.message.Source.time">
+<code class="sig-name descname">time</code><em class="property">: datetime.datetime</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.message.Source.time" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="mirai_core.models.message.Plain">
+<em class="property">class </em><code class="sig-prename descclassname">mirai_core.models.message.</code><code class="sig-name descname">Plain</code><span class="sig-paren">(</span><em class="sig-param">text: str</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mirai_core/models/message.html#Plain"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.models.message.Plain" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mirai_core.models.message.BaseMessageComponent" title="mirai_core.models.message.BaseMessageComponent"><code class="xref py py-class docutils literal notranslate"><span class="pre">mirai_core.models.message.BaseMessageComponent</span></code></a></p>
+<p>Text component
+Available for outbound message</p>
+<p>Construct text component</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>text</strong> – message text</p>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="mirai_core.models.message.Plain.text">
+<code class="sig-name descname">text</code><em class="property">: str</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.message.Plain.text" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="mirai_core.models.message.Quote">
+<em class="property">class </em><code class="sig-prename descclassname">mirai_core.models.message.</code><code class="sig-name descname">Quote</code><span class="sig-paren">(</span><em class="sig-param">**data: Any</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mirai_core/models/message.html#Quote"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.models.message.Quote" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mirai_core.models.message.BaseMessageComponent" title="mirai_core.models.message.BaseMessageComponent"><code class="xref py py-class docutils literal notranslate"><span class="pre">mirai_core.models.message.BaseMessageComponent</span></code></a></p>
+<p>Quote component
+Not a valid component for outbound message</p>
+<dl class="attribute">
+<dt id="mirai_core.models.message.Quote.id">
+<code class="sig-name descname">id</code><em class="property">: int</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.message.Quote.id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.message.Quote.groupId">
+<code class="sig-name descname">groupId</code><em class="property">: int</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.message.Quote.groupId" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.message.Quote.senderId">
+<code class="sig-name descname">senderId</code><em class="property">: int</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.message.Quote.senderId" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.message.Quote.origin">
+<code class="sig-name descname">origin</code><em class="property">: MessageChain</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.message.Quote.origin" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="mirai_core.models.message.At">
+<em class="property">class </em><code class="sig-prename descclassname">mirai_core.models.message.</code><code class="sig-name descname">At</code><span class="sig-paren">(</span><em class="sig-param">target</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mirai_core/models/message.html#At"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.models.message.At" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pydantic.generics.GenericModel</span></code>, <a class="reference internal" href="#mirai_core.models.message.BaseMessageComponent" title="mirai_core.models.message.BaseMessageComponent"><code class="xref py py-class docutils literal notranslate"><span class="pre">mirai_core.models.message.BaseMessageComponent</span></code></a></p>
+<p>At component
+Available for outbound message</p>
+<p>Construct at component</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>target</strong> – target qq number</p>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="mirai_core.models.message.At.target">
+<code class="sig-name descname">target</code><em class="property">: int</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.message.At.target" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.message.At.display">
+<code class="sig-name descname">display</code><em class="property">: str</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.message.At.display" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="mirai_core.models.message.AtAll">
+<em class="property">class </em><code class="sig-prename descclassname">mirai_core.models.message.</code><code class="sig-name descname">AtAll</code><span class="sig-paren">(</span><em class="sig-param">**data: Any</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mirai_core/models/message.html#AtAll"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.models.message.AtAll" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mirai_core.models.message.BaseMessageComponent" title="mirai_core.models.message.BaseMessageComponent"><code class="xref py py-class docutils literal notranslate"><span class="pre">mirai_core.models.message.BaseMessageComponent</span></code></a></p>
+<p>AtAll component
+Available for outbound message</p>
+<dl class="attribute">
+<dt id="mirai_core.models.message.AtAll.type">
+<code class="sig-name descname">type</code><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.message.AtAll.type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="mirai_core.models.message.Face">
+<em class="property">class </em><code class="sig-prename descclassname">mirai_core.models.message.</code><code class="sig-name descname">Face</code><span class="sig-paren">(</span><em class="sig-param">face_id</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mirai_core/models/message.html#Face"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.models.message.Face" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mirai_core.models.message.BaseMessageComponent" title="mirai_core.models.message.BaseMessageComponent"><code class="xref py py-class docutils literal notranslate"><span class="pre">mirai_core.models.message.BaseMessageComponent</span></code></a></p>
+<p>Face component
+Available for outbound message</p>
+<p>Construct Face component</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>face_id</strong> – unsigned 8-bit face id</p>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="mirai_core.models.message.Face.faceId">
+<code class="sig-name descname">faceId</code><em class="property">: int</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.message.Face.faceId" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="mirai_core.models.message.Image">
+<em class="property">class </em><code class="sig-prename descclassname">mirai_core.models.message.</code><code class="sig-name descname">Image</code><span class="sig-paren">(</span><em class="sig-param">imageId</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mirai_core/models/message.html#Image"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.models.message.Image" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mirai_core.models.message.BaseMessageComponent" title="mirai_core.models.message.BaseMessageComponent"><code class="xref py py-class docutils literal notranslate"><span class="pre">mirai_core.models.message.BaseMessageComponent</span></code></a></p>
+<p>Received image component
+Available for outbound message</p>
+<p>Construct Image from mirai styled uuid</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>imageId</strong> – uuid as str (see <a class="reference external" href="https://github.com/mamoe/mirai-api-http/blob/master/MessageType.md#image">https://github.com/mamoe/mirai-api-http/blob/master/MessageType.md#image</a>)</p>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="mirai_core.models.message.Image.imageId">
+<code class="sig-name descname">imageId</code><em class="property">: str</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.message.Image.imageId" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.message.Image.url">
+<code class="sig-name descname">url</code><em class="property">: Optional[HttpUrl]</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.message.Image.url" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="mirai_core.models.message.Image.image_type">
+<em class="property">property </em><code class="sig-name descname">image_type</code><a class="headerlink" href="#mirai_core.models.message.Image.image_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>get image type from pattern</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>‘friend’ or ‘group’, if uuid is invalid format, return ‘unknown’</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="mirai_core.models.message.LocalImage">
+<em class="property">class </em><code class="sig-prename descclassname">mirai_core.models.message.</code><code class="sig-name descname">LocalImage</code><span class="sig-paren">(</span><em class="sig-param">path=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mirai_core/models/message.html#LocalImage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.models.message.LocalImage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Local image component
+Available for outbound message</p>
+<p>Construct LocalImage component</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>path</strong> – absolute path on disk</p>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="mirai_core.models.message.LocalImage.path">
+<code class="sig-name descname">path</code><em class="property">: Path</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.message.LocalImage.path" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="mirai_core.models.message.Unknown">
+<em class="property">class </em><code class="sig-prename descclassname">mirai_core.models.message.</code><code class="sig-name descname">Unknown</code><span class="sig-paren">(</span><em class="sig-param">**data: Any</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mirai_core/models/message.html#Unknown"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.models.message.Unknown" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mirai_core.models.message.BaseMessageComponent" title="mirai_core.models.message.BaseMessageComponent"><code class="xref py py-class docutils literal notranslate"><span class="pre">mirai_core.models.message.BaseMessageComponent</span></code></a></p>
+<p>Unknown component
+Not a valid component for outbound message</p>
+<dl class="attribute">
+<dt id="mirai_core.models.message.Unknown.text">
+<code class="sig-name descname">text</code><em class="property">: str</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.message.Unknown.text" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="mirai_core.models.message.ComponentTypes">
+<em class="property">class </em><code class="sig-prename descclassname">mirai_core.models.message.</code><code class="sig-name descname">ComponentTypes</code><a class="reference internal" href="_modules/mirai_core/models/message.html#ComponentTypes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.models.message.ComponentTypes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">enum.Enum</span></code></p>
+<p>An enumeration.</p>
+<dl class="attribute">
+<dt id="mirai_core.models.message.ComponentTypes.Plain">
+<code class="sig-name descname">Plain</code><em class="property"> = &lt;class 'mirai_core.models.message.Plain'&gt;</em><a class="headerlink" href="#mirai_core.models.message.ComponentTypes.Plain" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.message.ComponentTypes.Source">
+<code class="sig-name descname">Source</code><em class="property"> = &lt;class 'mirai_core.models.message.Source'&gt;</em><a class="headerlink" href="#mirai_core.models.message.ComponentTypes.Source" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.message.ComponentTypes.At">
+<code class="sig-name descname">At</code><em class="property"> = &lt;class 'mirai_core.models.message.At'&gt;</em><a class="headerlink" href="#mirai_core.models.message.ComponentTypes.At" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.message.ComponentTypes.AtAll">
+<code class="sig-name descname">AtAll</code><em class="property"> = &lt;class 'mirai_core.models.message.AtAll'&gt;</em><a class="headerlink" href="#mirai_core.models.message.ComponentTypes.AtAll" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.message.ComponentTypes.Face">
+<code class="sig-name descname">Face</code><em class="property"> = &lt;class 'mirai_core.models.message.Face'&gt;</em><a class="headerlink" href="#mirai_core.models.message.ComponentTypes.Face" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.message.ComponentTypes.Image">
+<code class="sig-name descname">Image</code><em class="property"> = &lt;class 'mirai_core.models.message.Image'&gt;</em><a class="headerlink" href="#mirai_core.models.message.ComponentTypes.Image" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.message.ComponentTypes.Quote">
+<code class="sig-name descname">Quote</code><em class="property"> = &lt;class 'mirai_core.models.message.Quote'&gt;</em><a class="headerlink" href="#mirai_core.models.message.ComponentTypes.Quote" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.message.ComponentTypes.Xml">
+<code class="sig-name descname">Xml</code><em class="property"> = &lt;class 'mirai_core.models.message.Xml'&gt;</em><a class="headerlink" href="#mirai_core.models.message.ComponentTypes.Xml" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.message.ComponentTypes.Json">
+<code class="sig-name descname">Json</code><em class="property"> = &lt;class 'mirai_core.models.message.Json'&gt;</em><a class="headerlink" href="#mirai_core.models.message.ComponentTypes.Json" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.message.ComponentTypes.App">
+<code class="sig-name descname">App</code><em class="property"> = &lt;class 'mirai_core.models.message.App'&gt;</em><a class="headerlink" href="#mirai_core.models.message.ComponentTypes.App" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.message.ComponentTypes.Unknown">
+<code class="sig-name descname">Unknown</code><em class="property"> = &lt;class 'mirai_core.models.message.Unknown'&gt;</em><a class="headerlink" href="#mirai_core.models.message.ComponentTypes.Unknown" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-mirai_core.models">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-mirai_core.models" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="mirai_core.html" class="btn btn-neutral float-left" title="mirai_core package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, jqqqqqqqqqq, Chenwe-i-lin
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

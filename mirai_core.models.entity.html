@@ -1,0 +1,404 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>mirai_core.models.entity package &mdash; Python Mirai Core 0.6.4 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="mirai_core.models.message package" href="mirai_core.models.message.html" />
+    <link rel="prev" title="mirai_core.models package" href="mirai_core.models.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Python Mirai Core
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="mirai_core.html">mirai_core package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="mirai_core.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="mirai_core.models.html">mirai_core.models package</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="mirai_core.models.html#subpackages">Subpackages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mirai_core.models.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mirai_core.models.html#module-mirai_core.models.events">mirai_core.models.events module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mirai_core.models.html#module-mirai_core.models">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mirai_core.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mirai_core.html#module-mirai_core.bot">mirai_core.bot module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mirai_core.html#module-mirai_core.exceptions">mirai_core.exceptions module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mirai_core.html#module-mirai_core.log">mirai_core.log module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mirai_core.html#module-mirai_core.network">mirai_core.network module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mirai_core.html#module-mirai_core.updater">mirai_core.updater module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mirai_core.html#module-mirai_core">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Python Mirai Core</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="mirai_core.html">mirai_core package</a> &raquo;</li>
+        
+          <li><a href="mirai_core.models.html">mirai_core.models package</a> &raquo;</li>
+        
+      <li>mirai_core.models.entity package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/mirai_core.models.entity.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="mirai-core-models-entity-package">
+<h1>mirai_core.models.entity package<a class="headerlink" href="#mirai-core-models-entity-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="mirai-core-models-entity-friend-module">
+<h2>mirai_core.models.entity.friend module<a class="headerlink" href="#mirai-core-models-entity-friend-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="mirai-core-models-entity-group-module">
+<h2>mirai_core.models.entity.group module<a class="headerlink" href="#mirai-core-models-entity-group-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-mirai_core.models.entity">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-mirai_core.models.entity" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="mirai_core.models.entity.Friend">
+<em class="property">class </em><code class="sig-prename descclassname">mirai_core.models.entity.</code><code class="sig-name descname">Friend</code><span class="sig-paren">(</span><em class="sig-param">**data: Any</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mirai_core/models/entity.html#Friend"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.models.entity.Friend" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pydantic.main.BaseModel</span></code></p>
+<dl class="attribute">
+<dt id="mirai_core.models.entity.Friend.id">
+<code class="sig-name descname">id</code><em class="property">: int</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.entity.Friend.id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.entity.Friend.nickname">
+<code class="sig-name descname">nickname</code><em class="property">: Optional[str]</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.entity.Friend.nickname" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.entity.Friend.remark">
+<code class="sig-name descname">remark</code><em class="property">: Optional[str]</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.entity.Friend.remark" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="mirai_core.models.entity.Friend.get_avatar_url">
+<code class="sig-name descname">get_avatar_url</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="_modules/mirai_core/models/entity.html#Friend.get_avatar_url"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.models.entity.Friend.get_avatar_url" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="mirai_core.models.entity.Permission">
+<em class="property">class </em><code class="sig-prename descclassname">mirai_core.models.entity.</code><code class="sig-name descname">Permission</code><a class="reference internal" href="_modules/mirai_core/models/entity.html#Permission"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.models.entity.Permission" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">enum.Enum</span></code></p>
+<p>An enumeration.</p>
+<dl class="attribute">
+<dt id="mirai_core.models.entity.Permission.Member">
+<code class="sig-name descname">Member</code><em class="property"> = 'MEMBER'</em><a class="headerlink" href="#mirai_core.models.entity.Permission.Member" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.entity.Permission.Administrator">
+<code class="sig-name descname">Administrator</code><em class="property"> = 'ADMINISTRATOR'</em><a class="headerlink" href="#mirai_core.models.entity.Permission.Administrator" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.entity.Permission.Owner">
+<code class="sig-name descname">Owner</code><em class="property"> = 'OWNER'</em><a class="headerlink" href="#mirai_core.models.entity.Permission.Owner" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="mirai_core.models.entity.Group">
+<em class="property">class </em><code class="sig-prename descclassname">mirai_core.models.entity.</code><code class="sig-name descname">Group</code><span class="sig-paren">(</span><em class="sig-param">**data: Any</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mirai_core/models/entity.html#Group"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.models.entity.Group" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pydantic.main.BaseModel</span></code></p>
+<dl class="attribute">
+<dt id="mirai_core.models.entity.Group.id">
+<code class="sig-name descname">id</code><em class="property">: int</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.entity.Group.id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.entity.Group.name">
+<code class="sig-name descname">name</code><em class="property">: str</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.entity.Group.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.entity.Group.permission">
+<code class="sig-name descname">permission</code><em class="property">: Permission</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.entity.Group.permission" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="mirai_core.models.entity.Group.get_avatar_url">
+<code class="sig-name descname">get_avatar_url</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="_modules/mirai_core/models/entity.html#Group.get_avatar_url"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.models.entity.Group.get_avatar_url" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="mirai_core.models.entity.Member">
+<em class="property">class </em><code class="sig-prename descclassname">mirai_core.models.entity.</code><code class="sig-name descname">Member</code><span class="sig-paren">(</span><em class="sig-param">**data: Any</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mirai_core/models/entity.html#Member"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.models.entity.Member" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pydantic.main.BaseModel</span></code></p>
+<dl class="attribute">
+<dt id="mirai_core.models.entity.Member.id">
+<code class="sig-name descname">id</code><em class="property">: int</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.entity.Member.id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.entity.Member.memberName">
+<code class="sig-name descname">memberName</code><em class="property">: str</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.entity.Member.memberName" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.entity.Member.permission">
+<code class="sig-name descname">permission</code><em class="property">: Permission</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.entity.Member.permission" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.entity.Member.group">
+<code class="sig-name descname">group</code><em class="property">: Group</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.entity.Member.group" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="mirai_core.models.entity.Member.get_avatar_url">
+<code class="sig-name descname">get_avatar_url</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="_modules/mirai_core/models/entity.html#Member.get_avatar_url"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.models.entity.Member.get_avatar_url" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="mirai_core.models.entity.MemberChangeableSetting">
+<em class="property">class </em><code class="sig-prename descclassname">mirai_core.models.entity.</code><code class="sig-name descname">MemberChangeableSetting</code><span class="sig-paren">(</span><em class="sig-param">**data: Any</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mirai_core/models/entity.html#MemberChangeableSetting"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.models.entity.MemberChangeableSetting" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pydantic.main.BaseModel</span></code></p>
+<dl class="attribute">
+<dt id="mirai_core.models.entity.MemberChangeableSetting.name">
+<code class="sig-name descname">name</code><em class="property">: str</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.entity.MemberChangeableSetting.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.entity.MemberChangeableSetting.specialTitle">
+<code class="sig-name descname">specialTitle</code><em class="property">: str</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.entity.MemberChangeableSetting.specialTitle" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="mirai_core.models.entity.MemberChangeableSetting.modify">
+<code class="sig-name descname">modify</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mirai_core/models/entity.html#MemberChangeableSetting.modify"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.models.entity.MemberChangeableSetting.modify" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="mirai_core.models.entity.GroupSetting">
+<em class="property">class </em><code class="sig-prename descclassname">mirai_core.models.entity.</code><code class="sig-name descname">GroupSetting</code><span class="sig-paren">(</span><em class="sig-param">**data: Any</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mirai_core/models/entity.html#GroupSetting"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.models.entity.GroupSetting" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pydantic.main.BaseModel</span></code></p>
+<dl class="attribute">
+<dt id="mirai_core.models.entity.GroupSetting.name">
+<code class="sig-name descname">name</code><em class="property">: str</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.entity.GroupSetting.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.entity.GroupSetting.announcement">
+<code class="sig-name descname">announcement</code><em class="property">: str</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.entity.GroupSetting.announcement" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.entity.GroupSetting.confessTalk">
+<code class="sig-name descname">confessTalk</code><em class="property">: bool</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.entity.GroupSetting.confessTalk" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.entity.GroupSetting.allowMemberInvite">
+<code class="sig-name descname">allowMemberInvite</code><em class="property">: bool</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.entity.GroupSetting.allowMemberInvite" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.entity.GroupSetting.autoApprove">
+<code class="sig-name descname">autoApprove</code><em class="property">: bool</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.entity.GroupSetting.autoApprove" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="mirai_core.models.entity.GroupSetting.anonymousChat">
+<code class="sig-name descname">anonymousChat</code><em class="property">: bool</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.models.entity.GroupSetting.anonymousChat" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="mirai_core.models.entity.GroupSetting.modify">
+<code class="sig-name descname">modify</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mirai_core/models/entity.html#GroupSetting.modify"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.models.entity.GroupSetting.modify" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="mirai_core.models.message.html" class="btn btn-neutral float-right" title="mirai_core.models.message package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="mirai_core.models.html" class="btn btn-neutral float-left" title="mirai_core.models package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, jqqqqqqqqqq, Chenwe-i-lin
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

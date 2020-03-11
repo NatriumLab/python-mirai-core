@@ -1,0 +1,788 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>mirai_core.bot &mdash; Python Mirai Core 0.6.4 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Python Mirai Core
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../mirai_core.html">mirai_core package</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Python Mirai Core</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>mirai_core.bot</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for mirai_core.bot</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">Dict</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">timedelta</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">from</span> <span class="nn">.log</span> <span class="kn">import</span> <span class="n">create_logger</span>
+
+<span class="kn">from</span> <span class="nn">.models.message</span> <span class="kn">import</span> <span class="n">BotMessage</span><span class="p">,</span> <span class="n">ImageType</span><span class="p">,</span> <span class="n">MessageChain</span><span class="p">,</span> \
+    <span class="n">Source</span><span class="p">,</span> <span class="n">Image</span><span class="p">,</span> <span class="n">Quote</span><span class="p">,</span> <span class="n">Plain</span><span class="p">,</span> <span class="n">BaseMessageComponent</span><span class="p">,</span> <span class="n">LocalImage</span>
+<span class="kn">from</span> <span class="nn">.models.events</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">.models.entity</span> <span class="kn">import</span> <span class="n">Friend</span><span class="p">,</span> <span class="n">Group</span><span class="p">,</span> <span class="n">GroupSetting</span><span class="p">,</span> <span class="n">Member</span><span class="p">,</span> <span class="n">MemberChangeableSetting</span>
+<span class="kn">from</span> <span class="nn">.network</span> <span class="kn">import</span> <span class="n">HttpClient</span>
+<span class="kn">from</span> <span class="nn">.exceptions</span> <span class="kn">import</span> <span class="n">AuthenticationException</span><span class="p">,</span> <span class="n">MiraiException</span>
+
+
+<div class="viewcode-block" id="Bot"><a class="viewcode-back" href="../../mirai_core.html#mirai_core.bot.Bot">[docs]</a><span class="k">class</span> <span class="nc">Bot</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    See https://github.com/mamoe/mirai-api-http for details</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qq</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">host</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;127.0.0.1&#39;</span><span class="p">,</span> <span class="n">port</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">8080</span><span class="p">,</span> <span class="n">auth_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;abcdefgh&#39;</span><span class="p">,</span> <span class="n">loop</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">qq</span> <span class="o">=</span> <span class="n">qq</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">auth_key</span> <span class="o">=</span> <span class="n">auth_key</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">base_url</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;http://</span><span class="si">{</span><span class="n">host</span><span class="si">}</span><span class="s1">:</span><span class="si">{</span><span class="n">port</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loop</span> <span class="o">=</span> <span class="n">loop</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">session</span> <span class="o">=</span> <span class="n">HttpClient</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">base_url</span><span class="p">,</span> <span class="n">loop</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">loop</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">session_key</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">create_logger</span><span class="p">(</span><span class="s1">&#39;Bot&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Bot.retry_once"><a class="viewcode-back" href="../../mirai_core.html#mirai_core.bot.Bot.retry_once">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">retry_once</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="k">await</span> <span class="n">task</span>
+        <span class="k">except</span> <span class="n">MiraiException</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="s1">&#39;Trying handshake due to the following exception&#39;</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">handshake</span><span class="p">()</span>
+            <span class="k">return</span> <span class="k">await</span> <span class="n">task</span>
+        <span class="k">except</span> <span class="n">MiraiException</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="s1">&#39;Unable to handshake&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Bot.handshake"><a class="viewcode-back" href="../../mirai_core.html#mirai_core.bot.Bot.handshake">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">handshake</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Authenticate and verify the session_key</span>
+<span class="sd">        Automatically called if session_key needs to be updated</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="p">()</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">verify</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Bot.auth"><a class="viewcode-back" href="../../mirai_core.html#mirai_core.bot.Bot.auth">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">auth</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Post auth_key, and get session_key</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s1">&#39;/auth&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;authKey&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">auth_key</span><span class="p">})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">session_key</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;session&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Bot.verify"><a class="viewcode-back" href="../../mirai_core.html#mirai_core.bot.Bot.verify">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">verify</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Post session_key to verify the session</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s1">&#39;/verify&#39;</span><span class="p">,</span>
+                                <span class="n">data</span><span class="o">=</span><span class="p">{</span>
+                                    <span class="s1">&#39;sessionKey&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">session_key</span><span class="p">,</span>
+                                    <span class="s1">&#39;qq&#39;</span><span class="p">:</span>         <span class="bp">self</span><span class="o">.</span><span class="n">qq</span>
+                                <span class="p">})</span></div>
+
+<div class="viewcode-block" id="Bot.release"><a class="viewcode-back" href="../../mirai_core.html#mirai_core.bot.Bot.release">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">release</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Post session_key to release the session</span>
+<span class="sd">        Needs to be called manually if Updater is not used</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s1">&#39;/release&#39;</span><span class="p">,</span>
+                                <span class="n">data</span><span class="o">=</span><span class="p">{</span>
+                                    <span class="s1">&#39;sessionKey&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">session_key</span><span class="p">,</span>
+                                    <span class="s1">&#39;qq&#39;</span><span class="p">:</span>         <span class="bp">self</span><span class="o">.</span><span class="n">qq</span>
+                                <span class="p">})</span></div>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_handle_target_as</span><span class="p">(</span><span class="n">target</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Group</span><span class="p">,</span> <span class="n">Friend</span><span class="p">,</span> <span class="n">Member</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
+                          <span class="n">as_type</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">Group</span><span class="p">],</span> <span class="n">Type</span><span class="p">[</span><span class="n">Friend</span><span class="p">],</span> <span class="n">Type</span><span class="p">[</span><span class="n">Member</span><span class="p">]]):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Internal use only, convert target to id</span>
+
+<span class="sd">        :param target: Union[Group, Friend, Member, int]</span>
+<span class="sd">        :param as_type: Group, Friend or Member</span>
+<span class="sd">        :return: id, int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">target</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">as_type</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">target</span><span class="o">.</span><span class="n">id</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Invalid target as </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">as_type</span><span class="p">)</span><span class="si">}</span><span class="s1"> object.&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Bot.send_friend_message"><a class="viewcode-back" href="../../mirai_core.html#mirai_core.bot.Bot.send_friend_message">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">send_friend_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                                  <span class="n">friend</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Friend</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
+                                  <span class="n">message</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span>
+                                      <span class="n">MessageChain</span><span class="p">,</span>
+                                      <span class="n">BaseMessageComponent</span><span class="p">,</span>
+                                      <span class="n">List</span><span class="p">[</span><span class="n">BaseMessageComponent</span><span class="p">],</span>
+                                      <span class="nb">str</span>
+                                  <span class="p">],</span>
+                                  <span class="n">quote_source</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Source</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BotMessage</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Send friend message</span>
+
+<span class="sd">        :param friend: int or Friend object as target</span>
+<span class="sd">        :param message: MessageChain, BaseMessageComponent, List of BaseMessageComponent or str, the content to send</span>
+<span class="sd">        :param quote_source: int (the 64-bit int) or Source, the message to quote</span>
+<span class="sd">        :return: BotMessage (contains message id)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;sessionKey&#39;</span><span class="p">:</span>   <span class="bp">self</span><span class="o">.</span><span class="n">session_key</span><span class="p">,</span>
+            <span class="s1">&#39;target&#39;</span><span class="p">:</span>       <span class="n">Bot</span><span class="o">.</span><span class="n">_handle_target_as</span><span class="p">(</span><span class="n">friend</span><span class="p">,</span> <span class="n">Friend</span><span class="p">),</span>
+            <span class="s1">&#39;messageChain&#39;</span><span class="p">:</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle_message_chain</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">Friend</span><span class="p">)</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="n">quote_source</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">quote_source</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+                <span class="n">data</span><span class="p">[</span><span class="s1">&#39;quote&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">quote_source</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">quote_source</span><span class="p">,</span> <span class="n">Source</span><span class="p">):</span>
+                <span class="n">data</span><span class="p">[</span><span class="s1">&#39;quote&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">quote_source</span><span class="o">.</span><span class="n">id</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">retry_once</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s1">&#39;/sendFriendMessage&#39;</span><span class="p">,</span>
+                                                         <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">BotMessage</span><span class="o">.</span><span class="n">parse_obj</span><span class="p">(</span><span class="n">result</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Bot.send_group_message"><a class="viewcode-back" href="../../mirai_core.html#mirai_core.bot.Bot.send_group_message">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">send_group_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                                 <span class="n">group</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Group</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
+                                 <span class="n">message</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span>
+                                     <span class="n">MessageChain</span><span class="p">,</span>
+                                     <span class="n">BaseMessageComponent</span><span class="p">,</span>
+                                     <span class="n">List</span><span class="p">[</span><span class="n">BaseMessageComponent</span><span class="p">],</span>
+                                     <span class="nb">str</span>
+                                 <span class="p">],</span>
+                                 <span class="n">quote_source</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Source</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BotMessage</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Send group message</span>
+
+<span class="sd">        :param group: int or Group object as target</span>
+<span class="sd">        :param message: MessageChain, BaseMessageComponent, List of BaseMessageComponent or str, the content to send</span>
+<span class="sd">        :param quote_source: int (the 64-bit int) or Source, the message to quote</span>
+<span class="sd">        :return: BotMessage (contains message id)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;sessionKey&#39;</span><span class="p">:</span>   <span class="bp">self</span><span class="o">.</span><span class="n">session_key</span><span class="p">,</span>
+            <span class="s1">&#39;target&#39;</span><span class="p">:</span>       <span class="n">Bot</span><span class="o">.</span><span class="n">_handle_target_as</span><span class="p">(</span><span class="n">group</span><span class="p">,</span> <span class="n">Group</span><span class="p">),</span>
+            <span class="s1">&#39;messageChain&#39;</span><span class="p">:</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle_message_chain</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">Group</span><span class="p">)</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="n">quote_source</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">quote_source</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+                <span class="n">data</span><span class="p">[</span><span class="s1">&#39;quote&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">quote_source</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">quote_source</span><span class="p">,</span> <span class="n">Source</span><span class="p">):</span>
+                <span class="n">data</span><span class="p">[</span><span class="s1">&#39;quote&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">quote_source</span><span class="o">.</span><span class="n">id</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">retry_once</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s1">&#39;/sendGroupMessage&#39;</span><span class="p">,</span>
+                                                         <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">BotMessage</span><span class="o">.</span><span class="n">parse_obj</span><span class="p">(</span><span class="n">result</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Bot.recall"><a class="viewcode-back" href="../../mirai_core.html#mirai_core.bot.Bot.recall">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">recall</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Source</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Recall a message</span>
+<span class="sd">        Success if no exception is raised</span>
+
+<span class="sd">        :param source: int (the 64-bit int) or Source</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;sessionKey&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">session_key</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="n">data</span><span class="p">[</span><span class="s1">&#39;target&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">source</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">Source</span><span class="p">):</span>
+            <span class="n">data</span><span class="p">[</span><span class="s1">&#39;target&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">id</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">MiraiException</span><span class="p">(</span><span class="s1">&#39;Invalid source argument&#39;</span><span class="p">)</span>
+
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">retry_once</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s1">&#39;/recall&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">))</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">groups</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Group</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get list of joined groups</span>
+
+<span class="sd">        :return: List of Group</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;sessionKey&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">session_key</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">retry_once</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;/groupList&#39;</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">))</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">Group</span><span class="o">.</span><span class="n">parse_obj</span><span class="p">(</span><span class="n">group_info</span><span class="p">)</span> <span class="k">for</span> <span class="n">group_info</span> <span class="ow">in</span> <span class="n">result</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">friends</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Friend</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get list of friends</span>
+
+<span class="sd">        :return: List of Friend</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;sessionKey&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">session_key</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">retry_once</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;/friendList&#39;</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">))</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">Friend</span><span class="o">.</span><span class="n">parse_obj</span><span class="p">(</span><span class="n">friend_info</span><span class="p">)</span> <span class="k">for</span> <span class="n">friend_info</span> <span class="ow">in</span> <span class="n">result</span><span class="p">]</span>
+
+<div class="viewcode-block" id="Bot.get_members"><a class="viewcode-back" href="../../mirai_core.html#mirai_core.bot.Bot.get_members">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">get_members</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Group</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Member</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get list of members of a group</span>
+
+<span class="sd">        :param target: int or Group, the target group</span>
+<span class="sd">        :return: List of Member</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="n">group</span> <span class="o">=</span> <span class="n">target</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">group</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">id</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;sessionKey&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">session_key</span><span class="p">,</span>
+            <span class="s1">&#39;target&#39;</span><span class="p">:</span>     <span class="n">group</span>
+        <span class="p">}</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">retry_once</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;/memberList&#39;</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">))</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">Member</span><span class="o">.</span><span class="n">parse_obj</span><span class="p">(</span><span class="n">member_info</span><span class="p">)</span> <span class="k">for</span> <span class="n">member_info</span> <span class="ow">in</span> <span class="n">result</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="Bot.upload_image"><a class="viewcode-back" href="../../mirai_core.html#mirai_core.bot.Bot.upload_image">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">upload_image</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image_type</span><span class="p">:</span> <span class="n">ImageType</span><span class="p">,</span> <span class="n">image_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Image</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Upload a image to QQ server. The image between group and friend is not exchangeable</span>
+<span class="sd">        This function can be called separately to acquire image uuids, or automatically if using LocalImage while sending</span>
+
+<span class="sd">        :param image_type: ImageType, Friend or Group</span>
+<span class="sd">        :param image_path: absolute path of the image</span>
+<span class="sd">        :return: Image object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">image_path</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">image_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">image_path</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">image_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="s1">&#39;Image not found.&#39;</span><span class="p">)</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;sessionKey&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">session_key</span><span class="p">,</span>
+            <span class="s1">&#39;type&#39;</span><span class="p">:</span>       <span class="n">image_type</span><span class="o">.</span><span class="n">value</span>
+        <span class="p">}</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">retry_once</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">upload</span><span class="p">(</span><span class="s1">&#39;/uploadImage&#39;</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">image_path</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">Image</span><span class="o">.</span><span class="n">parse_obj</span><span class="p">(</span><span class="n">result</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Bot.fetch_message"><a class="viewcode-back" href="../../mirai_core.html#mirai_core.bot.Bot.fetch_message">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">fetch_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">count</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Event</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Fetch a list of messages</span>
+<span class="sd">        This function is called automatically if using polling instead of websocket</span>
+
+<span class="sd">        :param count: maximum count of one fetch</span>
+<span class="sd">        :return: List of Event</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;sessionKey&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">session_key</span><span class="p">,</span>
+            <span class="s1">&#39;count&#39;</span><span class="p">:</span>      <span class="n">count</span>
+        <span class="p">}</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">retry_once</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;/fetchMessage&#39;</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">))</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">)):</span>
+                <span class="n">result</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_event</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="n">index</span><span class="p">])</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="s1">&#39;Unhandled exception&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span></div>
+
+<div class="viewcode-block" id="Bot.mute_all"><a class="viewcode-back" href="../../mirai_core.html#mirai_core.bot.Bot.mute_all">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">mute_all</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">group</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Group</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Mute all non admin members in group</span>
+<span class="sd">        Success if no exception is raised</span>
+
+<span class="sd">        :param group: int or Group, the target group</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;sessionKey&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">session_key</span><span class="p">,</span>
+            <span class="s1">&#39;target&#39;</span><span class="p">:</span>     <span class="n">Bot</span><span class="o">.</span><span class="n">_handle_target_as</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">group</span><span class="p">,</span> <span class="n">as_type</span><span class="o">=</span><span class="n">Group</span><span class="p">)</span>
+        <span class="p">}</span>
+
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">retry_once</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;/muteAll&#39;</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="Bot.unmute_all"><a class="viewcode-back" href="../../mirai_core.html#mirai_core.bot.Bot.unmute_all">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">unmute_all</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">group</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Group</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Unmute all non admin members in group</span>
+<span class="sd">        Success if no exception is raised</span>
+
+<span class="sd">        :param group: int or Group, the target group</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;sessionKey&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">session_key</span><span class="p">,</span>
+            <span class="s1">&#39;target&#39;</span><span class="p">:</span>     <span class="n">Bot</span><span class="o">.</span><span class="n">_handle_target_as</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">group</span><span class="p">,</span> <span class="n">as_type</span><span class="o">=</span><span class="n">Group</span><span class="p">)</span>
+        <span class="p">}</span>
+
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">retry_once</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;/unmuteAll&#39;</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="Bot.get_member_info"><a class="viewcode-back" href="../../mirai_core.html#mirai_core.bot.Bot.get_member_info">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">get_member_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">group</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Group</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="n">member</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Member</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">MemberChangeableSetting</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the info of a member</span>
+
+<span class="sd">        :param group: int or Group, target group</span>
+<span class="sd">        :param member: int or Member, target member</span>
+<span class="sd">        :return: MemberChangeableSetting</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;sessionKey&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">session_key</span><span class="p">,</span>
+            <span class="s1">&#39;target&#39;</span><span class="p">:</span>     <span class="n">Bot</span><span class="o">.</span><span class="n">_handle_target_as</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">group</span><span class="p">,</span> <span class="n">as_type</span><span class="o">=</span><span class="n">Group</span><span class="p">),</span>
+            <span class="s1">&#39;memberId&#39;</span><span class="p">:</span>   <span class="bp">self</span><span class="o">.</span><span class="n">_handle_target_as</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">member</span><span class="p">,</span> <span class="n">as_type</span><span class="o">=</span><span class="n">Member</span><span class="p">)</span>
+        <span class="p">}</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">retry_once</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;/memberInfo&#39;</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">MemberChangeableSetting</span><span class="o">.</span><span class="n">parse_obj</span><span class="p">(</span><span class="n">result</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Bot.get_bot_member_info"><a class="viewcode-back" href="../../mirai_core.html#mirai_core.bot.Bot.get_bot_member_info">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">get_bot_member_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">group</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Group</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">MemberChangeableSetting</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the info of this bot</span>
+
+<span class="sd">        :param group: int or Group, target group</span>
+<span class="sd">        :return: MemberChangeableSetting</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">retry_once</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_member_info</span><span class="p">(</span><span class="n">group</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">qq</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="Bot.set_member_info"><a class="viewcode-back" href="../../mirai_core.html#mirai_core.bot.Bot.set_member_info">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">set_member_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">group</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Group</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
+                              <span class="n">member</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Member</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
+                              <span class="n">setting</span><span class="p">:</span> <span class="n">MemberChangeableSetting</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the info of a member</span>
+<span class="sd">        Success if no exception is raised</span>
+
+<span class="sd">        :param group: int or Group, target group</span>
+<span class="sd">        :param member: int or Member, target member</span>
+<span class="sd">        :param setting: MemberChangeableSetting, the new settings</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;sessionKey&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">session_key</span><span class="p">,</span>
+            <span class="s1">&#39;target&#39;</span><span class="p">:</span>     <span class="n">Bot</span><span class="o">.</span><span class="n">_handle_target_as</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">group</span><span class="p">,</span> <span class="n">as_type</span><span class="o">=</span><span class="n">Group</span><span class="p">),</span>
+            <span class="s1">&#39;memberId&#39;</span><span class="p">:</span>   <span class="bp">self</span><span class="o">.</span><span class="n">_handle_target_as</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">member</span><span class="p">,</span> <span class="n">as_type</span><span class="o">=</span><span class="n">Member</span><span class="p">),</span>
+            <span class="s1">&#39;info&#39;</span><span class="p">:</span>       <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">setting</span><span class="o">.</span><span class="n">json</span><span class="p">())</span>
+        <span class="p">}</span>
+
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">retry_once</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s1">&#39;/memberInfo&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="Bot.get_group_config"><a class="viewcode-back" href="../../mirai_core.html#mirai_core.bot.Bot.get_group_config">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">get_group_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">group</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Group</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">GroupSetting</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the group config of a group</span>
+
+<span class="sd">        :param group: int or Group, target group</span>
+<span class="sd">        :return: GroupSetting</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;sessionKey&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">session_key</span><span class="p">,</span>
+            <span class="s1">&#39;target&#39;</span><span class="p">:</span>     <span class="n">Bot</span><span class="o">.</span><span class="n">_handle_target_as</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">group</span><span class="p">,</span> <span class="n">as_type</span><span class="o">=</span><span class="n">Group</span><span class="p">),</span>
+        <span class="p">}</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">retry_once</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;/groupConfig&#39;</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">GroupSetting</span><span class="o">.</span><span class="n">parse_obj</span><span class="p">(</span><span class="n">result</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Bot.set_group_config"><a class="viewcode-back" href="../../mirai_core.html#mirai_core.bot.Bot.set_group_config">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">set_group_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">group</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Group</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
+                               <span class="n">config</span><span class="p">:</span> <span class="n">GroupSetting</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the group config of a group</span>
+<span class="sd">        Success if no exception is raised</span>
+
+<span class="sd">        :param group: int or Group, target group</span>
+<span class="sd">        :param config: GroupSetting</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;sessionKey&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">session_key</span><span class="p">,</span>
+            <span class="s1">&#39;target&#39;</span><span class="p">:</span>     <span class="n">Bot</span><span class="o">.</span><span class="n">_handle_target_as</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">group</span><span class="p">,</span> <span class="n">as_type</span><span class="o">=</span><span class="n">Group</span><span class="p">),</span>
+            <span class="s1">&#39;config&#39;</span><span class="p">:</span>     <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">json</span><span class="p">())</span>
+        <span class="p">}</span>
+
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">retry_once</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s1">&#39;/groupConfig&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="Bot.mute"><a class="viewcode-back" href="../../mirai_core.html#mirai_core.bot.Bot.mute">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">mute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">group</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Group</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
+                   <span class="n">member</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Member</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
+                   <span class="n">time</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">timedelta</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Mute a member of a group</span>
+<span class="sd">        Success if no exception is raised</span>
+
+<span class="sd">        :param group: int or Group, target group</span>
+<span class="sd">        :param member: int or Member, target member</span>
+<span class="sd">        :param time: int or datetime.timedelta, must between 1 minutes and 30 days</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">time</span><span class="p">,</span> <span class="n">timedelta</span><span class="p">):</span>
+            <span class="n">time</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">())</span>
+        <span class="n">time</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="mi">86400</span> <span class="o">*</span> <span class="mi">30</span><span class="p">,</span> <span class="nb">max</span><span class="p">(</span><span class="mi">60</span><span class="p">,</span> <span class="n">time</span><span class="p">))</span>  <span class="c1"># time should between 1 minutes and 30 days</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;sessionKey&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">session_key</span><span class="p">,</span>
+            <span class="s1">&#39;target&#39;</span><span class="p">:</span>     <span class="n">Bot</span><span class="o">.</span><span class="n">_handle_target_as</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">group</span><span class="p">,</span> <span class="n">as_type</span><span class="o">=</span><span class="n">Group</span><span class="p">),</span>
+            <span class="s1">&#39;MemberId&#39;</span><span class="p">:</span>   <span class="n">Bot</span><span class="o">.</span><span class="n">_handle_target_as</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">member</span><span class="p">,</span> <span class="n">as_type</span><span class="o">=</span><span class="n">Member</span><span class="p">),</span>
+            <span class="s1">&#39;time&#39;</span><span class="p">:</span>       <span class="n">time</span>
+        <span class="p">}</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">retry_once</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s1">&#39;/mute&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="Bot.unmute"><a class="viewcode-back" href="../../mirai_core.html#mirai_core.bot.Bot.unmute">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">unmute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">group</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Group</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
+                     <span class="n">member</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Member</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Unmute a member of a group</span>
+<span class="sd">        Success if no exception is raised</span>
+
+<span class="sd">        :param group: int or Group, target group</span>
+<span class="sd">        :param member: int or Member, target member</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;sessionKey&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">session_key</span><span class="p">,</span>
+            <span class="s1">&#39;target&#39;</span><span class="p">:</span>     <span class="n">Bot</span><span class="o">.</span><span class="n">_handle_target_as</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">group</span><span class="p">,</span> <span class="n">as_type</span><span class="o">=</span><span class="n">Group</span><span class="p">),</span>
+            <span class="s1">&#39;MemberId&#39;</span><span class="p">:</span>   <span class="n">Bot</span><span class="o">.</span><span class="n">_handle_target_as</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">member</span><span class="p">,</span> <span class="n">as_type</span><span class="o">=</span><span class="n">Member</span><span class="p">)</span>
+        <span class="p">}</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">retry_once</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s1">&#39;/unmute&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="Bot.kick"><a class="viewcode-back" href="../../mirai_core.html#mirai_core.bot.Bot.kick">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">kick</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">group</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Group</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
+                   <span class="n">member</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Member</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
+                   <span class="n">message</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Kick a member of a group</span>
+
+<span class="sd">        :param group: int or Group, target group</span>
+<span class="sd">        :param member: int or Member, target member</span>
+<span class="sd">        :param message: string, message to the member</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;sessionKey&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">session_key</span><span class="p">,</span>
+            <span class="s1">&#39;target&#39;</span><span class="p">:</span>     <span class="n">Bot</span><span class="o">.</span><span class="n">_handle_target_as</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">group</span><span class="p">,</span> <span class="n">as_type</span><span class="o">=</span><span class="n">Group</span><span class="p">),</span>
+            <span class="s1">&#39;MemberId&#39;</span><span class="p">:</span>   <span class="n">Bot</span><span class="o">.</span><span class="n">_handle_target_as</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">member</span><span class="p">,</span> <span class="n">as_type</span><span class="o">=</span><span class="n">Member</span><span class="p">)</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="n">message</span><span class="p">:</span>
+            <span class="n">data</span><span class="p">[</span><span class="s1">&#39;msg&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">message</span>
+
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">retry_once</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s1">&#39;/kick&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">))</span></div>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">_handle_image</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="n">BaseMessageComponent</span><span class="p">,</span> <span class="n">image_type</span><span class="p">:</span> <span class="n">ImageType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Internal use only</span>
+<span class="sd">        Convert LocalImage to Image, and everything to json</span>
+
+<span class="sd">        :param message: BaseMessageComponent</span>
+<span class="sd">        :param image_type: ImageType</span>
+<span class="sd">        :return: json representation</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">LocalImage</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">message</span><span class="o">.</span><span class="n">json</span><span class="p">())</span>
+
+        <span class="n">image</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">retry_once</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">upload_image</span><span class="p">(</span><span class="n">image_type</span><span class="p">,</span> <span class="n">message</span><span class="o">.</span><span class="n">path</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s1">&#39;type&#39;</span><span class="p">:</span>    <span class="s1">&#39;Image&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;imageId&#39;</span><span class="p">:</span> <span class="n">image</span><span class="o">.</span><span class="n">imageId</span>
+        <span class="p">}</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">_handle_message_chain</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span>
+        <span class="n">MessageChain</span><span class="p">,</span>
+        <span class="n">BaseMessageComponent</span><span class="p">,</span>
+        <span class="n">List</span><span class="p">[</span><span class="n">BaseMessageComponent</span><span class="p">],</span>
+        <span class="nb">str</span>
+    <span class="p">],</span> <span class="n">as_type</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">Group</span><span class="p">],</span> <span class="n">Type</span><span class="p">[</span><span class="n">Friend</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Internal use only</span>
+<span class="sd">        Convert MessageChain to json</span>
+
+<span class="sd">        :param message: MessageChain</span>
+<span class="sd">        :param as_type: Group or Friend</span>
+<span class="sd">        :return: list</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">MessageChain</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">message</span><span class="o">.</span><span class="n">json</span><span class="p">())</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">Plain</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">message</span><span class="p">)</span><span class="o">.</span><span class="n">json</span><span class="p">())]</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">BaseMessageComponent</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">as_type</span> <span class="o">==</span> <span class="n">Group</span><span class="p">:</span>
+                <span class="n">image_type</span> <span class="o">=</span> <span class="n">ImageType</span><span class="o">.</span><span class="n">Group</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">image_type</span> <span class="o">=</span> <span class="n">ImageType</span><span class="o">.</span><span class="n">Friend</span>
+            <span class="k">return</span> <span class="p">[</span><span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle_image</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">image_type</span><span class="p">)]</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="n">as_type</span> <span class="o">==</span> <span class="n">Group</span><span class="p">:</span>
+                <span class="n">image_type</span> <span class="o">=</span> <span class="n">ImageType</span><span class="o">.</span><span class="n">Group</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">image_type</span> <span class="o">=</span> <span class="n">ImageType</span><span class="o">.</span><span class="n">Friend</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="p">[</span><span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle_image</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">image_type</span><span class="o">=</span><span class="n">image_type</span><span class="p">)</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">message</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">result</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Invalid message&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Bot.get_config"><a class="viewcode-back" href="../../mirai_core.html#mirai_core.bot.Bot.get_config">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">get_config</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the config of http api</span>
+
+<span class="sd">        :return: config</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;sessionKey&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">session_key</span>
+        <span class="p">}</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">retry_once</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;/config&#39;</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">result</span></div>
+
+<div class="viewcode-block" id="Bot.set_config"><a class="viewcode-back" href="../../mirai_core.html#mirai_core.bot.Bot.set_config">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">set_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cache_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4096</span><span class="p">,</span> <span class="n">enable_websocket</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the config of http api</span>
+<span class="sd">        Success if no exception is raised</span>
+
+<span class="sd">        :param cache_size: int, the size of message cache</span>
+<span class="sd">        :param enable_websocket: bool, whether to enable websocket (will disable fetch_message accordingly)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;sessionKey&#39;</span><span class="p">:</span>      <span class="bp">self</span><span class="o">.</span><span class="n">session_key</span><span class="p">,</span>
+            <span class="s1">&#39;cacheSize&#39;</span><span class="p">:</span>       <span class="n">cache_size</span><span class="p">,</span>
+            <span class="s1">&#39;enableWebsocket&#39;</span><span class="p">:</span> <span class="n">enable_websocket</span>
+        <span class="p">}</span>
+
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">retry_once</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s1">&#39;/config&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">))</span></div>
+
+    <span class="k">def</span> <span class="nf">_parse_event</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Event</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Internal use only</span>
+<span class="sd">        Parse event or message from json to Event</span>
+
+<span class="sd">        :param result: the json</span>
+<span class="sd">        :return: Event</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">Events</span><span class="p">,</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]):</span>  <span class="c1"># if Event</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">if</span> <span class="s1">&#39;messageChain&#39;</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>  <span class="c1"># construct message chain</span>
+                    <span class="c1"># parse quote first</span>
+                    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">component</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;messageChain&#39;</span><span class="p">]):</span>
+                        <span class="k">if</span> <span class="n">component</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Quote&#39;</span><span class="p">:</span>
+                            <span class="n">result</span><span class="p">[</span><span class="s1">&#39;messageChain&#39;</span><span class="p">][</span><span class="n">idx</span><span class="p">][</span><span class="s1">&#39;origin&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">MessageChain</span><span class="o">.</span><span class="n">custom_parse</span><span class="p">(</span>
+                                <span class="n">result</span><span class="p">[</span><span class="s1">&#39;messageChain&#39;</span><span class="p">][</span><span class="n">idx</span><span class="p">][</span><span class="s1">&#39;origin&#39;</span><span class="p">])</span>
+                    <span class="n">result</span><span class="p">[</span><span class="s1">&#39;messageChain&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">MessageChain</span><span class="o">.</span><span class="n">custom_parse</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;messageChain&#39;</span><span class="p">])</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">Events</span><span class="p">[</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">parse_obj</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="s1">&#39;Unhandled exception&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">result</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Invalid message chain&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_websocket_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">handler</span><span class="p">:</span> <span class="n">callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">callable</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Internal use only</span>
+<span class="sd">        Wrap the handler, and convert json to Event</span>
+
+<span class="sd">        :param handler: callable, the handler</span>
+<span class="sd">        :return: wrapped handler</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">async</span> <span class="k">def</span> <span class="nf">_handler</span><span class="p">(</span><span class="n">result</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">,</span> <span class="n">Dict</span><span class="p">]):</span>
+            <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            an example handler for create_websocket</span>
+<span class="sd">            :param result: json</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_event</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+            <span class="k">await</span> <span class="n">handler</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">_handler</span>
+
+<div class="viewcode-block" id="Bot.create_websocket"><a class="viewcode-back" href="../../mirai_core.html#mirai_core.bot.Bot.create_websocket">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">create_websocket</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">handler</span><span class="p">,</span> <span class="n">ws_close_handler</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">listen</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;all&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Register callback for websocket. Once an Event or Message is received, the handler will be invoked</span>
+
+<span class="sd">        :param handler: callable</span>
+<span class="sd">        :param ws_close_handler: callable, websocket shutdown hook</span>
+<span class="sd">        :param listen: &#39;all&#39;, &#39;event&#39; or &#39;message&#39;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">listen</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;all&#39;</span><span class="p">,</span> <span class="s1">&#39;event&#39;</span><span class="p">,</span> <span class="s1">&#39;message&#39;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;listen must be one of &#39;all&#39;, &#39;event&#39; or &#39;message&#39;&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">ws_close_handler</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">async</span> <span class="k">def</span> <span class="nf">ws_close_handler</span><span class="p">(</span><span class="n">event</span><span class="p">):</span>
+                <span class="k">pass</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">retry_once</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">websocket</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;/</span><span class="si">{</span><span class="n">listen</span><span class="si">}</span><span class="s1">?sessionKey=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">session_key</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+                                                     <span class="bp">self</span><span class="o">.</span><span class="n">_websocket_handler</span><span class="p">(</span><span class="n">handler</span><span class="p">),</span> <span class="n">ws_close_handler</span><span class="p">))</span></div></div>
+
+
+<div class="viewcode-block" id="Events"><a class="viewcode-back" href="../../mirai_core.html#mirai_core.bot.Events">[docs]</a><span class="k">class</span> <span class="nc">Events</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Internal use only</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">BotOnlineEvent</span> <span class="o">=</span> <span class="n">BotOnlineEvent</span>
+    <span class="n">BotOfflineEventActive</span> <span class="o">=</span> <span class="n">BotOfflineEventActive</span>
+    <span class="n">BotOfflineEventForce</span> <span class="o">=</span> <span class="n">BotOfflineEventForce</span>
+    <span class="n">BotOfflineEventDropped</span> <span class="o">=</span> <span class="n">BotOfflineEventDropped</span>
+    <span class="n">BotReloginEvent</span> <span class="o">=</span> <span class="n">BotReloginEvent</span>
+    <span class="n">BotGroupPermissionChangeEvent</span> <span class="o">=</span> <span class="n">BotGroupPermissionChangeEvent</span>
+    <span class="n">BotMuteEvent</span> <span class="o">=</span> <span class="n">BotMuteEvent</span>
+    <span class="n">BotUnmuteEvent</span> <span class="o">=</span> <span class="n">BotUnmuteEvent</span>
+    <span class="n">BotJoinGroupEvent</span> <span class="o">=</span> <span class="n">BotJoinGroupEvent</span>
+
+    <span class="n">GroupNameChangeEvent</span> <span class="o">=</span> <span class="n">GroupNameChangeEvent</span>
+    <span class="n">GroupEntranceAnnouncementChangeEvent</span> <span class="o">=</span> <span class="n">GroupEntranceAnnouncementChangeEvent</span>
+    <span class="n">GroupMuteAllEvent</span> <span class="o">=</span> <span class="n">GroupMuteAllEvent</span>
+
+    <span class="c1"># 群设置被修改事件</span>
+    <span class="n">GroupAllowAnonymousChatEvent</span> <span class="o">=</span> <span class="n">GroupAllowAnonymousChatEvent</span>  <span class="c1"># 群设置 是否允许匿名聊天 被修改</span>
+    <span class="n">GroupAllowConfessTalkEvent</span> <span class="o">=</span> <span class="n">GroupAllowConfessTalkEvent</span>  <span class="c1"># 坦白说</span>
+    <span class="n">GroupAllowMemberInviteEvent</span> <span class="o">=</span> <span class="n">GroupAllowMemberInviteEvent</span>  <span class="c1"># 邀请进群</span>
+
+    <span class="c1"># 群事件(被 Bot 监听到的, 为被动事件, 其中 Bot 身份为第三方.)</span>
+    <span class="n">MemberJoinEvent</span> <span class="o">=</span> <span class="n">MemberJoinEvent</span>
+    <span class="n">MemberLeaveEventKick</span> <span class="o">=</span> <span class="n">MemberLeaveEventKick</span>
+    <span class="n">MemberLeaveEventQuit</span> <span class="o">=</span> <span class="n">MemberLeaveEventQuit</span>
+    <span class="n">MemberCardChangeEvent</span> <span class="o">=</span> <span class="n">MemberCardChangeEvent</span>
+    <span class="n">MemberSpecialTitleChangeEvent</span> <span class="o">=</span> <span class="n">MemberSpecialTitleChangeEvent</span>
+    <span class="n">MemberPermissionChangeEvent</span> <span class="o">=</span> <span class="n">MemberPermissionChangeEvent</span>
+    <span class="n">MemberMuteEvent</span> <span class="o">=</span> <span class="n">MemberMuteEvent</span>
+    <span class="n">MemberUnmuteEvent</span> <span class="o">=</span> <span class="n">MemberUnmuteEvent</span>
+
+    <span class="n">FriendMessage</span> <span class="o">=</span> <span class="n">FriendMessage</span>
+    <span class="n">GroupMessage</span> <span class="o">=</span> <span class="n">GroupMessage</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, jqqqqqqqqqq, Chenwe-i-lin
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
