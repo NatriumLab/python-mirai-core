@@ -422,6 +422,36 @@ class Bot:
 
         await self.retry_once(self.session.post('/kick', data=data))
 
+    async def respond_request(self,
+                              request: Union[Events.NewFriendRequestEvent, Events.MemberJoinRequestEvent],
+                              response: Union[NewFriendRequestResponse, MemberJoinRequestResponse],
+                              message: str = ''):
+        if isinstance(request, NewFriendRequestEvent):
+            assert isinstance(response, (NewFriendRequestResponse, int)), f'Response type mismatch'
+            response = response.value if isinstance(response, NewFriendRequestResponse) else response
+            data = {
+                'sessionKey': self.session_key,
+                'eventId': request.requestId,
+                'fromId':  request.supplicant,
+                'groupId': request.sourceGroup,
+                'operate': response,
+                'message': message
+            }
+            return await self.retry_once(self.session.post('/resp/newFriendRequestEvent', data=data))
+        elif isinstance(request, MemberJoinRequestEvent):
+            assert isinstance(response, (MemberJoinRequestResponse, int)), f'Response type mismatch'
+            response = response.value if isinstance(response, MemberJoinRequestResponse) else response
+            data = {
+                'sessionKey': self.session_key,
+                'eventId': request.requestId,
+                'fromId':  request.supplicant,
+                'groupId': request.sourceGroup,
+                'operate': response,
+                'message': message
+            }
+        else:
+            raise TypeError(f'Unsupported event: {str(request)}')
+
     async def _handle_image(self, message: BaseMessageComponent, image_type: ImageType) -> dict:
         """
         Internal use only
@@ -563,39 +593,3 @@ class Bot:
         await self.retry_once(self.session.websocket(f'/{listen}?sessionKey={self.session_key}',
                                                      self._websocket_handler(handler), ws_close_handler))
 
-
-class Events(Enum):
-    """
-    Internal use only
-    """
-    BotOnlineEvent = BotOnlineEvent
-    BotOfflineEventActive = BotOfflineEventActive
-    BotOfflineEventForce = BotOfflineEventForce
-    BotOfflineEventDropped = BotOfflineEventDropped
-    BotReloginEvent = BotReloginEvent
-    BotGroupPermissionChangeEvent = BotGroupPermissionChangeEvent
-    BotMuteEvent = BotMuteEvent
-    BotUnmuteEvent = BotUnmuteEvent
-    BotJoinGroupEvent = BotJoinGroupEvent
-
-    GroupNameChangeEvent = GroupNameChangeEvent
-    GroupEntranceAnnouncementChangeEvent = GroupEntranceAnnouncementChangeEvent
-    GroupMuteAllEvent = GroupMuteAllEvent
-
-    # 群设置被修改事件
-    GroupAllowAnonymousChatEvent = GroupAllowAnonymousChatEvent  # 群设置 是否允许匿名聊天 被修改
-    GroupAllowConfessTalkEvent = GroupAllowConfessTalkEvent  # 坦白说
-    GroupAllowMemberInviteEvent = GroupAllowMemberInviteEvent  # 邀请进群
-
-    # 群事件(被 Bot 监听到的, 为被动事件, 其中 Bot 身份为第三方.)
-    MemberJoinEvent = MemberJoinEvent
-    MemberLeaveEventKick = MemberLeaveEventKick
-    MemberLeaveEventQuit = MemberLeaveEventQuit
-    MemberCardChangeEvent = MemberCardChangeEvent
-    MemberSpecialTitleChangeEvent = MemberSpecialTitleChangeEvent
-    MemberPermissionChangeEvent = MemberPermissionChangeEvent
-    MemberMuteEvent = MemberMuteEvent
-    MemberUnmuteEvent = MemberUnmuteEvent
-
-    FriendMessage = FriendMessage
-    GroupMessage = GroupMessage
