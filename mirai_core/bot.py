@@ -423,7 +423,7 @@ class Bot:
         await self.retry_once(self.session.post('/kick', data=data))
 
     async def respond_request(self,
-                              request: Union[Events.NewFriendRequestEvent, Events.MemberJoinRequestEvent],
+                              request: Union[NewFriendRequestEvent, MemberJoinRequestEvent],
                               response: Union[NewFriendRequestResponse, MemberJoinRequestResponse],
                               message: str = ''):
         if isinstance(request, NewFriendRequestEvent):

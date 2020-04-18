@@ -339,7 +339,7 @@ class GroupMessage(Event):
 
 
 class NewFriendRequestEvent(Event):
-    type: EventTypes = EventTypes.currentFriendRequestEvent
+    type: EventTypes = EventTypes.NewFriendRequestEvent
     requestId: int = Field(..., alias="eventId")
     supplicant: int = Field(..., alias="fromId")  # 即请求方 QQ
     sourceGroup: Optional[int] = Field(..., alias="groupId")
