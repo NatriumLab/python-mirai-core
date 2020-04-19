@@ -7,6 +7,8 @@ A Flask like Python wrapper of [Mirai-HTTP-API](https://github.com/mamoe/mirai-a
 
 See full documentation [here](https://mirai-py.originpages.com/python-mirai-core/docs/mirai_core/index.html)
 
+Synced with mirai core 0.37.4
+
 ## Installation
 
 ### Install from PyPI
