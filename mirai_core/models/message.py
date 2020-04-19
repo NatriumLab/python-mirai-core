@@ -523,13 +523,13 @@ class Face(BaseMessageComponent):
     type = MessageComponentTypes.Face
     faceId: int  # face id, see qq_emoji_text_list for details
 
-    def __init__(self, face_id, **kwargs):
+    def __init__(self, faceId, **kwargs):
         """
         Construct Face component
 
         :param face_id: unsigned 8-bit face id
         """
-        super().__init__(faceId=face_id, **kwargs)
+        super().__init__(faceId=faceId, **kwargs)
 
     def __str__(self):
         return qq_emoji_text_list[self.faceId]
@@ -603,13 +603,13 @@ class Xml(BaseMessageComponent):
     type = MessageComponentTypes.Xml
     XML: str  # xml content
 
-    def __init__(self, xml: str):
+    def __init__(self, XML: str):
         """
         Construct Xml component
 
         :param xml: str contains xml
         """
-        super().__init__(XML=xml)
+        super().__init__(XML=XML)
 
 
 class Json(BaseMessageComponent):
@@ -620,13 +620,13 @@ class Json(BaseMessageComponent):
     type = MessageComponentTypes.Json
     Json: dict = Field(..., alias="json")  # json content
 
-    def __init__(self, json: Union[dict, List]):
+    def __init__(self, Json: Union[dict, List]):
         """
         Construct Json component
 
         :param json: json content
         """
-        super().__init__(Json=json)
+        super().__init__(Json=Json)
 
 
 class App(BaseMessageComponent):
