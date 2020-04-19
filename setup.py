@@ -12,7 +12,7 @@ def get_version():
     Read version
     :return: str
     """
-    txt = (WORK_DIR / 'umr_mirai_driver' / '__init__.py').read_text('utf-8')
+    txt = (WORK_DIR / 'mirai_core' / '__init__.py').read_text('utf-8')
     try:
         return re.findall(r"^__VERSION__ = (.*)[\r\n]?$", txt, re.M)[0]
     except IndexError:
