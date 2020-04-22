@@ -16,20 +16,17 @@ __ALL__ = [
 ]
 
 
-__logger = create_logger('Bot')
-
-
 def retry_once(func):
     async def wrapper(self, *args, **kwargs):
         try:
             return await func(self, *args, **kwargs)
         except (NetworkException, SessionException, AuthenticationException):
-            __logger.exception('Trying handshake due to the following exception')
+            self.logger.exception('Trying handshake due to the following exception')
         try:
             await self.handshake()
             return await func(self, *args, **kwargs)
         except (NetworkException, SessionException, AuthenticationException):
-            __logger.exception('Unable to handshake')
+            self.logger.exception('Unable to handshake')
         return None
 
     return wrapper
@@ -47,6 +44,7 @@ class Bot:
         self.loop = loop
         self.session = HttpClient(self.base_url, loop=self.loop)
         self.session_key = ''
+        self.logger = create_logger('Bot')
 
     async def handshake(self):
         """
@@ -273,8 +271,7 @@ class Bot:
             for index in range(len(result)):
                 result[index] = self._parse_event(result[index])
         except:
-            global __logger
-            __logger.exception('Unhandled exception')
+            self.logger.exception('Unhandled exception')
         return result
 
     @retry_once
@@ -587,8 +584,7 @@ class Bot:
                             if result['messageChain'][2]['type'] == 'Plain' and result['messageChain'][2]['text'] == ' ':
                                 del result['messageChain'][2]  # delete space after duplicated at
                         except:
-                            global __logger
-                            __logger.exception('Please open a github issue to report this error')
+                            self.logger.exception('Please open a github issue to report this error')
                     # for idx, component in enumerate(result['messageChain']):
                     #     if component['type'] == 'Quote':
                     #         result['messageChain'][idx]['origin'] = MessageChain.custom_parse(
@@ -596,8 +592,7 @@ class Bot:
                     result['messageChain'] = MessageChain.custom_parse(result['messageChain'])
                 result = Events[result['type']].value.parse_obj(result)
             except:
-                global __logger
-                __logger.exception('Unhandled exception')
+                self.logger.exception('Unhandled exception')
             return result
         else:
             raise ValueError('Invalid message chain')
