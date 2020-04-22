@@ -9,7 +9,30 @@ from .models.message import BotMessage, ImageType, MessageChain, \
 from .models.events import *
 from .models.entity import Friend, Group, GroupSetting, Member, MemberChangeableSetting
 from .network import HttpClient
-from .exceptions import AuthenticationException, MiraiException
+from .exceptions import AuthenticationException, MiraiException, NetworkException, SessionException
+
+__ALL__ = [
+    'Bot'
+]
+
+
+__logger = create_logger('Bot')
+
+
+def retry_once(func):
+    async def wrapper(self, *args, **kwargs):
+        try:
+            return await func(self, *args, **kwargs)
+        except (NetworkException, SessionException, AuthenticationException):
+            __logger.exception('Trying handshake due to the following exception')
+        try:
+            await self.handshake()
+            return await func(self, *args, **kwargs)
+        except (NetworkException, SessionException, AuthenticationException):
+            __logger.exception('Unable to handshake')
+        return None
+
+    return wrapper
 
 
 class Bot:
@@ -24,18 +47,6 @@ class Bot:
         self.loop = loop
         self.session = HttpClient(self.base_url, loop=self.loop)
         self.session_key = ''
-        self.logger = create_logger('Bot')
-
-    async def retry_once(self, task):
-        try:
-            return await task
-        except MiraiException:
-            self.logger.exception('Trying handshake due to the following exception')
-        try:
-            await self.handshake()
-            return await task
-        except MiraiException:
-            self.logger.exception('Unable to handshake')
 
     async def handshake(self):
         """
@@ -90,6 +101,7 @@ class Bot:
         else:
             raise ValueError(f'Invalid target as {type(as_type)} object.')
 
+    @retry_once
     async def send_friend_message(self,
                                   friend: Union[Friend, int],
                                   message: Union[
@@ -117,11 +129,11 @@ class Bot:
                 data['quote'] = quote_source
             elif isinstance(quote_source, Source):
                 data['quote'] = quote_source.id
-        result = await self.retry_once(self.session.post('/sendFriendMessage',
-                                                         data=data))
+        result = await self.session.post('/sendFriendMessage', data=data)
 
         return BotMessage.parse_obj(result)
 
+    @retry_once
     async def send_group_message(self,
                                  group: Union[Group, int],
                                  message: Union[
@@ -149,10 +161,10 @@ class Bot:
                 data['quote'] = quote_source
             elif isinstance(quote_source, Source):
                 data['quote'] = quote_source.id
-        result = await self.retry_once(self.session.post('/sendGroupMessage',
-                                                         data=data))
+        result = await self.session.post('/sendGroupMessage', data=data)
         return BotMessage.parse_obj(result)
 
+    @retry_once
     async def recall(self, source: Union[Source, int]) -> None:
         """
         Recall a message
@@ -170,9 +182,10 @@ class Bot:
         else:
             raise MiraiException('Invalid source argument')
 
-        await self.retry_once(self.session.post('/recall', data=data))
+        await self.session.post('/recall', data=data)
 
     @property
+    @retry_once
     async def groups(self) -> List[Group]:
         """
         Get list of joined groups
@@ -182,10 +195,11 @@ class Bot:
         params = {
             'sessionKey': self.session_key,
         }
-        result = await self.retry_once(self.session.get('/groupList', params=params))
+        result = await self.session.get('/groupList', params=params)
         return [Group.parse_obj(group_info) for group_info in result]
 
     @property
+    @retry_once
     async def friends(self) -> List[Friend]:
         """
         Get list of friends
@@ -195,9 +209,10 @@ class Bot:
         params = {
             'sessionKey': self.session_key,
         }
-        result = await self.retry_once(self.session.get('/friendList', params=params))
+        result = await self.session.get('/friendList', params=params)
         return [Friend.parse_obj(friend_info) for friend_info in result]
 
+    @retry_once
     async def get_members(self, target: Union[Group, int]) -> List[Member]:
         """
         Get list of members of a group
@@ -213,9 +228,10 @@ class Bot:
             'sessionKey': self.session_key,
             'target':     group
         }
-        result = await self.retry_once(self.session.get('/memberList', params=params))
+        result = await self.session.get('/memberList', params=params)
         return [Member.parse_obj(member_info) for member_info in result]
 
+    @retry_once
     async def upload_image(self, image_type: ImageType, image_path: Union[Path, str]) -> Optional[Image]:
         """
         Upload a image to QQ server. The image between group and friend is not exchangeable
@@ -235,9 +251,10 @@ class Bot:
             'sessionKey': self.session_key,
             'type':       image_type.value
         }
-        result = await self.retry_once(self.session.upload('/uploadImage', file=image_path, data=data))
+        result = await self.session.upload('/uploadImage', file=image_path, data=data)
         return Image.parse_obj(result)
 
+    @retry_once
     async def fetch_message(self, count: int) -> List[Event]:
         """
         Fetch a list of messages
@@ -250,15 +267,17 @@ class Bot:
             'sessionKey': self.session_key,
             'count':      count
         }
-        result = await self.retry_once(self.session.get('/fetchMessage', params=params))
+        result = await self.session.get('/fetchMessage', params=params)
 
         try:
             for index in range(len(result)):
                 result[index] = self._parse_event(result[index])
         except:
-            self.logger.exception('Unhandled exception')
+            global __logger
+            __logger.exception('Unhandled exception')
         return result
 
+    @retry_once
     async def mute_all(self, group: Union[Group, int]) -> None:
         """
         Mute all non admin members in group
@@ -271,8 +290,9 @@ class Bot:
             'target':     Bot._handle_target_as(target=group, as_type=Group)
         }
 
-        await self.retry_once(self.session.get('/muteAll', params=params))
+        await self.session.get('/muteAll', params=params)
 
+    @retry_once
     async def unmute_all(self, group: Union[Group, int]) -> None:
         """
         Unmute all non admin members in group
@@ -285,8 +305,9 @@ class Bot:
             'target':     Bot._handle_target_as(target=group, as_type=Group)
         }
 
-        await self.retry_once(self.session.get('/unmuteAll', params=params))
+        await self.session.get('/unmuteAll', params=params)
 
+    @retry_once
     async def get_member_info(self, group: Union[Group, int], member: Union[Member, int]) -> MemberChangeableSetting:
         """
         Get the info of a member
@@ -301,9 +322,10 @@ class Bot:
             'memberId':   self._handle_target_as(target=member, as_type=Member)
         }
 
-        result = await self.retry_once(self.session.get('/memberInfo', params=params))
+        result = await self.session.get('/memberInfo', params=params)
         return MemberChangeableSetting.parse_obj(result)
 
+    @retry_once
     async def get_bot_member_info(self, group: Union[Group, int]) -> MemberChangeableSetting:
         """
         Get the info of this bot
@@ -311,8 +333,9 @@ class Bot:
         :param group: int or Group, target group
         :return: MemberChangeableSetting
         """
-        return await self.retry_once(self.get_member_info(group, self.qq))
+        return await self.get_member_info(group, self.qq)
 
+    @retry_once
     async def set_member_info(self, group: Union[Group, int],
                               member: Union[Member, int],
                               setting: MemberChangeableSetting) -> None:
@@ -331,8 +354,9 @@ class Bot:
             'info':       json.loads(setting.json())
         }
 
-        await self.retry_once(self.session.post('/memberInfo', data=data))
+        await self.session.post('/memberInfo', data=data)
 
+    @retry_once
     async def get_group_config(self, group: Union[Group, int]) -> GroupSetting:
         """
         Get the group config of a group
@@ -344,9 +368,10 @@ class Bot:
             'sessionKey': self.session_key,
             'target':     Bot._handle_target_as(target=group, as_type=Group),
         }
-        result = await self.retry_once(self.session.get('/groupConfig', params=params))
+        result = await self.session.get('/groupConfig', params=params)
         return GroupSetting.parse_obj(result)
 
+    @retry_once
     async def set_group_config(self, group: Union[Group, int],
                                config: GroupSetting) -> None:
         """
@@ -362,8 +387,9 @@ class Bot:
             'config':     json.loads(config.json())
         }
 
-        await self.retry_once(self.session.post('/groupConfig', data=data))
+        await self.session.post('/groupConfig', data=data)
 
+    @retry_once
     async def mute(self, group: Union[Group, int],
                    member: Union[Member, int],
                    time: Union[timedelta, int]) -> None:
@@ -384,8 +410,9 @@ class Bot:
             'MemberId':   Bot._handle_target_as(target=member, as_type=Member),
             'time':       time
         }
-        await self.retry_once(self.session.post('/mute', data=data))
+        await self.session.post('/mute', data=data)
 
+    @retry_once
     async def unmute(self, group: Union[Group, int],
                      member: Union[Member, int]) -> None:
         """
@@ -400,8 +427,9 @@ class Bot:
             'target':     Bot._handle_target_as(target=group, as_type=Group),
             'MemberId':   Bot._handle_target_as(target=member, as_type=Member)
         }
-        await self.retry_once(self.session.post('/unmute', data=data))
+        await self.session.post('/unmute', data=data)
 
+    @retry_once
     async def kick(self, group: Union[Group, int],
                    member: Union[Member, int],
                    message: str = '') -> None:
@@ -420,8 +448,9 @@ class Bot:
         if message:
             data['msg'] = message
 
-        await self.retry_once(self.session.post('/kick', data=data))
+        await self.session.post('/kick', data=data)
 
+    @retry_once
     async def respond_request(self,
                               request: Union[NewFriendRequestEvent, MemberJoinRequestEvent],
                               response: Union[NewFriendRequestResponse, MemberJoinRequestResponse],
@@ -437,7 +466,7 @@ class Bot:
                 'operate': response,
                 'message': message
             }
-            return await self.retry_once(self.session.post('/resp/newFriendRequestEvent', data=data))
+            return await self.session.post('/resp/newFriendRequestEvent', data=data)
         elif isinstance(request, MemberJoinRequestEvent):
             assert isinstance(response, (MemberJoinRequestResponse, int)), f'Response type mismatch'
             response = response.value if isinstance(response, MemberJoinRequestResponse) else response
@@ -449,6 +478,7 @@ class Bot:
                 'operate': response,
                 'message': message
             }
+            return await self.session.post('/resp/memberJoinRequestEvent', data=data)
         else:
             raise TypeError(f'Unsupported event: {str(request)}')
 
@@ -464,7 +494,7 @@ class Bot:
         if not isinstance(message, LocalImage):
             return json.loads(message.json())
 
-        image = await self.retry_once(self.upload_image(image_type, message.path))
+        image = await self.upload_image(image_type, message.path)
 
         return {
             'type':    'Image',
@@ -505,6 +535,7 @@ class Bot:
         else:
             raise ValueError('Invalid message')
 
+    @retry_once
     async def get_config(self) -> dict:
         """
         Get the config of http api
@@ -515,9 +546,10 @@ class Bot:
             'sessionKey': self.session_key
         }
 
-        result = await self.retry_once(self.session.get('/config', params=params))
+        result = await self.session.get('/config', params=params)
         return result
 
+    @retry_once
     async def set_config(self, cache_size: int = 4096, enable_websocket: bool = True) -> None:
         """
         Set the config of http api
@@ -532,7 +564,7 @@ class Bot:
             'enableWebsocket': enable_websocket
         }
 
-        await self.retry_once(self.session.post('/config', data=data))
+        await self.session.post('/config', data=data)
 
     def _parse_event(self, result) -> Event:
         """
@@ -546,14 +578,26 @@ class Bot:
             try:
                 if 'messageChain' in result:  # construct message chain
                     # parse quote first
-                    for idx, component in enumerate(result['messageChain']):
-                        if component['type'] == 'Quote':
-                            result['messageChain'][idx]['origin'] = MessageChain.custom_parse(
-                                result['messageChain'][idx]['origin'])
+                    first_component = result['messageChain'][1]
+                    if first_component['type'] == 'Quote':  # FIXME: add the first two message part back
+                        result['messageChain'][1]['origin'] = MessageChain.custom_parse(
+                            result['messageChain'][1]['origin'])
+                        try:
+                            del result['messageChain'][2]  # delete duplicated at
+                            if result['messageChain'][2]['type'] == 'Plain' and result['messageChain'][2]['text'] == ' ':
+                                del result['messageChain'][2]  # delete space after duplicated at
+                        except:
+                            global __logger
+                            __logger.exception('Please open a github issue to report this error')
+                    # for idx, component in enumerate(result['messageChain']):
+                    #     if component['type'] == 'Quote':
+                    #         result['messageChain'][idx]['origin'] = MessageChain.custom_parse(
+                    #             result['messageChain'][idx]['origin'])
                     result['messageChain'] = MessageChain.custom_parse(result['messageChain'])
                 result = Events[result['type']].value.parse_obj(result)
             except:
-                self.logger.exception('Unhandled exception')
+                global __logger
+                __logger.exception('Unhandled exception')
             return result
         else:
             raise ValueError('Invalid message chain')
@@ -577,6 +621,7 @@ class Bot:
 
         return _handler
 
+    @retry_once
     async def create_websocket(self, handler, ws_close_handler=None, listen: str = 'all') -> None:
         """
         Register callback for websocket. Once an Event or Message is received, the handler will be invoked
@@ -590,6 +635,5 @@ class Bot:
         if ws_close_handler is None:
             async def ws_close_handler(event):
                 pass
-        await self.retry_once(self.session.websocket(f'/{listen}?sessionKey={self.session_key}',
-                                                     self._websocket_handler(handler), ws_close_handler))
-
+        await self.session.websocket(f'/{listen}?sessionKey={self.session_key}',
+                                     self._websocket_handler(handler), ws_close_handler)

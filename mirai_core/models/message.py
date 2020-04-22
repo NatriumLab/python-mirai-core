@@ -603,13 +603,13 @@ class Xml(BaseMessageComponent):
     type = MessageComponentTypes.Xml
     XML: str  # xml content
 
-    def __init__(self, XML: str):
+    def __init__(self, XML: str, **kwargs):
         """
         Construct Xml component
 
         :param xml: str contains xml
         """
-        super().__init__(XML=XML)
+        super().__init__(XML=XML, **kwargs)
 
 
 class Json(BaseMessageComponent):
@@ -620,13 +620,13 @@ class Json(BaseMessageComponent):
     type = MessageComponentTypes.Json
     Json: dict = Field(..., alias="json")  # json content
 
-    def __init__(self, Json: Union[dict, List]):
+    def __init__(self, Json: Union[dict, List], **kwargs):
         """
         Construct Json component
 
         :param json: json content
         """
-        super().__init__(Json=Json)
+        super().__init__(Json=Json, **kwargs)
 
 
 class App(BaseMessageComponent):
@@ -637,13 +637,13 @@ class App(BaseMessageComponent):
     type = MessageComponentTypes.App
     content: str  # app content
 
-    def __init__(self, content: str):
+    def __init__(self, content: str, **kwargs):
         """
         Construct App component
 
         :param content: app content
         """
-        super().__init__(content=content)
+        super().__init__(content=content, **kwargs)
 
 
 class Unknown(BaseMessageComponent):
