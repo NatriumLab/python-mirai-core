@@ -575,16 +575,17 @@ class Bot:
             try:
                 if 'messageChain' in result:  # construct message chain
                     # parse quote first
-                    first_component = result['messageChain'][1]
-                    if first_component['type'] == 'Quote':  # FIXME: add the first two message part back
-                        result['messageChain'][1]['origin'] = MessageChain.custom_parse(
-                            result['messageChain'][1]['origin'])
-                        try:
-                            del result['messageChain'][2]  # delete duplicated at
-                            if result['messageChain'][2]['type'] == 'Plain' and result['messageChain'][2]['text'] == ' ':
-                                del result['messageChain'][2]  # delete space after duplicated at
-                        except:
-                            self.logger.exception('Please open a github issue to report this error')
+                    if len(result['MessageChain']) > 1:
+                        first_component = result['messageChain'][1]
+                        if first_component['type'] == 'Quote':  # FIXME: add the first two message part back
+                            result['messageChain'][1]['origin'] = MessageChain.custom_parse(
+                                result['messageChain'][1]['origin'])
+                            try:
+                                del result['messageChain'][2]  # delete duplicated at
+                                if result['messageChain'][2]['type'] == 'Plain' and result['messageChain'][2]['text'] == ' ':
+                                    del result['messageChain'][2]  # delete space after duplicated at
+                            except:
+                                self.logger.exception('Please open a github issue to report this error')
                     # for idx, component in enumerate(result['messageChain']):
                     #     if component['type'] == 'Quote':
                     #         result['messageChain'][idx]['origin'] = MessageChain.custom_parse(
