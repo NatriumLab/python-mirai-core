@@ -575,7 +575,7 @@ class Bot:
             try:
                 if 'messageChain' in result:  # construct message chain
                     # parse quote first
-                    if len(result['MessageChain']) > 1:
+                    if len(result['messageChain']) > 1:
                         first_component = result['messageChain'][1]
                         if first_component['type'] == 'Quote':  # FIXME: add the first two message part back
                             result['messageChain'][1]['origin'] = MessageChain.custom_parse(
