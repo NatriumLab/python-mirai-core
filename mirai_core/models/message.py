@@ -20,6 +20,10 @@ __all__ = [
     'Image',
     'Unknown',
     'Quote',
+    'App',
+    'Json',
+    'Xml',
+    'Poke',
     'ComponentTypes',
     'LocalImage',
     'MessageChain',
@@ -38,6 +42,7 @@ class MessageComponentTypes(Enum):
     Xml = "Xml"
     Json = "Json"
     App = "App"
+    Poke = "Poke"
     Unknown = "Unknown"
 
 
@@ -601,15 +606,21 @@ class Xml(BaseMessageComponent):
     Available for outbound message
     """
     type = MessageComponentTypes.Xml
-    XML: str  # xml content
+    xml: str  # xml content
 
-    def __init__(self, XML: str, **kwargs):
+    def __init__(self, xml: str, **kwargs):
         """
         Construct Xml component
 
         :param xml: str contains xml
         """
-        super().__init__(XML=XML, **kwargs)
+        super().__init__(xml=xml, **kwargs)
+
+    def __str__(self):
+        return self.xml
+
+    def __repr__(self):
+        return f'[Xml: {self.xml}]'
 
 
 class Json(BaseMessageComponent):
@@ -618,15 +629,21 @@ class Json(BaseMessageComponent):
     Available for outbound message
     """
     type = MessageComponentTypes.Json
-    Json: dict = Field(..., alias="json")  # json content
+    json: dict  # json content
 
-    def __init__(self, Json: Union[dict, List], **kwargs):
+    def __init__(self, json: Union[dict, List], **kwargs):
         """
         Construct Json component
 
         :param json: json content
         """
-        super().__init__(Json=Json, **kwargs)
+        super().__init__(json=json, **kwargs)
+
+    def __str__(self):
+        return str(self.json)
+
+    def __repr__(self):
+        return f'[Json: {str(self.json)}]'
 
 
 class App(BaseMessageComponent):
@@ -644,6 +661,38 @@ class App(BaseMessageComponent):
         :param content: app content
         """
         super().__init__(content=content, **kwargs)
+
+    def __str__(self):
+        return str(self.content)
+
+    def __repr__(self):
+        return f'[App: {str(self.content)}]'
+
+
+class Poke(BaseMessageComponent):
+    """
+    Poke component
+    Available for outbound message
+    """
+    type = MessageComponentTypes.Poke
+    name: str
+
+    def __init__(self, name: str, **kwargs):
+        """
+        Construct Poke component
+
+        :param name: Poke content
+        """
+        valid_name = ('Poke', 'ShowLove', 'Like', 'Heartbroken', 'SixSixSix', 'FangDaZhao')
+        if name not in valid_name:
+            raise ValueError(f'"{name}" is not valid, choices are {valid_name}')
+        super().__init__(name=name, **kwargs)
+
+    def __str__(self):
+        return self.name
+
+    def __repr__(self):
+        return f'[Poke: {str(self.name)}]'
 
 
 class Unknown(BaseMessageComponent):
@@ -672,6 +721,7 @@ class ComponentTypes(Enum):
     Xml = Xml
     Json = Json
     App = App
+    Poke = Poke
     Unknown = Unknown
 
 
@@ -686,6 +736,7 @@ MessageComponents = {
     'Xml':     Xml,
     'Json':    Json,
     'App':     App,
+    'Poke':    Poke,
     'Unknown': Unknown
 }
 
