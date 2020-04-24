@@ -629,15 +629,15 @@ class Json(BaseMessageComponent):
     Available for outbound message
     """
     type = MessageComponentTypes.Json
-    json: dict  # json content
+    Json: dict = Field(..., alias="json")  # json content
 
-    def __init__(self, json: Union[dict, List], **kwargs):
+    def __init__(self, Json: Union[dict, List], **kwargs):
         """
         Construct Json component
 
         :param json: json content
         """
-        super().__init__(json=json, **kwargs)
+        super().__init__(Json=Json, **kwargs)
 
     def __str__(self):
         return str(self.json)
