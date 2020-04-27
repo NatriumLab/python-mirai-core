@@ -4,10 +4,10 @@ from pathlib import Path
 import json
 from .log import create_logger
 
-from .models.message import BotMessage, ImageType, MessageChain, \
-    Source, Image, Quote, Plain, BaseMessageComponent, LocalImage
-from .models.events import *
-from .models.entity import Friend, Group, GroupSetting, Member, MemberChangeableSetting
+from .models.Message import BotMessage, TargetType, MessageChain, \
+    Source, Image, Quote, Plain, BaseMessageComponent, FlashImage
+from .models.Event import *
+from .models.Entity import Friend, Group, GroupSetting, Member, MemberChangeableSetting
 from .network import HttpClient
 from .exceptions import AuthenticationException, MiraiException, NetworkException, SessionException
 
@@ -83,84 +83,148 @@ class Bot:
                                 })
 
     @staticmethod
-    def _handle_target_as(target: Union[Group, Friend, Member, int],
-                          as_type: Union[Type[Group], Type[Friend], Type[Member]]):
+    def _handle_target_as(target: Union[Group, Friend, Member, int]):
         """
         Internal use only, convert target to id
 
         :param target: Union[Group, Friend, Member, int]
-        :param as_type: Group, Friend or Member
         :return: id, int
         """
         if isinstance(target, int):
             return target
-        elif isinstance(target, as_type):
-            return target.id
         else:
-            raise ValueError(f'Invalid target as {type(as_type)} object.')
+            try:
+                return target.id
+            except:
+                raise ValueError(f'target does not contain id attribute')
 
     @retry_once
-    async def send_friend_message(self,
-                                  friend: Union[Friend, int],
-                                  message: Union[
-                                      MessageChain,
-                                      BaseMessageComponent,
-                                      List[BaseMessageComponent],
-                                      str
-                                  ],
-                                  quote_source: Union[int, Source] = None) -> BotMessage:
+    async def send_message(self,
+                     target: Union[Friend, Member, Group, int],
+                     chat_type: TargetType,
+                     message: Union[
+                         MessageChain,
+                         BaseMessageComponent,
+                         List[BaseMessageComponent],
+                         str
+                     ] = '',
+                     temp_group: Optional[int] = None,
+                     quote_source: Union[int, Source] = None,
+                     save_image_id: bool = False
+                     ) -> BotMessage:
         """
-        Send friend message
+        Send Group/Friend message, only keyword arguments are allowed
 
-        :param friend: int or Friend object as target
+        :param target: Group, Member, Friend, int
+        :param chat_type: ChatType, specify the type of target
+        :param temp_group: If chat_type is Member and target is int, then temp group must be specified
         :param message: MessageChain, BaseMessageComponent, List of BaseMessageComponent or str, the content to send
         :param quote_source: int (the 64-bit int) or Source, the message to quote
+        :param save_image_id: bool, whether this api should update the image_ids in MessageChain
+        The purpose of this argument is to save image ids for future use.
         :return: BotMessage (contains message id)
         """
+
         data = {
             'sessionKey':   self.session_key,
-            'target':       Bot._handle_target_as(friend, Friend),
-            'messageChain': await self._handle_message_chain(message, Friend)
         }
+        if chat_type == TargetType.Friend:
+            portal = '/sendFriendMessage'
+            data['target'] = self._handle_target_as(target)
+
+        elif chat_type == TargetType.Temp:
+            portal = '/sendTempMessage'
+            if isinstance(target, int):
+                data['qq'] = target
+                if not isinstance(temp_group, int):
+                    raise ValueError('temp group must be specified if target is not Member type')
+                data['group'] = temp_group
+            else:
+                data['group'] = target.group.id
+                data['qq'] = target.id
+
+        elif chat_type == TargetType.Group:
+            portal = '/sendGroupMessage'
+            data['target'] = self._handle_target_as(target)
+        else:
+            raise ValueError('One of friend, member and group must not be empty')
+
+        message_chain = await self._handle_message_chain(message, chat_type, save_image_id)
+
+        data['messageChain'] = message_chain
+
         if quote_source:
             if isinstance(quote_source, int):
                 data['quote'] = quote_source
             elif isinstance(quote_source, Source):
                 data['quote'] = quote_source.id
-        result = await self.session.post('/sendFriendMessage', data=data)
+
+        result = await self.session.post(portal, data=data)
 
         return BotMessage.parse_obj(result)
 
-    @retry_once
-    async def send_group_message(self,
-                                 group: Union[Group, int],
-                                 message: Union[
-                                     MessageChain,
-                                     BaseMessageComponent,
-                                     List[BaseMessageComponent],
-                                     str
-                                 ],
-                                 quote_source: Union[int, Source] = None) -> BotMessage:
-        """
-        Send group message
-
-        :param group: int or Group object as target
-        :param message: MessageChain, BaseMessageComponent, List of BaseMessageComponent or str, the content to send
-        :param quote_source: int (the 64-bit int) or Source, the message to quote
-        :return: BotMessage (contains message id)
-        """
-        data = {
-            'sessionKey':   self.session_key,
-            'target':       Bot._handle_target_as(group, Group),
-            'messageChain': await self._handle_message_chain(message, Group)
-        }
-        if quote_source:
-            if isinstance(quote_source, int):
-                data['quote'] = quote_source
-            elif isinstance(quote_source, Source):
-                data['quote'] = quote_source.id
-        result = await self.session.post('/sendGroupMessage', data=data)
-        return BotMessage.parse_obj(result)
+    # @retry_once
+    # async def send_friend_message(self,
+    #                               friend: Union[Friend, int],
+    #                               message: Union[
+    #                                   MessageChain,
+    #                                   BaseMessageComponent,
+    #                                   List[BaseMessageComponent],
+    #                                   str
+    #                               ],
+    #                               quote_source: Union[int, Source] = None) -> BotMessage:
+    #     """
+    #     Send friend message
+    #
+    #     :param friend: int or Friend object as target
+    #     :param message: MessageChain, BaseMessageComponent, List of BaseMessageComponent or str, the content to send
+    #     :param quote_source: int (the 64-bit int) or Source, the message to quote
+    #     :return: BotMessage (contains message id)
+    #     """
+    #     data = {
+    #         'sessionKey':   self.session_key,
+    #         'target':       Bot._handle_target_as(friend, Friend),
+    #         'messageChain': await self._handle_message_chain(message, Friend)
+    #     }
+    #     if quote_source:
+    #         if isinstance(quote_source, int):
+    #             data['quote'] = quote_source
+    #         elif isinstance(quote_source, Source):
+    #             data['quote'] = quote_source.id
+    #     result = await self.session.post('/sendFriendMessage', data=data)
+    #
+    #     return BotMessage.parse_obj(result)
+    #
+    # @retry_once
+    # async def send_group_message(self,
+    #                              group: Union[Group, int],
+    #                              message: Union[
+    #                                  MessageChain,
+    #                                  BaseMessageComponent,
+    #                                  List[BaseMessageComponent],
+    #                                  str
+    #                              ],
+    #                              quote_source: Union[int, Source] = None) -> BotMessage:
+    #     """
+    #     Send group message
+    #
+    #     :param group: int or Group object as target
+    #     :param message: MessageChain, BaseMessageComponent, List of BaseMessageComponent or str, the content to send
+    #     :param quote_source: int (the 64-bit int) or Source, the message to quote
+    #     :return: BotMessage (contains message id)
+    #     """
+    #     data = {
+    #         'sessionKey':   self.session_key,
+    #         'target':       Bot._handle_target_as(group, Group),
+    #         'messageChain': await self._handle_message_chain(message, Group)
+    #     }
+    #     if quote_source:
+    #         if isinstance(quote_source, int):
+    #             data['quote'] = quote_source
+    #         elif isinstance(quote_source, Source):
+    #             data['quote'] = quote_source.id
+    #     result = await self.session.post('/sendGroupMessage', data=data)
+    #     return BotMessage.parse_obj(result)
 
     @retry_once
     async def recall(self, source: Union[Source, int]) -> None:
@@ -230,8 +294,9 @@ class Bot:
         return [Member.parse_obj(member_info) for member_info in result]
 
     @retry_once
-    async def upload_image(self, image_type: ImageType, image_path: Union[Path, str]) -> Optional[Image]:
+    async def upload_image(self, image_type: TargetType, image_path: Union[Path, str]) -> Optional[Image]:
         """
+        Deprecated
         Upload a image to QQ server. The image between group and friend is not exchangeable
         This function can be called separately to acquire image uuids, or automatically if using LocalImage while sending
 
@@ -255,6 +320,7 @@ class Bot:
     @retry_once
     async def fetch_message(self, count: int) -> List[Event]:
         """
+        Deprecated
         Fetch a list of messages
         This function is called automatically if using polling instead of websocket
 
@@ -284,7 +350,7 @@ class Bot:
         """
         params = {
             'sessionKey': self.session_key,
-            'target':     Bot._handle_target_as(target=group, as_type=Group)
+            'target':     Bot._handle_target_as(target=group)
         }
 
         await self.session.get('/muteAll', params=params)
@@ -299,7 +365,7 @@ class Bot:
         """
         params = {
             'sessionKey': self.session_key,
-            'target':     Bot._handle_target_as(target=group, as_type=Group)
+            'target':     Bot._handle_target_as(target=group)
         }
 
         await self.session.get('/unmuteAll', params=params)
@@ -315,8 +381,8 @@ class Bot:
         """
         params = {
             'sessionKey': self.session_key,
-            'target':     Bot._handle_target_as(target=group, as_type=Group),
-            'memberId':   self._handle_target_as(target=member, as_type=Member)
+            'target':     Bot._handle_target_as(target=group),
+            'memberId':   self._handle_target_as(target=member)
         }
 
         result = await self.session.get('/memberInfo', params=params)
@@ -346,8 +412,8 @@ class Bot:
         """
         data = {
             'sessionKey': self.session_key,
-            'target':     Bot._handle_target_as(target=group, as_type=Group),
-            'memberId':   self._handle_target_as(target=member, as_type=Member),
+            'target':     Bot._handle_target_as(target=group),
+            'memberId':   self._handle_target_as(target=member),
             'info':       json.loads(setting.json())
         }
 
@@ -363,7 +429,7 @@ class Bot:
         """
         params = {
             'sessionKey': self.session_key,
-            'target':     Bot._handle_target_as(target=group, as_type=Group),
+            'target':     Bot._handle_target_as(target=group),
         }
         result = await self.session.get('/groupConfig', params=params)
         return GroupSetting.parse_obj(result)
@@ -380,7 +446,7 @@ class Bot:
         """
         data = {
             'sessionKey': self.session_key,
-            'target':     Bot._handle_target_as(target=group, as_type=Group),
+            'target':     Bot._handle_target_as(target=group),
             'config':     json.loads(config.json())
         }
 
@@ -403,8 +469,8 @@ class Bot:
         time = min(86400 * 30, max(60, time))  # time should between 1 minutes and 30 days
         data = {
             'sessionKey': self.session_key,
-            'target':     Bot._handle_target_as(target=group, as_type=Group),
-            'MemberId':   Bot._handle_target_as(target=member, as_type=Member),
+            'target':     Bot._handle_target_as(target=group),
+            'MemberId':   Bot._handle_target_as(target=member),
             'time':       time
         }
         await self.session.post('/mute', data=data)
@@ -421,8 +487,8 @@ class Bot:
         """
         data = {
             'sessionKey': self.session_key,
-            'target':     Bot._handle_target_as(target=group, as_type=Group),
-            'MemberId':   Bot._handle_target_as(target=member, as_type=Member)
+            'target':     Bot._handle_target_as(target=group),
+            'MemberId':   Bot._handle_target_as(target=member)
         }
         await self.session.post('/unmute', data=data)
 
@@ -439,8 +505,8 @@ class Bot:
         """
         data = {
             'sessionKey': self.session_key,
-            'target':     Bot._handle_target_as(target=group, as_type=Group),
-            'MemberId':   Bot._handle_target_as(target=member, as_type=Member)
+            'target':     Bot._handle_target_as(target=group),
+            'MemberId':   Bot._handle_target_as(target=member)
         }
         if message:
             data['msg'] = message
@@ -479,19 +545,23 @@ class Bot:
         else:
             raise TypeError(f'Unsupported event: {str(request)}')
 
-    async def _handle_image(self, message: BaseMessageComponent, image_type: ImageType) -> dict:
+    async def _handle_message_component(self, message: BaseMessageComponent, image_type: TargetType) -> dict:
         """
         Internal use only
-        Convert LocalImage to Image, and everything to json
+        Upload Image, and convert everything to json
 
         :param message: BaseMessageComponent
         :param image_type: ImageType
         :return: json representation
         """
-        if not isinstance(message, LocalImage):
+        if not isinstance(message, (Image, FlashImage)):
+            return json.loads(message.json())
+
+        if message.imageId or message.url:
             return json.loads(message.json())
 
         image = await self.upload_image(image_type, message.path)
+        message.imageId = image.imageId
 
         return {
             'type':    'Image',
@@ -502,33 +572,30 @@ class Bot:
         MessageChain,
         BaseMessageComponent,
         List[BaseMessageComponent],
-        str
-    ], as_type: Union[Type[Group], Type[Friend]]) -> List:
+        str],
+                                    image_type: TargetType,
+                                    save_image_id=False) -> List:
         """
         Internal use only
         Convert MessageChain to json
 
         :param message: MessageChain
-        :param as_type: Group or Friend
+        :param image_type: Group or Friend
+        :param save_image_id: whether to update image id in Image or FlashImage objects
+        :param image_type: what type of image should be uploaded
         :return: list
         """
         if isinstance(message, MessageChain):
             return json.loads(message.json())
         elif isinstance(message, str):
             return [json.loads(Plain(text=message).json())]
-        elif isinstance(message, BaseMessageComponent):
-            if as_type == Group:
-                image_type = ImageType.Group
+        elif isinstance(message, (BaseMessageComponent, tuple, list)):
+            if isinstance(message, BaseMessageComponent):
+                message = [message]
+            if save_image_id:
+                return [await self._handle_message_component(m, image_type=image_type) for m in message]
             else:
-                image_type = ImageType.Friend
-            return [await self._handle_image(message, image_type)]
-        elif isinstance(message, (tuple, list)):
-            if as_type == Group:
-                image_type = ImageType.Group
-            else:
-                image_type = ImageType.Friend
-            result = [await self._handle_image(m, image_type=image_type) for m in message]
-            return result
+                return [json.loads(m.json()) for m in message]
         else:
             raise ValueError('Invalid message')
 
@@ -578,8 +645,6 @@ class Bot:
                     if len(result['messageChain']) > 1:
                         first_component = result['messageChain'][1]
                         if first_component['type'] == 'Quote':  # FIXME: add the first two message part back
-                            result['messageChain'][1]['origin'] = MessageChain.custom_parse(
-                                result['messageChain'][1]['origin'])
                             try:
                                 del result['messageChain'][2]  # delete duplicated at
                                 if result['messageChain'][2]['type'] == 'Plain' and result['messageChain'][2]['text'] == ' ':
@@ -590,7 +655,7 @@ class Bot:
                     #     if component['type'] == 'Quote':
                     #         result['messageChain'][idx]['origin'] = MessageChain.custom_parse(
                     #             result['messageChain'][idx]['origin'])
-                    result['messageChain'] = MessageChain.custom_parse(result['messageChain'])
+                    result['messageChain'] = MessageChain.parse_obj(result['messageChain'])
                 result = Events[result['type']].value.parse_obj(result)
             except:
                 self.logger.exception('Unhandled exception')

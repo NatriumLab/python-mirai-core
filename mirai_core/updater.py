@@ -6,7 +6,7 @@ import signal
 from .log import create_logger, install_logger
 
 from .bot import Bot
-from .models.events import Event, EventTypes
+from .models.Event import Event, EventTypes
 from .exceptions import SessionException, NetworkException, AuthenticationException, ServerException
 
 

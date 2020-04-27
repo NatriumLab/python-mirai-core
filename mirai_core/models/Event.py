@@ -1,7 +1,7 @@
 from enum import Enum
 from pydantic import BaseModel, Field
-from .entity import Permission, Group, Member, Friend
-from .message import MessageChain
+from .Entity import Permission, Group, Member, Friend
+from .Message import MessageChain
 from typing import Optional
 from datetime import datetime
 
