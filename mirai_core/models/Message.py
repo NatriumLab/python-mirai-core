@@ -6,6 +6,7 @@ from pydantic import Field, validator, HttpUrl, BaseModel, Extra
 from .Constant import qq_emoji_text_list
 import datetime
 from collections import MutableSequence
+import json
 
 __all__ = [
     "BaseMessageComponent",
@@ -36,7 +37,7 @@ class BaseMessageComponent(BaseModel):
         for plain text extraction
         :return: human readable text component
         """
-        return 'Unknown message component: ' + str(self.json())
+        return 'Unknown message component: ' + json.dumps(self.dict(), ensure_ascii=False, indent=4)
 
     def __repr__(self):
         return '[Unknown]'
@@ -261,9 +262,9 @@ class Json(BaseMessageComponent):
     Available for outbound message
     """
     type: Literal['Json'] = 'Json'
-    Json: dict = Field(..., alias="json")  # json content
+    Json: str = Field(..., alias="json")  # json content
 
-    def __init__(self, Json: Union[dict, List], **kwargs):
+    def __init__(self, Json: str, **kwargs):
         """
         Construct Json component
 
@@ -272,10 +273,10 @@ class Json(BaseMessageComponent):
         super().__init__(Json=Json, **kwargs)
 
     def __str__(self):
-        return str(self.json)
+        return self.json
 
     def __repr__(self):
-        return f'[Json: {str(self.json)}]'
+        return f'[Json: {self.json}]'
 
 
 class App(BaseMessageComponent):

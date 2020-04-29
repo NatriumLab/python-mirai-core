@@ -96,19 +96,20 @@ class Updater:
 
         :return:
         """
-        while True:
-            try:
-                await self.bot.handshake()
-                if self.use_websocket:
-                    asyncio.run_coroutine_threadsafe(
-                        self.bot.create_websocket(self.event_caller, self.handshake), self.loop)
-                return
-            except NetworkException:
-                self.logger.warning('Unable to communicate with Mirai console, retrying in 5 seconds')
-                await asyncio.sleep(5)
-            except Exception as e:
-                self.logger.exception(f'retrying in 5 seconds')
-                await asyncio.sleep(5)
+        try:
+            await self.bot.handshake()
+            if self.use_websocket:
+                asyncio.run_coroutine_threadsafe(
+                    self.bot.create_websocket(self.event_caller, self.handshake), self.loop)
+            return
+        except NetworkException:
+            self.logger.warning('Unable to communicate with Mirai console, retrying in 5 seconds')
+            await asyncio.sleep(5)
+            asyncio.run_coroutine_threadsafe(self.handshake(), self.loop)
+        except Exception as e:
+            self.logger.exception(f'retrying in 5 seconds')
+            await asyncio.sleep(5)
+            asyncio.run_coroutine_threadsafe(self.handshake(), self.loop)
 
     async def message_polling(self, count=5, interval=0.5) -> None:
         """
