@@ -1,0 +1,887 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>mirai_core.models.message &mdash; Python Mirai Core 0.8 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Python Mirai Core
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../mirai_core.html">mirai_core package</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Python Mirai Core</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>mirai_core.models.message</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for mirai_core.models.message</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span>
+<span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">BaseModel</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">overload</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">Field</span><span class="p">,</span> <span class="n">validator</span><span class="p">,</span> <span class="n">HttpUrl</span><span class="p">,</span> <span class="n">BaseModel</span>
+<span class="kn">from</span> <span class="nn">pydantic.generics</span> <span class="kn">import</span> <span class="n">GenericModel</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">MutableSequence</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;MessageComponentTypes&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;BaseMessageComponent&quot;</span><span class="p">,</span>
+    <span class="s1">&#39;Plain&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Source&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;At&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;AtAll&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Face&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Image&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Unknown&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Quote&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;ComponentTypes&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;LocalImage&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;MessageChain&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;qq_emoji_text_list&#39;</span>
+<span class="p">]</span>
+
+
+<div class="viewcode-block" id="MessageComponentTypes"><a class="viewcode-back" href="../../../mirai_core.models.html#mirai_core.models.message.MessageComponentTypes">[docs]</a><span class="k">class</span> <span class="nc">MessageComponentTypes</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="n">Source</span> <span class="o">=</span> <span class="s2">&quot;Source&quot;</span>
+    <span class="n">Plain</span> <span class="o">=</span> <span class="s2">&quot;Plain&quot;</span>
+    <span class="n">Face</span> <span class="o">=</span> <span class="s2">&quot;Face&quot;</span>
+    <span class="n">At</span> <span class="o">=</span> <span class="s2">&quot;At&quot;</span>
+    <span class="n">AtAll</span> <span class="o">=</span> <span class="s2">&quot;AtAll&quot;</span>
+    <span class="n">Image</span> <span class="o">=</span> <span class="s2">&quot;Image&quot;</span>
+    <span class="n">Quote</span> <span class="o">=</span> <span class="s2">&quot;Quote&quot;</span>
+    <span class="n">Xml</span> <span class="o">=</span> <span class="s2">&quot;Xml&quot;</span>
+    <span class="n">Json</span> <span class="o">=</span> <span class="s2">&quot;Json&quot;</span>
+    <span class="n">App</span> <span class="o">=</span> <span class="s2">&quot;App&quot;</span>
+    <span class="n">Unknown</span> <span class="o">=</span> <span class="s2">&quot;Unknown&quot;</span></div>
+
+
+<div class="viewcode-block" id="BaseMessageComponent"><a class="viewcode-back" href="../../../mirai_core.models.html#mirai_core.models.message.BaseMessageComponent">[docs]</a><span class="k">class</span> <span class="nc">BaseMessageComponent</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="nb">type</span><span class="p">:</span> <span class="n">MessageComponentTypes</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        for plain text extraction</span>
+<span class="sd">        :return: human readable text component</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="s1">&#39;&#39;</span></div>
+
+
+<span class="c1"># original text copied from Tim</span>
+<span class="n">qq_emoji_text_list</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="mi">0</span><span class="p">:</span>   <span class="s1">&#39;[惊讶]&#39;</span><span class="p">,</span>
+    <span class="mi">1</span><span class="p">:</span>   <span class="s1">&#39;[撇嘴]&#39;</span><span class="p">,</span>
+    <span class="mi">2</span><span class="p">:</span>   <span class="s1">&#39;[色]&#39;</span><span class="p">,</span>
+    <span class="mi">3</span><span class="p">:</span>   <span class="s1">&#39;[发呆]&#39;</span><span class="p">,</span>
+    <span class="mi">4</span><span class="p">:</span>   <span class="s1">&#39;[得意]&#39;</span><span class="p">,</span>
+    <span class="mi">5</span><span class="p">:</span>   <span class="s1">&#39;[流泪]&#39;</span><span class="p">,</span>
+    <span class="mi">6</span><span class="p">:</span>   <span class="s1">&#39;[害羞]&#39;</span><span class="p">,</span>
+    <span class="mi">7</span><span class="p">:</span>   <span class="s1">&#39;[闭嘴]&#39;</span><span class="p">,</span>
+    <span class="mi">8</span><span class="p">:</span>   <span class="s1">&#39;[睡]&#39;</span><span class="p">,</span>
+    <span class="mi">9</span><span class="p">:</span>   <span class="s1">&#39;[大哭]&#39;</span><span class="p">,</span>
+    <span class="mi">10</span><span class="p">:</span>  <span class="s1">&#39;[尴尬]&#39;</span><span class="p">,</span>
+    <span class="mi">11</span><span class="p">:</span>  <span class="s1">&#39;[发怒]&#39;</span><span class="p">,</span>
+    <span class="mi">12</span><span class="p">:</span>  <span class="s1">&#39;[调皮]&#39;</span><span class="p">,</span>
+    <span class="mi">13</span><span class="p">:</span>  <span class="s1">&#39;[呲牙]&#39;</span><span class="p">,</span>
+    <span class="mi">14</span><span class="p">:</span>  <span class="s1">&#39;[微笑]&#39;</span><span class="p">,</span>
+    <span class="mi">15</span><span class="p">:</span>  <span class="s1">&#39;[难过]&#39;</span><span class="p">,</span>
+    <span class="mi">16</span><span class="p">:</span>  <span class="s1">&#39;[酷]&#39;</span><span class="p">,</span>
+    <span class="mi">17</span><span class="p">:</span>  <span class="s1">&#39;[Empty]&#39;</span><span class="p">,</span>
+    <span class="mi">18</span><span class="p">:</span>  <span class="s1">&#39;[抓狂]&#39;</span><span class="p">,</span>
+    <span class="mi">19</span><span class="p">:</span>  <span class="s1">&#39;[吐]&#39;</span><span class="p">,</span>
+    <span class="mi">20</span><span class="p">:</span>  <span class="s1">&#39;[偷笑]&#39;</span><span class="p">,</span>
+    <span class="mi">21</span><span class="p">:</span>  <span class="s1">&#39;[可爱]&#39;</span><span class="p">,</span>
+    <span class="mi">22</span><span class="p">:</span>  <span class="s1">&#39;[白眼]&#39;</span><span class="p">,</span>
+    <span class="mi">23</span><span class="p">:</span>  <span class="s1">&#39;[傲慢]&#39;</span><span class="p">,</span>
+    <span class="mi">24</span><span class="p">:</span>  <span class="s1">&#39;[饥饿]&#39;</span><span class="p">,</span>
+    <span class="mi">25</span><span class="p">:</span>  <span class="s1">&#39;[困]&#39;</span><span class="p">,</span>
+    <span class="mi">26</span><span class="p">:</span>  <span class="s1">&#39;[惊恐]&#39;</span><span class="p">,</span>
+    <span class="mi">27</span><span class="p">:</span>  <span class="s1">&#39;[流汗]&#39;</span><span class="p">,</span>
+    <span class="mi">28</span><span class="p">:</span>  <span class="s1">&#39;[憨笑]&#39;</span><span class="p">,</span>
+    <span class="mi">29</span><span class="p">:</span>  <span class="s1">&#39;[悠闲]&#39;</span><span class="p">,</span>
+    <span class="mi">30</span><span class="p">:</span>  <span class="s1">&#39;[奋斗]&#39;</span><span class="p">,</span>
+    <span class="mi">31</span><span class="p">:</span>  <span class="s1">&#39;[咒骂]&#39;</span><span class="p">,</span>
+    <span class="mi">32</span><span class="p">:</span>  <span class="s1">&#39;[疑问]&#39;</span><span class="p">,</span>
+    <span class="mi">33</span><span class="p">:</span>  <span class="s1">&#39;[嘘]&#39;</span><span class="p">,</span>
+    <span class="mi">34</span><span class="p">:</span>  <span class="s1">&#39;[晕]&#39;</span><span class="p">,</span>
+    <span class="mi">35</span><span class="p">:</span>  <span class="s1">&#39;[折磨]&#39;</span><span class="p">,</span>
+    <span class="mi">36</span><span class="p">:</span>  <span class="s1">&#39;[衰]&#39;</span><span class="p">,</span>
+    <span class="mi">37</span><span class="p">:</span>  <span class="s1">&#39;[骷髅]&#39;</span><span class="p">,</span>
+    <span class="mi">38</span><span class="p">:</span>  <span class="s1">&#39;[敲打]&#39;</span><span class="p">,</span>
+    <span class="mi">39</span><span class="p">:</span>  <span class="s1">&#39;[再见]&#39;</span><span class="p">,</span>
+    <span class="mi">40</span><span class="p">:</span>  <span class="s1">&#39;[Empty]&#39;</span><span class="p">,</span>
+    <span class="mi">41</span><span class="p">:</span>  <span class="s1">&#39;[发抖]&#39;</span><span class="p">,</span>
+    <span class="mi">42</span><span class="p">:</span>  <span class="s1">&#39;[爱情]&#39;</span><span class="p">,</span>
+    <span class="mi">43</span><span class="p">:</span>  <span class="s1">&#39;[跳跳]&#39;</span><span class="p">,</span>
+    <span class="mi">44</span><span class="p">:</span>  <span class="s1">&#39;[Empty]&#39;</span><span class="p">,</span>
+    <span class="mi">45</span><span class="p">:</span>  <span class="s1">&#39;[Empty]&#39;</span><span class="p">,</span>
+    <span class="mi">46</span><span class="p">:</span>  <span class="s1">&#39;[猪头]&#39;</span><span class="p">,</span>
+    <span class="mi">47</span><span class="p">:</span>  <span class="s1">&#39;[Empty]&#39;</span><span class="p">,</span>
+    <span class="mi">48</span><span class="p">:</span>  <span class="s1">&#39;[Empty]&#39;</span><span class="p">,</span>
+    <span class="mi">49</span><span class="p">:</span>  <span class="s1">&#39;[拥抱]&#39;</span><span class="p">,</span>
+    <span class="mi">50</span><span class="p">:</span>  <span class="s1">&#39;[Empty]&#39;</span><span class="p">,</span>
+    <span class="mi">51</span><span class="p">:</span>  <span class="s1">&#39;[Empty]&#39;</span><span class="p">,</span>
+    <span class="mi">52</span><span class="p">:</span>  <span class="s1">&#39;[Empty]&#39;</span><span class="p">,</span>
+    <span class="mi">53</span><span class="p">:</span>  <span class="s1">&#39;[蛋糕]&#39;</span><span class="p">,</span>
+    <span class="mi">54</span><span class="p">:</span>  <span class="s1">&#39;[闪电]&#39;</span><span class="p">,</span>
+    <span class="mi">55</span><span class="p">:</span>  <span class="s1">&#39;[炸弹]&#39;</span><span class="p">,</span>
+    <span class="mi">56</span><span class="p">:</span>  <span class="s1">&#39;[刀]&#39;</span><span class="p">,</span>
+    <span class="mi">57</span><span class="p">:</span>  <span class="s1">&#39;[足球]&#39;</span><span class="p">,</span>
+    <span class="mi">58</span><span class="p">:</span>  <span class="s1">&#39;[Empty]&#39;</span><span class="p">,</span>
+    <span class="mi">59</span><span class="p">:</span>  <span class="s1">&#39;[便便]&#39;</span><span class="p">,</span>
+    <span class="mi">60</span><span class="p">:</span>  <span class="s1">&#39;[咖啡]&#39;</span><span class="p">,</span>
+    <span class="mi">61</span><span class="p">:</span>  <span class="s1">&#39;[饭]&#39;</span><span class="p">,</span>
+    <span class="mi">62</span><span class="p">:</span>  <span class="s1">&#39;[Empty]&#39;</span><span class="p">,</span>
+    <span class="mi">63</span><span class="p">:</span>  <span class="s1">&#39;[玫瑰]&#39;</span><span class="p">,</span>
+    <span class="mi">64</span><span class="p">:</span>  <span class="s1">&#39;[凋谢]&#39;</span><span class="p">,</span>
+    <span class="mi">65</span><span class="p">:</span>  <span class="s1">&#39;[Empty]&#39;</span><span class="p">,</span>
+    <span class="mi">66</span><span class="p">:</span>  <span class="s1">&#39;[爱心]&#39;</span><span class="p">,</span>
+    <span class="mi">67</span><span class="p">:</span>  <span class="s1">&#39;[心碎]&#39;</span><span class="p">,</span>
+    <span class="mi">68</span><span class="p">:</span>  <span class="s1">&#39;[Empty]&#39;</span><span class="p">,</span>
+    <span class="mi">69</span><span class="p">:</span>  <span class="s1">&#39;[礼物]&#39;</span><span class="p">,</span>
+    <span class="mi">70</span><span class="p">:</span>  <span class="s1">&#39;[Empty]&#39;</span><span class="p">,</span>
+    <span class="mi">71</span><span class="p">:</span>  <span class="s1">&#39;[Empty]&#39;</span><span class="p">,</span>
+    <span class="mi">72</span><span class="p">:</span>  <span class="s1">&#39;[Empty]&#39;</span><span class="p">,</span>
+    <span class="mi">73</span><span class="p">:</span>  <span class="s1">&#39;[Empty]&#39;</span><span class="p">,</span>
+    <span class="mi">74</span><span class="p">:</span>  <span class="s1">&#39;[太阳]&#39;</span><span class="p">,</span>
+    <span class="mi">75</span><span class="p">:</span>  <span class="s1">&#39;[月亮]&#39;</span><span class="p">,</span>
+    <span class="mi">76</span><span class="p">:</span>  <span class="s1">&#39;[赞]&#39;</span><span class="p">,</span>
+    <span class="mi">77</span><span class="p">:</span>  <span class="s1">&#39;[踩]&#39;</span><span class="p">,</span>
+    <span class="mi">78</span><span class="p">:</span>  <span class="s1">&#39;[握手]&#39;</span><span class="p">,</span>
+    <span class="mi">79</span><span class="p">:</span>  <span class="s1">&#39;[胜利]&#39;</span><span class="p">,</span>
+    <span class="mi">80</span><span class="p">:</span>  <span class="s1">&#39;[Empty]&#39;</span><span class="p">,</span>
+    <span class="mi">81</span><span class="p">:</span>  <span class="s1">&#39;[Empty]&#39;</span><span class="p">,</span>
+    <span class="mi">82</span><span class="p">:</span>  <span class="s1">&#39;[Empty]&#39;</span><span class="p">,</span>
+    <span class="mi">83</span><span class="p">:</span>  <span class="s1">&#39;[Empty]&#39;</span><span class="p">,</span>
+    <span class="mi">84</span><span class="p">:</span>  <span class="s1">&#39;[Empty]&#39;</span><span class="p">,</span>
+    <span class="mi">85</span><span class="p">:</span>  <span class="s1">&#39;[飞吻]&#39;</span><span class="p">,</span>
+    <span class="mi">86</span><span class="p">:</span>  <span class="s1">&#39;[怄火]&#39;</span><span class="p">,</span>
+    <span class="mi">87</span><span class="p">:</span>  <span class="s1">&#39;[Empty]&#39;</span><span class="p">,</span>
+    <span class="mi">88</span><span class="p">:</span>  <span class="s1">&#39;[Empty]&#39;</span><span class="p">,</span>
+    <span class="mi">89</span><span class="p">:</span>  <span class="s1">&#39;[西瓜]&#39;</span><span class="p">,</span>
+    <span class="mi">90</span><span class="p">:</span>  <span class="s1">&#39;[Empty]&#39;</span><span class="p">,</span>
+    <span class="mi">91</span><span class="p">:</span>  <span class="s1">&#39;[Empty]&#39;</span><span class="p">,</span>
+    <span class="mi">92</span><span class="p">:</span>  <span class="s1">&#39;[Empty]&#39;</span><span class="p">,</span>
+    <span class="mi">93</span><span class="p">:</span>  <span class="s1">&#39;[Empty]&#39;</span><span class="p">,</span>
+    <span class="mi">94</span><span class="p">:</span>  <span class="s1">&#39;[Empty]&#39;</span><span class="p">,</span>
+    <span class="mi">95</span><span class="p">:</span>  <span class="s1">&#39;[Empty]&#39;</span><span class="p">,</span>
+    <span class="mi">96</span><span class="p">:</span>  <span class="s1">&#39;[冷汗]&#39;</span><span class="p">,</span>
+    <span class="mi">97</span><span class="p">:</span>  <span class="s1">&#39;[擦汗]&#39;</span><span class="p">,</span>
+    <span class="mi">98</span><span class="p">:</span>  <span class="s1">&#39;[抠鼻]&#39;</span><span class="p">,</span>
+    <span class="mi">99</span><span class="p">:</span>  <span class="s1">&#39;[鼓掌]&#39;</span><span class="p">,</span>
+    <span class="mi">100</span><span class="p">:</span> <span class="s1">&#39;[糗大了]&#39;</span><span class="p">,</span>
+    <span class="mi">101</span><span class="p">:</span> <span class="s1">&#39;[坏笑]&#39;</span><span class="p">,</span>
+    <span class="mi">102</span><span class="p">:</span> <span class="s1">&#39;[左哼哼]&#39;</span><span class="p">,</span>
+    <span class="mi">103</span><span class="p">:</span> <span class="s1">&#39;[右哼哼]&#39;</span><span class="p">,</span>
+    <span class="mi">104</span><span class="p">:</span> <span class="s1">&#39;[哈欠]&#39;</span><span class="p">,</span>
+    <span class="mi">105</span><span class="p">:</span> <span class="s1">&#39;[鄙视]&#39;</span><span class="p">,</span>
+    <span class="mi">106</span><span class="p">:</span> <span class="s1">&#39;[委屈]&#39;</span><span class="p">,</span>
+    <span class="mi">107</span><span class="p">:</span> <span class="s1">&#39;[快哭了]&#39;</span><span class="p">,</span>
+    <span class="mi">108</span><span class="p">:</span> <span class="s1">&#39;[阴险]&#39;</span><span class="p">,</span>
+    <span class="mi">109</span><span class="p">:</span> <span class="s1">&#39;[亲亲]&#39;</span><span class="p">,</span>
+    <span class="mi">110</span><span class="p">:</span> <span class="s1">&#39;[吓]&#39;</span><span class="p">,</span>
+    <span class="mi">111</span><span class="p">:</span> <span class="s1">&#39;[可怜]&#39;</span><span class="p">,</span>
+    <span class="mi">112</span><span class="p">:</span> <span class="s1">&#39;[菜刀]&#39;</span><span class="p">,</span>
+    <span class="mi">113</span><span class="p">:</span> <span class="s1">&#39;[啤酒]&#39;</span><span class="p">,</span>
+    <span class="mi">114</span><span class="p">:</span> <span class="s1">&#39;[篮球]&#39;</span><span class="p">,</span>
+    <span class="mi">115</span><span class="p">:</span> <span class="s1">&#39;[乒乓]&#39;</span><span class="p">,</span>
+    <span class="mi">116</span><span class="p">:</span> <span class="s1">&#39;[示爱]&#39;</span><span class="p">,</span>
+    <span class="mi">117</span><span class="p">:</span> <span class="s1">&#39;[瓢虫]&#39;</span><span class="p">,</span>
+    <span class="mi">118</span><span class="p">:</span> <span class="s1">&#39;[抱拳]&#39;</span><span class="p">,</span>
+    <span class="mi">119</span><span class="p">:</span> <span class="s1">&#39;[勾引]&#39;</span><span class="p">,</span>
+    <span class="mi">120</span><span class="p">:</span> <span class="s1">&#39;[拳头]&#39;</span><span class="p">,</span>
+    <span class="mi">121</span><span class="p">:</span> <span class="s1">&#39;[差劲]&#39;</span><span class="p">,</span>
+    <span class="mi">122</span><span class="p">:</span> <span class="s1">&#39;[爱你]&#39;</span><span class="p">,</span>
+    <span class="mi">123</span><span class="p">:</span> <span class="s1">&#39;[NO]&#39;</span><span class="p">,</span>
+    <span class="mi">124</span><span class="p">:</span> <span class="s1">&#39;[OK]&#39;</span><span class="p">,</span>
+    <span class="mi">125</span><span class="p">:</span> <span class="s1">&#39;[转圈]&#39;</span><span class="p">,</span>
+    <span class="mi">126</span><span class="p">:</span> <span class="s1">&#39;[磕头]&#39;</span><span class="p">,</span>
+    <span class="mi">127</span><span class="p">:</span> <span class="s1">&#39;[回头]&#39;</span><span class="p">,</span>
+    <span class="mi">128</span><span class="p">:</span> <span class="s1">&#39;[跳绳]&#39;</span><span class="p">,</span>
+    <span class="mi">129</span><span class="p">:</span> <span class="s1">&#39;[挥手]&#39;</span><span class="p">,</span>
+    <span class="mi">130</span><span class="p">:</span> <span class="s1">&#39;[激动]&#39;</span><span class="p">,</span>
+    <span class="mi">131</span><span class="p">:</span> <span class="s1">&#39;[街舞]&#39;</span><span class="p">,</span>
+    <span class="mi">132</span><span class="p">:</span> <span class="s1">&#39;[献吻]&#39;</span><span class="p">,</span>
+    <span class="mi">133</span><span class="p">:</span> <span class="s1">&#39;[左太极]&#39;</span><span class="p">,</span>
+    <span class="mi">134</span><span class="p">:</span> <span class="s1">&#39;[右太极]&#39;</span><span class="p">,</span>
+    <span class="mi">135</span><span class="p">:</span> <span class="s1">&#39;[Empty]&#39;</span><span class="p">,</span>
+    <span class="mi">136</span><span class="p">:</span> <span class="s1">&#39;[双喜]&#39;</span><span class="p">,</span>
+    <span class="mi">137</span><span class="p">:</span> <span class="s1">&#39;[鞭炮]&#39;</span><span class="p">,</span>
+    <span class="mi">138</span><span class="p">:</span> <span class="s1">&#39;[灯笼]&#39;</span><span class="p">,</span>
+    <span class="mi">139</span><span class="p">:</span> <span class="s1">&#39;[发财]&#39;</span><span class="p">,</span>
+    <span class="mi">140</span><span class="p">:</span> <span class="s1">&#39;[K歌]&#39;</span><span class="p">,</span>
+    <span class="mi">141</span><span class="p">:</span> <span class="s1">&#39;[购物]&#39;</span><span class="p">,</span>
+    <span class="mi">142</span><span class="p">:</span> <span class="s1">&#39;[邮件]&#39;</span><span class="p">,</span>
+    <span class="mi">143</span><span class="p">:</span> <span class="s1">&#39;[帅]&#39;</span><span class="p">,</span>
+    <span class="mi">144</span><span class="p">:</span> <span class="s1">&#39;[喝彩]&#39;</span><span class="p">,</span>
+    <span class="mi">145</span><span class="p">:</span> <span class="s1">&#39;[祈祷]&#39;</span><span class="p">,</span>
+    <span class="mi">146</span><span class="p">:</span> <span class="s1">&#39;[爆筋]&#39;</span><span class="p">,</span>
+    <span class="mi">147</span><span class="p">:</span> <span class="s1">&#39;[棒棒糖]&#39;</span><span class="p">,</span>
+    <span class="mi">148</span><span class="p">:</span> <span class="s1">&#39;[喝奶]&#39;</span><span class="p">,</span>
+    <span class="mi">149</span><span class="p">:</span> <span class="s1">&#39;[下面]&#39;</span><span class="p">,</span>
+    <span class="mi">150</span><span class="p">:</span> <span class="s1">&#39;[香蕉]&#39;</span><span class="p">,</span>
+    <span class="mi">151</span><span class="p">:</span> <span class="s1">&#39;[飞机]&#39;</span><span class="p">,</span>
+    <span class="mi">152</span><span class="p">:</span> <span class="s1">&#39;[开车]&#39;</span><span class="p">,</span>
+    <span class="mi">153</span><span class="p">:</span> <span class="s1">&#39;[高铁左车头]&#39;</span><span class="p">,</span>
+    <span class="mi">154</span><span class="p">:</span> <span class="s1">&#39;[车厢]&#39;</span><span class="p">,</span>
+    <span class="mi">155</span><span class="p">:</span> <span class="s1">&#39;[高铁右车头]&#39;</span><span class="p">,</span>
+    <span class="mi">156</span><span class="p">:</span> <span class="s1">&#39;[多云]&#39;</span><span class="p">,</span>
+    <span class="mi">157</span><span class="p">:</span> <span class="s1">&#39;[下雨]&#39;</span><span class="p">,</span>
+    <span class="mi">158</span><span class="p">:</span> <span class="s1">&#39;[钞票]&#39;</span><span class="p">,</span>
+    <span class="mi">159</span><span class="p">:</span> <span class="s1">&#39;[熊猫]&#39;</span><span class="p">,</span>
+    <span class="mi">160</span><span class="p">:</span> <span class="s1">&#39;[灯泡]&#39;</span><span class="p">,</span>
+    <span class="mi">161</span><span class="p">:</span> <span class="s1">&#39;[风车]&#39;</span><span class="p">,</span>
+    <span class="mi">162</span><span class="p">:</span> <span class="s1">&#39;[闹钟]&#39;</span><span class="p">,</span>
+    <span class="mi">163</span><span class="p">:</span> <span class="s1">&#39;[打伞]&#39;</span><span class="p">,</span>
+    <span class="mi">164</span><span class="p">:</span> <span class="s1">&#39;[彩球]&#39;</span><span class="p">,</span>
+    <span class="mi">165</span><span class="p">:</span> <span class="s1">&#39;[钻戒]&#39;</span><span class="p">,</span>
+    <span class="mi">166</span><span class="p">:</span> <span class="s1">&#39;[沙发]&#39;</span><span class="p">,</span>
+    <span class="mi">167</span><span class="p">:</span> <span class="s1">&#39;[纸巾]&#39;</span><span class="p">,</span>
+    <span class="mi">168</span><span class="p">:</span> <span class="s1">&#39;[药]&#39;</span><span class="p">,</span>
+    <span class="mi">169</span><span class="p">:</span> <span class="s1">&#39;[手枪]&#39;</span><span class="p">,</span>
+    <span class="mi">170</span><span class="p">:</span> <span class="s1">&#39;[青蛙]&#39;</span><span class="p">,</span>
+    <span class="mi">171</span><span class="p">:</span> <span class="s1">&#39;[茶]&#39;</span><span class="p">,</span>
+    <span class="mi">172</span><span class="p">:</span> <span class="s1">&#39;[眨眼睛]&#39;</span><span class="p">,</span>
+    <span class="mi">173</span><span class="p">:</span> <span class="s1">&#39;[泪奔]&#39;</span><span class="p">,</span>
+    <span class="mi">174</span><span class="p">:</span> <span class="s1">&#39;[无奈]&#39;</span><span class="p">,</span>
+    <span class="mi">175</span><span class="p">:</span> <span class="s1">&#39;[卖萌]&#39;</span><span class="p">,</span>
+    <span class="mi">176</span><span class="p">:</span> <span class="s1">&#39;[小纠结]&#39;</span><span class="p">,</span>
+    <span class="mi">177</span><span class="p">:</span> <span class="s1">&#39;[喷血]&#39;</span><span class="p">,</span>
+    <span class="mi">178</span><span class="p">:</span> <span class="s1">&#39;[斜眼笑]&#39;</span><span class="p">,</span>
+    <span class="mi">179</span><span class="p">:</span> <span class="s1">&#39;[doge]&#39;</span><span class="p">,</span>
+    <span class="mi">180</span><span class="p">:</span> <span class="s1">&#39;[惊喜]&#39;</span><span class="p">,</span>
+    <span class="mi">181</span><span class="p">:</span> <span class="s1">&#39;[骚扰]&#39;</span><span class="p">,</span>
+    <span class="mi">182</span><span class="p">:</span> <span class="s1">&#39;[笑哭]&#39;</span><span class="p">,</span>
+    <span class="mi">183</span><span class="p">:</span> <span class="s1">&#39;[我最美]&#39;</span><span class="p">,</span>
+    <span class="mi">184</span><span class="p">:</span> <span class="s1">&#39;[河蟹]&#39;</span><span class="p">,</span>
+    <span class="mi">185</span><span class="p">:</span> <span class="s1">&#39;[羊驼]&#39;</span><span class="p">,</span>
+    <span class="mi">186</span><span class="p">:</span> <span class="s1">&#39;[Empty]&#39;</span><span class="p">,</span>
+    <span class="mi">187</span><span class="p">:</span> <span class="s1">&#39;[幽灵]&#39;</span><span class="p">,</span>
+    <span class="mi">188</span><span class="p">:</span> <span class="s1">&#39;[蛋]&#39;</span><span class="p">,</span>
+    <span class="mi">189</span><span class="p">:</span> <span class="s1">&#39;[Empty]&#39;</span><span class="p">,</span>
+    <span class="mi">190</span><span class="p">:</span> <span class="s1">&#39;[菊花]&#39;</span><span class="p">,</span>
+    <span class="mi">191</span><span class="p">:</span> <span class="s1">&#39;[Empty]&#39;</span><span class="p">,</span>
+    <span class="mi">192</span><span class="p">:</span> <span class="s1">&#39;[红包]&#39;</span><span class="p">,</span>
+    <span class="mi">193</span><span class="p">:</span> <span class="s1">&#39;[大笑]&#39;</span><span class="p">,</span>
+    <span class="mi">194</span><span class="p">:</span> <span class="s1">&#39;[不开心]&#39;</span><span class="p">,</span>
+    <span class="mi">195</span><span class="p">:</span> <span class="s1">&#39;[Empty]&#39;</span><span class="p">,</span>
+    <span class="mi">196</span><span class="p">:</span> <span class="s1">&#39;[Empty]&#39;</span><span class="p">,</span>
+    <span class="mi">197</span><span class="p">:</span> <span class="s1">&#39;[冷漠]&#39;</span><span class="p">,</span>
+    <span class="mi">198</span><span class="p">:</span> <span class="s1">&#39;[呃]&#39;</span><span class="p">,</span>
+    <span class="mi">199</span><span class="p">:</span> <span class="s1">&#39;[好棒]&#39;</span><span class="p">,</span>
+    <span class="mi">200</span><span class="p">:</span> <span class="s1">&#39;[拜托]&#39;</span><span class="p">,</span>
+    <span class="mi">201</span><span class="p">:</span> <span class="s1">&#39;[点赞]&#39;</span><span class="p">,</span>
+    <span class="mi">202</span><span class="p">:</span> <span class="s1">&#39;[无聊]&#39;</span><span class="p">,</span>
+    <span class="mi">203</span><span class="p">:</span> <span class="s1">&#39;[托脸]&#39;</span><span class="p">,</span>
+    <span class="mi">204</span><span class="p">:</span> <span class="s1">&#39;[吃]&#39;</span><span class="p">,</span>
+    <span class="mi">205</span><span class="p">:</span> <span class="s1">&#39;[送花]&#39;</span><span class="p">,</span>
+    <span class="mi">206</span><span class="p">:</span> <span class="s1">&#39;[害怕]&#39;</span><span class="p">,</span>
+    <span class="mi">207</span><span class="p">:</span> <span class="s1">&#39;[花痴]&#39;</span><span class="p">,</span>
+    <span class="mi">208</span><span class="p">:</span> <span class="s1">&#39;[小样儿]&#39;</span><span class="p">,</span>
+    <span class="mi">209</span><span class="p">:</span> <span class="s1">&#39;[Empty]&#39;</span><span class="p">,</span>
+    <span class="mi">210</span><span class="p">:</span> <span class="s1">&#39;[飙泪]&#39;</span><span class="p">,</span>
+    <span class="mi">211</span><span class="p">:</span> <span class="s1">&#39;[我不看]&#39;</span><span class="p">,</span>
+    <span class="mi">212</span><span class="p">:</span> <span class="s1">&#39;[托腮]&#39;</span><span class="p">,</span>
+    <span class="mi">213</span><span class="p">:</span> <span class="s1">&#39;[Empty]&#39;</span><span class="p">,</span>
+    <span class="mi">214</span><span class="p">:</span> <span class="s1">&#39;[啵啵]&#39;</span><span class="p">,</span>
+    <span class="mi">215</span><span class="p">:</span> <span class="s1">&#39;[糊脸]&#39;</span><span class="p">,</span>
+    <span class="mi">216</span><span class="p">:</span> <span class="s1">&#39;[拍头]&#39;</span><span class="p">,</span>
+    <span class="mi">217</span><span class="p">:</span> <span class="s1">&#39;[扯一扯]&#39;</span><span class="p">,</span>
+    <span class="mi">218</span><span class="p">:</span> <span class="s1">&#39;[舔一舔]&#39;</span><span class="p">,</span>
+    <span class="mi">219</span><span class="p">:</span> <span class="s1">&#39;[蹭一蹭]&#39;</span><span class="p">,</span>
+    <span class="mi">220</span><span class="p">:</span> <span class="s1">&#39;[拽炸天]&#39;</span><span class="p">,</span>
+    <span class="mi">221</span><span class="p">:</span> <span class="s1">&#39;[顶呱呱]&#39;</span><span class="p">,</span>
+    <span class="mi">222</span><span class="p">:</span> <span class="s1">&#39;[抱抱]&#39;</span><span class="p">,</span>
+    <span class="mi">223</span><span class="p">:</span> <span class="s1">&#39;[暴击]&#39;</span><span class="p">,</span>
+    <span class="mi">224</span><span class="p">:</span> <span class="s1">&#39;[开枪]&#39;</span><span class="p">,</span>
+    <span class="mi">225</span><span class="p">:</span> <span class="s1">&#39;[撩一撩]&#39;</span><span class="p">,</span>
+    <span class="mi">226</span><span class="p">:</span> <span class="s1">&#39;[拍桌]&#39;</span><span class="p">,</span>
+    <span class="mi">227</span><span class="p">:</span> <span class="s1">&#39;[拍手]&#39;</span><span class="p">,</span>
+    <span class="mi">228</span><span class="p">:</span> <span class="s1">&#39;[恭喜]&#39;</span><span class="p">,</span>
+    <span class="mi">229</span><span class="p">:</span> <span class="s1">&#39;[干杯]&#39;</span><span class="p">,</span>
+    <span class="mi">230</span><span class="p">:</span> <span class="s1">&#39;[嘲讽]&#39;</span><span class="p">,</span>
+    <span class="mi">231</span><span class="p">:</span> <span class="s1">&#39;[哼]&#39;</span><span class="p">,</span>
+    <span class="mi">232</span><span class="p">:</span> <span class="s1">&#39;[佛系]&#39;</span><span class="p">,</span>
+    <span class="mi">233</span><span class="p">:</span> <span class="s1">&#39;[掐一掐]&#39;</span><span class="p">,</span>
+    <span class="mi">234</span><span class="p">:</span> <span class="s1">&#39;[惊呆]&#39;</span><span class="p">,</span>
+    <span class="mi">235</span><span class="p">:</span> <span class="s1">&#39;[颤抖]&#39;</span><span class="p">,</span>
+    <span class="mi">236</span><span class="p">:</span> <span class="s1">&#39;[啃头]&#39;</span><span class="p">,</span>
+    <span class="mi">237</span><span class="p">:</span> <span class="s1">&#39;[偷看]&#39;</span><span class="p">,</span>
+    <span class="mi">238</span><span class="p">:</span> <span class="s1">&#39;[扇脸]&#39;</span><span class="p">,</span>
+    <span class="mi">239</span><span class="p">:</span> <span class="s1">&#39;[原谅]&#39;</span><span class="p">,</span>
+    <span class="mi">240</span><span class="p">:</span> <span class="s1">&#39;[喷脸]&#39;</span><span class="p">,</span>
+    <span class="mi">241</span><span class="p">:</span> <span class="s1">&#39;[生日快乐]&#39;</span><span class="p">,</span>
+    <span class="mi">242</span><span class="p">:</span> <span class="s1">&#39;[Empty]&#39;</span><span class="p">,</span>
+    <span class="mi">243</span><span class="p">:</span> <span class="s1">&#39;[Empty]&#39;</span><span class="p">,</span>
+    <span class="mi">244</span><span class="p">:</span> <span class="s1">&#39;[Empty]&#39;</span><span class="p">,</span>
+    <span class="mi">245</span><span class="p">:</span> <span class="s1">&#39;[Empty]&#39;</span><span class="p">,</span>
+    <span class="mi">246</span><span class="p">:</span> <span class="s1">&#39;[Empty]&#39;</span><span class="p">,</span>
+    <span class="mi">247</span><span class="p">:</span> <span class="s1">&#39;[Empty]&#39;</span><span class="p">,</span>
+    <span class="mi">248</span><span class="p">:</span> <span class="s1">&#39;[Empty]&#39;</span><span class="p">,</span>
+    <span class="mi">249</span><span class="p">:</span> <span class="s1">&#39;[Empty]&#39;</span><span class="p">,</span>
+    <span class="mi">250</span><span class="p">:</span> <span class="s1">&#39;[Empty]&#39;</span><span class="p">,</span>
+    <span class="mi">251</span><span class="p">:</span> <span class="s1">&#39;[Empty]&#39;</span><span class="p">,</span>
+    <span class="mi">252</span><span class="p">:</span> <span class="s1">&#39;[Empty]&#39;</span><span class="p">,</span>
+    <span class="mi">253</span><span class="p">:</span> <span class="s1">&#39;[Empty]&#39;</span><span class="p">,</span>
+    <span class="mi">254</span><span class="p">:</span> <span class="s1">&#39;[Empty]&#39;</span><span class="p">,</span>
+    <span class="mi">255</span><span class="p">:</span> <span class="s1">&#39;[Empty]&#39;</span><span class="p">,</span>
+<span class="p">}</span>
+
+
+<div class="viewcode-block" id="MessageChain"><a class="viewcode-back" href="../../../mirai_core.models.html#mirai_core.models.message.MessageChain">[docs]</a><span class="k">class</span> <span class="nc">MessageChain</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">,</span> <span class="n">MutableSequence</span><span class="p">):</span>
+    <span class="c1"># stores the actual components</span>
+    <span class="n">__root__</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">BaseMessageComponent</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+<div class="viewcode-block" id="MessageChain.insert"><a class="viewcode-back" href="../../../mirai_core.models.html#mirai_core.models.message.MessageChain.insert">[docs]</a>    <span class="k">def</span> <span class="nf">insert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__root__</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="nb">object</span><span class="p">)</span></div>
+
+    <span class="nd">@overload</span>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">o</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="o">...</span>
+
+    <span class="nd">@overload</span>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s</span><span class="p">:</span> <span class="nb">slice</span><span class="p">,</span> <span class="n">o</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="o">...</span>
+
+    <span class="k">def</span> <span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">o</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__root__</span><span class="o">.</span><span class="fm">__setitem__</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">o</span><span class="p">)</span>
+
+    <span class="nd">@overload</span>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="fm">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="o">...</span>
+
+    <span class="nd">@overload</span>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="fm">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">:</span> <span class="nb">slice</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="o">...</span>
+
+    <span class="k">def</span> <span class="fm">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__root__</span><span class="o">.</span><span class="fm">__delitem__</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="c1"># merge two message chain or append one component</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">BaseMessageComponent</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__root__</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">MessageChain</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__root__</span> <span class="o">+=</span> <span class="n">value</span><span class="o">.</span><span class="n">__root__</span>
+            <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__root__</span><span class="p">])</span>
+
+<div class="viewcode-block" id="MessageChain.custom_parse"><a class="viewcode-back" href="../../../mirai_core.models.html#mirai_core.models.message.MessageChain.custom_parse">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">custom_parse</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="s1">&#39;MessageChain&#39;</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        construct message chain from dict</span>
+<span class="sd">        used only when receiving messages from mirai</span>
+
+<span class="sd">        :param value: dict contains message components</span>
+<span class="sd">        :return: MessageChain</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;invaild value&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">__root__</span><span class="o">=</span><span class="p">[</span><span class="n">ComponentTypes</span><span class="o">.</span><span class="n">__members__</span><span class="p">[</span><span class="n">m</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="o">**</span><span class="n">m</span><span class="p">)</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">value</span><span class="p">])</span></div>
+
+    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__root__</span><span class="o">.</span><span class="fm">__iter__</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__root__</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+
+<div class="viewcode-block" id="MessageChain.has"><a class="viewcode-back" href="../../../mirai_core.models.html#mirai_core.models.message.MessageChain.has">[docs]</a>    <span class="k">def</span> <span class="nf">has</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">component_class</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        test if any item in MessageChain is component_class</span>
+
+<span class="sd">        :param component_class: the class for the component</span>
+<span class="sd">        :return: boolean</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">component_class</span><span class="p">):</span>
+                <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span></div>
+
+    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__root__</span><span class="p">)</span>
+
+<div class="viewcode-block" id="MessageChain.get_first"><a class="viewcode-back" href="../../../mirai_core.models.html#mirai_core.models.message.MessageChain.get_first">[docs]</a>    <span class="k">def</span> <span class="nf">get_first</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">component_class</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">BaseMessageComponent</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the first component with component_class</span>
+
+<span class="sd">        :param component_class: the class for the component</span>
+<span class="sd">        :return: None or the component</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__root__</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">component_class</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">i</span></div>
+
+<div class="viewcode-block" id="MessageChain.get_all"><a class="viewcode-back" href="../../../mirai_core.models.html#mirai_core.models.message.MessageChain.get_all">[docs]</a>    <span class="k">def</span> <span class="nf">get_all</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">component_class</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">BaseMessageComponent</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__root__</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">component_class</span><span class="p">)]</span></div>
+
+<div class="viewcode-block" id="MessageChain.get_source"><a class="viewcode-back" href="../../../mirai_core.models.html#mirai_core.models.message.MessageChain.get_source">[docs]</a>    <span class="k">def</span> <span class="nf">get_source</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;Source&#39;</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_first</span><span class="p">(</span><span class="n">Source</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">Source</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span></div>
+
+<div class="viewcode-block" id="MessageChain.get_quote"><a class="viewcode-back" href="../../../mirai_core.models.html#mirai_core.models.message.MessageChain.get_quote">[docs]</a>    <span class="k">def</span> <span class="nf">get_quote</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;Quote&#39;</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_first</span><span class="p">(</span><span class="n">Quote</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">result</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">Quote</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">result</span></div></div>
+
+
+<div class="viewcode-block" id="Source"><a class="viewcode-back" href="../../../mirai_core.models.html#mirai_core.models.message.Source">[docs]</a><span class="k">class</span> <span class="nc">Source</span><span class="p">(</span><span class="n">BaseMessageComponent</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The source of the message</span>
+<span class="sd">    Not a valid component for outbound message</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">type</span> <span class="o">=</span> <span class="n">MessageComponentTypes</span><span class="o">.</span><span class="n">Source</span>
+    <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span>  <span class="c1"># the message id: higher 32 bits are sequence id, and lower 32 bits are random id</span>
+    <span class="n">time</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span>  <span class="c1"># the timestamp the message was sent</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;&#39;</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;[Source: id=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s1">, time=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="si">}</span><span class="s1">]&#39;</span></div>
+
+
+<div class="viewcode-block" id="Plain"><a class="viewcode-back" href="../../../mirai_core.models.html#mirai_core.models.message.Plain">[docs]</a><span class="k">class</span> <span class="nc">Plain</span><span class="p">(</span><span class="n">BaseMessageComponent</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Text component</span>
+<span class="sd">    Available for outbound message</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">type</span> <span class="o">=</span> <span class="n">MessageComponentTypes</span><span class="o">.</span><span class="n">Plain</span>
+    <span class="n">text</span><span class="p">:</span> <span class="nb">str</span>  <span class="c1"># text content</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Construct text component</span>
+
+<span class="sd">        :param text: message text</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">text</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;[Plain: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="si">}</span><span class="s1">]&#39;</span></div>
+
+
+<div class="viewcode-block" id="Quote"><a class="viewcode-back" href="../../../mirai_core.models.html#mirai_core.models.message.Quote">[docs]</a><span class="k">class</span> <span class="nc">Quote</span><span class="p">(</span><span class="n">BaseMessageComponent</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Quote component</span>
+<span class="sd">    Not a valid component for outbound message</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">type</span> <span class="o">=</span> <span class="n">MessageComponentTypes</span><span class="o">.</span><span class="n">Quote</span>
+    <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span>  <span class="c1"># origin message id</span>
+    <span class="n">groupId</span><span class="p">:</span> <span class="nb">int</span>  <span class="c1"># origin group id</span>
+    <span class="n">senderId</span><span class="p">:</span> <span class="nb">int</span>  <span class="c1"># origin sender id</span>
+    <span class="n">origin</span><span class="p">:</span> <span class="n">MessageChain</span>  <span class="c1"># origin message (Source and other content without Quote)</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;&#39;</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;[Quote: id=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s1">]&#39;</span></div>
+
+
+<div class="viewcode-block" id="At"><a class="viewcode-back" href="../../../mirai_core.models.html#mirai_core.models.message.At">[docs]</a><span class="k">class</span> <span class="nc">At</span><span class="p">(</span><span class="n">GenericModel</span><span class="p">,</span> <span class="n">BaseMessageComponent</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    At component</span>
+<span class="sd">    Available for outbound message</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">type</span> <span class="o">=</span> <span class="n">MessageComponentTypes</span><span class="o">.</span><span class="n">At</span>
+    <span class="n">target</span><span class="p">:</span> <span class="nb">int</span>  <span class="c1"># target qq number</span>
+    <span class="n">display</span><span class="p">:</span> <span class="nb">str</span>  <span class="c1"># display name (only used for inbound at), &#39;@&#39; already included</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Construct at component</span>
+
+<span class="sd">        :param target: target qq number</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">target</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">display</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;[At: target=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="si">}</span><span class="s1">, display=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">display</span><span class="si">}</span><span class="s1">]&#39;</span></div>
+
+
+<div class="viewcode-block" id="AtAll"><a class="viewcode-back" href="../../../mirai_core.models.html#mirai_core.models.message.AtAll">[docs]</a><span class="k">class</span> <span class="nc">AtAll</span><span class="p">(</span><span class="n">BaseMessageComponent</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    AtAll component</span>
+<span class="sd">    Available for outbound message</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">type</span> <span class="o">=</span> <span class="n">MessageComponentTypes</span><span class="o">.</span><span class="n">AtAll</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;@All&#39;</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;[AtAll]&#39;</span></div>
+
+
+<div class="viewcode-block" id="Face"><a class="viewcode-back" href="../../../mirai_core.models.html#mirai_core.models.message.Face">[docs]</a><span class="k">class</span> <span class="nc">Face</span><span class="p">(</span><span class="n">BaseMessageComponent</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Face component</span>
+<span class="sd">    Available for outbound message</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">type</span> <span class="o">=</span> <span class="n">MessageComponentTypes</span><span class="o">.</span><span class="n">Face</span>
+    <span class="n">faceId</span><span class="p">:</span> <span class="nb">int</span>  <span class="c1"># face id, see qq_emoji_text_list for details</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">face_id</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Construct Face component</span>
+
+<span class="sd">        :param face_id: unsigned 8-bit face id</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">faceId</span><span class="o">=</span><span class="n">face_id</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">qq_emoji_text_list</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">faceId</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;[Face: id=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">faceId</span><span class="si">}</span><span class="s1">, </span><span class="si">{</span><span class="n">qq_emoji_text_list</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">faceId</span><span class="p">]</span><span class="si">}</span><span class="s1">]&#39;</span></div>
+
+
+<div class="viewcode-block" id="Image"><a class="viewcode-back" href="../../../mirai_core.models.html#mirai_core.models.message.Image">[docs]</a><span class="k">class</span> <span class="nc">Image</span><span class="p">(</span><span class="n">BaseMessageComponent</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Received image component</span>
+<span class="sd">    Available for outbound message</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">type</span> <span class="o">=</span> <span class="n">MessageComponentTypes</span><span class="o">.</span><span class="n">Image</span>
+    <span class="n">imageId</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">url</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">HttpUrl</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">imageId</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Construct Image from mirai styled uuid</span>
+
+<span class="sd">        :param imageId: uuid as str (see https://github.com/mamoe/mirai-api-http/blob/master/MessageType.md#image)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">imageId</span><span class="o">=</span><span class="n">imageId</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;&#39;</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;[Image: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">imageId</span><span class="si">}</span><span class="s1">]&#39;</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">image_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        get image type from pattern</span>
+
+<span class="sd">        :return: &#39;friend&#39; or &#39;group&#39;, if uuid is invalid format, return &#39;unknown&#39;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">imageId</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="s1">&#39;friend&#39;</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">imageId</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;{&#39;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="s1">&#39;group&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="s1">&#39;unknown&#39;</span></div>
+
+
+<div class="viewcode-block" id="LocalImage"><a class="viewcode-back" href="../../../mirai_core.models.html#mirai_core.models.message.LocalImage">[docs]</a><span class="k">class</span> <span class="nc">LocalImage</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Local image component</span>
+<span class="sd">    Available for outbound message</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">path</span><span class="p">:</span> <span class="n">Path</span>  <span class="c1"># absolute path to image</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Construct LocalImage component</span>
+
+<span class="sd">        :param path: absolute path on disk</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">Path</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="n">path</span></div>
+
+
+<span class="k">class</span> <span class="nc">Xml</span><span class="p">(</span><span class="n">BaseMessageComponent</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Xml component</span>
+<span class="sd">    Available for outbound message</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">type</span> <span class="o">=</span> <span class="n">MessageComponentTypes</span><span class="o">.</span><span class="n">Xml</span>
+    <span class="n">XML</span><span class="p">:</span> <span class="nb">str</span>  <span class="c1"># xml content</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xml</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Construct Xml component</span>
+
+<span class="sd">        :param xml: str contains xml</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">XML</span><span class="o">=</span><span class="n">xml</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">Json</span><span class="p">(</span><span class="n">BaseMessageComponent</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Json component</span>
+<span class="sd">    Available for outbound message</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">type</span> <span class="o">=</span> <span class="n">MessageComponentTypes</span><span class="o">.</span><span class="n">Json</span>
+    <span class="n">Json</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">alias</span><span class="o">=</span><span class="s2">&quot;json&quot;</span><span class="p">)</span>  <span class="c1"># json content</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">json</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="n">List</span><span class="p">]):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Construct Json component</span>
+
+<span class="sd">        :param json: json content</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">Json</span><span class="o">=</span><span class="n">json</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">App</span><span class="p">(</span><span class="n">BaseMessageComponent</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    App component</span>
+<span class="sd">    Available for outbound message</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">type</span> <span class="o">=</span> <span class="n">MessageComponentTypes</span><span class="o">.</span><span class="n">App</span>
+    <span class="n">content</span><span class="p">:</span> <span class="nb">str</span>  <span class="c1"># app content</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Construct App component</span>
+
+<span class="sd">        :param content: app content</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">content</span><span class="o">=</span><span class="n">content</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="Unknown"><a class="viewcode-back" href="../../../mirai_core.models.html#mirai_core.models.message.Unknown">[docs]</a><span class="k">class</span> <span class="nc">Unknown</span><span class="p">(</span><span class="n">BaseMessageComponent</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Unknown component</span>
+<span class="sd">    Not a valid component for outbound message</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">type</span> <span class="o">=</span> <span class="n">MessageComponentTypes</span><span class="o">.</span><span class="n">Unknown</span>
+    <span class="n">text</span><span class="p">:</span> <span class="nb">str</span>  <span class="c1"># content in string</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;&#39;</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;[Unknown]&#39;</span></div>
+
+
+<div class="viewcode-block" id="ComponentTypes"><a class="viewcode-back" href="../../../mirai_core.models.html#mirai_core.models.message.ComponentTypes">[docs]</a><span class="k">class</span> <span class="nc">ComponentTypes</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="n">Plain</span> <span class="o">=</span> <span class="n">Plain</span>
+    <span class="n">Source</span> <span class="o">=</span> <span class="n">Source</span>
+    <span class="n">At</span> <span class="o">=</span> <span class="n">At</span>
+    <span class="n">AtAll</span> <span class="o">=</span> <span class="n">AtAll</span>
+    <span class="n">Face</span> <span class="o">=</span> <span class="n">Face</span>
+    <span class="n">Image</span> <span class="o">=</span> <span class="n">Image</span>
+    <span class="n">Quote</span> <span class="o">=</span> <span class="n">Quote</span>
+    <span class="n">Xml</span> <span class="o">=</span> <span class="n">Xml</span>
+    <span class="n">Json</span> <span class="o">=</span> <span class="n">Json</span>
+    <span class="n">App</span> <span class="o">=</span> <span class="n">App</span>
+    <span class="n">Unknown</span> <span class="o">=</span> <span class="n">Unknown</span></div>
+
+
+<span class="n">MessageComponents</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;At&#39;</span><span class="p">:</span>      <span class="n">At</span><span class="p">,</span>
+    <span class="s1">&#39;AtAll&#39;</span><span class="p">:</span>   <span class="n">AtAll</span><span class="p">,</span>
+    <span class="s1">&#39;Face&#39;</span><span class="p">:</span>    <span class="n">Face</span><span class="p">,</span>
+    <span class="s1">&#39;Plain&#39;</span><span class="p">:</span>   <span class="n">Plain</span><span class="p">,</span>
+    <span class="s1">&#39;Image&#39;</span><span class="p">:</span>   <span class="n">Image</span><span class="p">,</span>
+    <span class="s1">&#39;Source&#39;</span><span class="p">:</span>  <span class="n">Source</span><span class="p">,</span>
+    <span class="s1">&#39;Quote&#39;</span><span class="p">:</span>   <span class="n">Quote</span><span class="p">,</span>
+    <span class="s1">&#39;Xml&#39;</span><span class="p">:</span>     <span class="n">Xml</span><span class="p">,</span>
+    <span class="s1">&#39;Json&#39;</span><span class="p">:</span>    <span class="n">Json</span><span class="p">,</span>
+    <span class="s1">&#39;App&#39;</span><span class="p">:</span>     <span class="n">App</span><span class="p">,</span>
+    <span class="s1">&#39;Unknown&#39;</span><span class="p">:</span> <span class="n">Unknown</span>
+<span class="p">}</span>
+
+
+<span class="k">class</span> <span class="nc">BotMessage</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="nb">type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;BotMessage&#39;</span>
+    <span class="n">messageId</span><span class="p">:</span> <span class="nb">int</span>
+
+
+<span class="k">class</span> <span class="nc">ImageType</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="n">Friend</span> <span class="o">=</span> <span class="s1">&#39;friend&#39;</span>
+    <span class="n">Group</span> <span class="o">=</span> <span class="s1">&#39;group&#39;</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, jqqqqqqqqqq, Chenwe-i-lin
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

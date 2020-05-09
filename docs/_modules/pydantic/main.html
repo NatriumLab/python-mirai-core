@@ -1,0 +1,1070 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pydantic.main &mdash; Python Mirai Core 0.8 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Python Mirai Core
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../mirai_core.html">mirai_core package</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Python Mirai Core</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>pydantic.main</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pydantic.main</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABCMeta</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+<span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">types</span> <span class="kn">import</span> <span class="n">FunctionType</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">TypeVar</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">cast</span><span class="p">,</span> <span class="n">no_type_check</span>
+
+<span class="kn">from</span> <span class="nn">.class_validators</span> <span class="kn">import</span> <span class="n">ROOT_KEY</span><span class="p">,</span> <span class="n">ValidatorGroup</span><span class="p">,</span> <span class="n">extract_root_validators</span><span class="p">,</span> <span class="n">extract_validators</span><span class="p">,</span> <span class="n">inherit_validators</span>
+<span class="kn">from</span> <span class="nn">.error_wrappers</span> <span class="kn">import</span> <span class="n">ErrorWrapper</span><span class="p">,</span> <span class="n">ValidationError</span>
+<span class="kn">from</span> <span class="nn">.errors</span> <span class="kn">import</span> <span class="n">ConfigError</span><span class="p">,</span> <span class="n">DictError</span><span class="p">,</span> <span class="n">ExtraError</span><span class="p">,</span> <span class="n">MissingError</span>
+<span class="kn">from</span> <span class="nn">.fields</span> <span class="kn">import</span> <span class="n">SHAPE_MAPPING</span><span class="p">,</span> <span class="n">ModelField</span><span class="p">,</span> <span class="n">Undefined</span>
+<span class="kn">from</span> <span class="nn">.json</span> <span class="kn">import</span> <span class="n">custom_pydantic_encoder</span><span class="p">,</span> <span class="n">pydantic_encoder</span>
+<span class="kn">from</span> <span class="nn">.parse</span> <span class="kn">import</span> <span class="n">Protocol</span><span class="p">,</span> <span class="n">load_file</span><span class="p">,</span> <span class="n">load_str_bytes</span>
+<span class="kn">from</span> <span class="nn">.schema</span> <span class="kn">import</span> <span class="n">model_schema</span>
+<span class="kn">from</span> <span class="nn">.types</span> <span class="kn">import</span> <span class="n">PyObject</span><span class="p">,</span> <span class="n">StrBytes</span>
+<span class="kn">from</span> <span class="nn">.typing</span> <span class="kn">import</span> <span class="n">AnyCallable</span><span class="p">,</span> <span class="n">AnyType</span><span class="p">,</span> <span class="n">ForwardRef</span><span class="p">,</span> <span class="n">is_classvar</span><span class="p">,</span> <span class="n">resolve_annotations</span><span class="p">,</span> <span class="n">update_field_forward_refs</span>
+<span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">GetterDict</span><span class="p">,</span> <span class="n">Representation</span><span class="p">,</span> <span class="n">ValueItems</span><span class="p">,</span> <span class="n">lenient_issubclass</span><span class="p">,</span> <span class="n">sequence_like</span><span class="p">,</span> <span class="n">validate_field_name</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">.class_validators</span> <span class="kn">import</span> <span class="n">ValidatorListDict</span>
+    <span class="kn">from</span> <span class="nn">.types</span> <span class="kn">import</span> <span class="n">ModelOrDc</span>
+    <span class="kn">from</span> <span class="nn">.typing</span> <span class="kn">import</span> <span class="n">CallableGenerator</span><span class="p">,</span> <span class="n">TupleGenerator</span><span class="p">,</span> <span class="n">DictStrAny</span><span class="p">,</span> <span class="n">DictAny</span><span class="p">,</span> <span class="n">SetStr</span>
+    <span class="kn">from</span> <span class="nn">.typing</span> <span class="kn">import</span> <span class="n">AbstractSetIntStr</span><span class="p">,</span> <span class="n">DictIntStrAny</span><span class="p">,</span> <span class="n">ReprArgs</span>  <span class="c1"># noqa: F401</span>
+
+    <span class="n">ConfigType</span> <span class="o">=</span> <span class="n">Type</span><span class="p">[</span><span class="s1">&#39;BaseConfig&#39;</span><span class="p">]</span>
+    <span class="n">Model</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;Model&#39;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="s1">&#39;BaseModel&#39;</span><span class="p">)</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">cython</span>  <span class="c1"># type: ignore</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="n">compiled</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="k">else</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">compiled</span> <span class="o">=</span> <span class="n">cython</span><span class="o">.</span><span class="n">compiled</span>
+    <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+        <span class="n">compiled</span> <span class="o">=</span> <span class="kc">False</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="s1">&#39;BaseConfig&#39;</span><span class="p">,</span> <span class="s1">&#39;BaseModel&#39;</span><span class="p">,</span> <span class="s1">&#39;Extra&#39;</span><span class="p">,</span> <span class="s1">&#39;compiled&#39;</span><span class="p">,</span> <span class="s1">&#39;create_model&#39;</span><span class="p">,</span> <span class="s1">&#39;validate_model&#39;</span>
+
+
+<span class="k">class</span> <span class="nc">Extra</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+    <span class="n">allow</span> <span class="o">=</span> <span class="s1">&#39;allow&#39;</span>
+    <span class="n">ignore</span> <span class="o">=</span> <span class="s1">&#39;ignore&#39;</span>
+    <span class="n">forbid</span> <span class="o">=</span> <span class="s1">&#39;forbid&#39;</span>
+
+
+<span class="k">class</span> <span class="nc">BaseConfig</span><span class="p">:</span>
+    <span class="n">title</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">anystr_strip_whitespace</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">min_anystr_length</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">max_anystr_length</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">validate_all</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">extra</span> <span class="o">=</span> <span class="n">Extra</span><span class="o">.</span><span class="n">ignore</span>
+    <span class="n">allow_mutation</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">allow_population_by_field_name</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">use_enum_values</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">fields</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">validate_assignment</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">error_msg_templates</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">arbitrary_types_allowed</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">orm_mode</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">getter_dict</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">GetterDict</span><span class="p">]</span> <span class="o">=</span> <span class="n">GetterDict</span>
+    <span class="n">alias_generator</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">keep_untouched</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">type</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">()</span>
+    <span class="n">schema_extra</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]],</span> <span class="kc">None</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">json_loads</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span>
+    <span class="n">json_dumps</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span>
+    <span class="n">json_encoders</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">AnyType</span><span class="p">,</span> <span class="n">AnyCallable</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">get_field_info</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+        <span class="n">fields_value</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">fields</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fields_value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">field_info</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;alias&#39;</span><span class="p">:</span> <span class="n">fields_value</span><span class="p">}</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fields_value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="n">field_info</span> <span class="o">=</span> <span class="n">fields_value</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">field_info</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">if</span> <span class="s1">&#39;alias&#39;</span> <span class="ow">in</span> <span class="n">field_info</span><span class="p">:</span>
+            <span class="n">field_info</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s1">&#39;alias_priority&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">field_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;alias_priority&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">1</span> <span class="ow">and</span> <span class="bp">cls</span><span class="o">.</span><span class="n">alias_generator</span><span class="p">:</span>
+            <span class="n">alias</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">alias_generator</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">alias</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Config.alias_generator must return str, not </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">alias</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">field_info</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">alias</span><span class="o">=</span><span class="n">alias</span><span class="p">,</span> <span class="n">alias_priority</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">field_info</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">prepare_field</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">field</span><span class="p">:</span> <span class="s1">&#39;ModelField&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Optional hook to check or modify fields during model creation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+
+
+<span class="k">def</span> <span class="nf">inherit_config</span><span class="p">(</span><span class="n">self_config</span><span class="p">:</span> <span class="s1">&#39;ConfigType&#39;</span><span class="p">,</span> <span class="n">parent_config</span><span class="p">:</span> <span class="s1">&#39;ConfigType&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;ConfigType&#39;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">self_config</span><span class="p">:</span>
+        <span class="n">base_classes</span> <span class="o">=</span> <span class="p">(</span><span class="n">parent_config</span><span class="p">,)</span>
+    <span class="k">elif</span> <span class="n">self_config</span> <span class="o">==</span> <span class="n">parent_config</span><span class="p">:</span>
+        <span class="n">base_classes</span> <span class="o">=</span> <span class="p">(</span><span class="n">self_config</span><span class="p">,)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">base_classes</span> <span class="o">=</span> <span class="n">self_config</span><span class="p">,</span> <span class="n">parent_config</span>  <span class="c1"># type: ignore</span>
+    <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="s1">&#39;Config&#39;</span><span class="p">,</span> <span class="n">base_classes</span><span class="p">,</span> <span class="p">{})</span>
+
+
+<span class="n">EXTRA_LINK</span> <span class="o">=</span> <span class="s1">&#39;https://pydantic-docs.helpmanual.io/usage/model_config/&#39;</span>
+
+
+<span class="k">def</span> <span class="nf">prepare_config</span><span class="p">(</span><span class="n">config</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">BaseConfig</span><span class="p">],</span> <span class="n">cls_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">extra</span><span class="p">,</span> <span class="n">Extra</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">config</span><span class="o">.</span><span class="n">extra</span> <span class="o">=</span> <span class="n">Extra</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">extra</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;&quot;</span><span class="si">{</span><span class="n">cls_name</span><span class="si">}</span><span class="s1">&quot;: </span><span class="si">{</span><span class="n">config</span><span class="o">.</span><span class="n">extra</span><span class="si">}</span><span class="s1"> is not a valid value for &quot;extra&quot;&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="s1">&#39;allow_population_by_alias&#39;</span><span class="p">):</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">cls_name</span><span class="si">}</span><span class="s1">: &quot;allow_population_by_alias&quot; is deprecated and replaced by &quot;allow_population_by_field_name&quot;&#39;</span><span class="p">,</span>
+            <span class="ne">DeprecationWarning</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">config</span><span class="o">.</span><span class="n">allow_population_by_field_name</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">allow_population_by_alias</span>  <span class="c1"># type: ignore</span>
+
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="s1">&#39;case_insensitive&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">any</span><span class="p">(</span><span class="s1">&#39;BaseSettings.Config&#39;</span> <span class="ow">in</span> <span class="n">c</span><span class="o">.</span><span class="vm">__qualname__</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">config</span><span class="o">.</span><span class="vm">__mro__</span><span class="p">):</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">cls_name</span><span class="si">}</span><span class="s1">: &quot;case_insensitive&quot; is deprecated on BaseSettings config and replaced by &#39;</span>
+            <span class="sa">f</span><span class="s1">&#39;&quot;case_sensitive&quot; (default False)&#39;</span><span class="p">,</span>
+            <span class="ne">DeprecationWarning</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">config</span><span class="o">.</span><span class="n">case_sensitive</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">config</span><span class="o">.</span><span class="n">case_insensitive</span>  <span class="c1"># type: ignore</span>
+
+
+<span class="k">def</span> <span class="nf">is_valid_field</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">return</span> <span class="n">ROOT_KEY</span> <span class="o">==</span> <span class="n">name</span>
+
+
+<span class="k">def</span> <span class="nf">validate_custom_root_type</span><span class="p">(</span><span class="n">fields</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ModelField</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">fields</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;__root__ cannot be mixed with other fields&#39;</span><span class="p">)</span>
+
+
+<span class="n">UNTOUCHED_TYPES</span> <span class="o">=</span> <span class="n">FunctionType</span><span class="p">,</span> <span class="nb">property</span><span class="p">,</span> <span class="nb">type</span><span class="p">,</span> <span class="nb">classmethod</span><span class="p">,</span> <span class="nb">staticmethod</span>
+
+
+<span class="k">class</span> <span class="nc">ModelMetaclass</span><span class="p">(</span><span class="n">ABCMeta</span><span class="p">):</span>
+    <span class="nd">@no_type_check</span>  <span class="c1"># noqa C901</span>
+    <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span><span class="n">mcs</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">namespace</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>  <span class="c1"># noqa C901</span>
+        <span class="n">fields</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ModelField</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="n">BaseConfig</span>
+        <span class="n">validators</span><span class="p">:</span> <span class="s1">&#39;ValidatorListDict&#39;</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">pre_root_validators</span><span class="p">,</span> <span class="n">post_root_validators</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">base</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="n">bases</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="n">BaseModel</span><span class="p">)</span> <span class="ow">and</span> <span class="n">base</span> <span class="o">!=</span> <span class="n">BaseModel</span><span class="p">:</span>
+                <span class="n">fields</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">base</span><span class="o">.</span><span class="n">__fields__</span><span class="p">))</span>
+                <span class="n">config</span> <span class="o">=</span> <span class="n">inherit_config</span><span class="p">(</span><span class="n">base</span><span class="o">.</span><span class="n">__config__</span><span class="p">,</span> <span class="n">config</span><span class="p">)</span>
+                <span class="n">validators</span> <span class="o">=</span> <span class="n">inherit_validators</span><span class="p">(</span><span class="n">base</span><span class="o">.</span><span class="n">__validators__</span><span class="p">,</span> <span class="n">validators</span><span class="p">)</span>
+                <span class="n">pre_root_validators</span> <span class="o">+=</span> <span class="n">base</span><span class="o">.</span><span class="n">__pre_root_validators__</span>
+                <span class="n">post_root_validators</span> <span class="o">+=</span> <span class="n">base</span><span class="o">.</span><span class="n">__post_root_validators__</span>
+
+        <span class="n">config</span> <span class="o">=</span> <span class="n">inherit_config</span><span class="p">(</span><span class="n">namespace</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Config&#39;</span><span class="p">),</span> <span class="n">config</span><span class="p">)</span>
+        <span class="n">validators</span> <span class="o">=</span> <span class="n">inherit_validators</span><span class="p">(</span><span class="n">extract_validators</span><span class="p">(</span><span class="n">namespace</span><span class="p">),</span> <span class="n">validators</span><span class="p">)</span>
+        <span class="n">vg</span> <span class="o">=</span> <span class="n">ValidatorGroup</span><span class="p">(</span><span class="n">validators</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">fields</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">set_config</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+            <span class="n">extra_validators</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">get_validators</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">extra_validators</span><span class="p">:</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">class_validators</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">extra_validators</span><span class="p">)</span>
+                <span class="c1"># re-run prepare to add extra validators</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">populate_validators</span><span class="p">()</span>
+
+        <span class="n">prepare_config</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+
+        <span class="n">class_vars</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">namespace</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;__module__&#39;</span><span class="p">),</span> <span class="n">namespace</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;__qualname__&#39;</span><span class="p">))</span> <span class="o">!=</span> <span class="p">(</span><span class="s1">&#39;pydantic.main&#39;</span><span class="p">,</span> <span class="s1">&#39;BaseModel&#39;</span><span class="p">):</span>
+            <span class="n">annotations</span> <span class="o">=</span> <span class="n">resolve_annotations</span><span class="p">(</span><span class="n">namespace</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;__annotations__&#39;</span><span class="p">,</span> <span class="p">{}),</span> <span class="n">namespace</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;__module__&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+            <span class="n">untouched_types</span> <span class="o">=</span> <span class="n">UNTOUCHED_TYPES</span> <span class="o">+</span> <span class="n">config</span><span class="o">.</span><span class="n">keep_untouched</span>
+            <span class="c1"># annotation only fields need to come first in fields</span>
+            <span class="k">for</span> <span class="n">ann_name</span><span class="p">,</span> <span class="n">ann_type</span> <span class="ow">in</span> <span class="n">annotations</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">is_classvar</span><span class="p">(</span><span class="n">ann_type</span><span class="p">):</span>
+                    <span class="n">class_vars</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">ann_name</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">is_valid_field</span><span class="p">(</span><span class="n">ann_name</span><span class="p">):</span>
+                    <span class="n">validate_field_name</span><span class="p">(</span><span class="n">bases</span><span class="p">,</span> <span class="n">ann_name</span><span class="p">)</span>
+                    <span class="n">value</span> <span class="o">=</span> <span class="n">namespace</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">ann_name</span><span class="p">,</span> <span class="n">Undefined</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="p">(</span>
+                        <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">untouched_types</span><span class="p">)</span>
+                        <span class="ow">and</span> <span class="n">ann_type</span> <span class="o">!=</span> <span class="n">PyObject</span>
+                        <span class="ow">and</span> <span class="ow">not</span> <span class="n">lenient_issubclass</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">ann_type</span><span class="p">,</span> <span class="s1">&#39;__origin__&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="n">Type</span><span class="p">)</span>
+                    <span class="p">):</span>
+                        <span class="k">continue</span>
+                    <span class="n">fields</span><span class="p">[</span><span class="n">ann_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">ModelField</span><span class="o">.</span><span class="n">infer</span><span class="p">(</span>
+                        <span class="n">name</span><span class="o">=</span><span class="n">ann_name</span><span class="p">,</span>
+                        <span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">,</span>
+                        <span class="n">annotation</span><span class="o">=</span><span class="n">ann_type</span><span class="p">,</span>
+                        <span class="n">class_validators</span><span class="o">=</span><span class="n">vg</span><span class="o">.</span><span class="n">get_validators</span><span class="p">(</span><span class="n">ann_name</span><span class="p">),</span>
+                        <span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">,</span>
+                    <span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">var_name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">namespace</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="p">(</span>
+                    <span class="n">var_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">annotations</span>
+                    <span class="ow">and</span> <span class="n">is_valid_field</span><span class="p">(</span><span class="n">var_name</span><span class="p">)</span>
+                    <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">untouched_types</span><span class="p">)</span>
+                    <span class="ow">and</span> <span class="n">var_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">class_vars</span>
+                <span class="p">):</span>
+                    <span class="n">validate_field_name</span><span class="p">(</span><span class="n">bases</span><span class="p">,</span> <span class="n">var_name</span><span class="p">)</span>
+                    <span class="n">inferred</span> <span class="o">=</span> <span class="n">ModelField</span><span class="o">.</span><span class="n">infer</span><span class="p">(</span>
+                        <span class="n">name</span><span class="o">=</span><span class="n">var_name</span><span class="p">,</span>
+                        <span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">,</span>
+                        <span class="n">annotation</span><span class="o">=</span><span class="n">annotations</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">var_name</span><span class="p">),</span>
+                        <span class="n">class_validators</span><span class="o">=</span><span class="n">vg</span><span class="o">.</span><span class="n">get_validators</span><span class="p">(</span><span class="n">var_name</span><span class="p">),</span>
+                        <span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">,</span>
+                    <span class="p">)</span>
+                    <span class="k">if</span> <span class="n">var_name</span> <span class="ow">in</span> <span class="n">fields</span> <span class="ow">and</span> <span class="n">inferred</span><span class="o">.</span><span class="n">type_</span> <span class="o">!=</span> <span class="n">fields</span><span class="p">[</span><span class="n">var_name</span><span class="p">]</span><span class="o">.</span><span class="n">type_</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                            <span class="sa">f</span><span class="s1">&#39;The type of </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">.</span><span class="si">{</span><span class="n">var_name</span><span class="si">}</span><span class="s1"> differs from the new default value; &#39;</span>
+                            <span class="sa">f</span><span class="s1">&#39;if you wish to change the type of this field, please use a type annotation&#39;</span>
+                        <span class="p">)</span>
+                    <span class="n">fields</span><span class="p">[</span><span class="n">var_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">inferred</span>
+
+        <span class="n">_custom_root_type</span> <span class="o">=</span> <span class="n">ROOT_KEY</span> <span class="ow">in</span> <span class="n">fields</span>
+        <span class="k">if</span> <span class="n">_custom_root_type</span><span class="p">:</span>
+            <span class="n">validate_custom_root_type</span><span class="p">(</span><span class="n">fields</span><span class="p">)</span>
+        <span class="n">vg</span><span class="o">.</span><span class="n">check_for_unused</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">json_encoders</span><span class="p">:</span>
+            <span class="n">json_encoder</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">custom_pydantic_encoder</span><span class="p">,</span> <span class="n">config</span><span class="o">.</span><span class="n">json_encoders</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">json_encoder</span> <span class="o">=</span> <span class="n">pydantic_encoder</span>
+        <span class="n">pre_rv_new</span><span class="p">,</span> <span class="n">post_rv_new</span> <span class="o">=</span> <span class="n">extract_root_validators</span><span class="p">(</span><span class="n">namespace</span><span class="p">)</span>
+        <span class="n">new_namespace</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;__config__&#39;</span><span class="p">:</span> <span class="n">config</span><span class="p">,</span>
+            <span class="s1">&#39;__fields__&#39;</span><span class="p">:</span> <span class="n">fields</span><span class="p">,</span>
+            <span class="s1">&#39;__field_defaults__&#39;</span><span class="p">:</span> <span class="p">{</span><span class="n">n</span><span class="p">:</span> <span class="n">f</span><span class="o">.</span><span class="n">default</span> <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">fields</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">f</span><span class="o">.</span><span class="n">required</span><span class="p">},</span>
+            <span class="s1">&#39;__validators__&#39;</span><span class="p">:</span> <span class="n">vg</span><span class="o">.</span><span class="n">validators</span><span class="p">,</span>
+            <span class="s1">&#39;__pre_root_validators__&#39;</span><span class="p">:</span> <span class="n">pre_root_validators</span> <span class="o">+</span> <span class="n">pre_rv_new</span><span class="p">,</span>
+            <span class="s1">&#39;__post_root_validators__&#39;</span><span class="p">:</span> <span class="n">post_root_validators</span> <span class="o">+</span> <span class="n">post_rv_new</span><span class="p">,</span>
+            <span class="s1">&#39;__schema_cache__&#39;</span><span class="p">:</span> <span class="p">{},</span>
+            <span class="s1">&#39;__json_encoder__&#39;</span><span class="p">:</span> <span class="nb">staticmethod</span><span class="p">(</span><span class="n">json_encoder</span><span class="p">),</span>
+            <span class="s1">&#39;__custom_root_type__&#39;</span><span class="p">:</span> <span class="n">_custom_root_type</span><span class="p">,</span>
+            <span class="o">**</span><span class="p">{</span><span class="n">n</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">namespace</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">n</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">},</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="n">mcs</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">new_namespace</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">BaseModel</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">ModelMetaclass</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+        <span class="c1"># populated by the metaclass, defined here to help IDEs only</span>
+        <span class="n">__fields__</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ModelField</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">__field_defaults__</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">__validators__</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">AnyCallable</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">__pre_root_validators__</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">AnyCallable</span><span class="p">]</span>
+        <span class="n">__post_root_validators__</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="n">AnyCallable</span><span class="p">]]</span>
+        <span class="n">__config__</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">BaseConfig</span><span class="p">]</span> <span class="o">=</span> <span class="n">BaseConfig</span>
+        <span class="n">__root__</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">__json_encoder__</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Any</span><span class="p">],</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span>
+        <span class="n">__schema_cache__</span><span class="p">:</span> <span class="s1">&#39;DictAny&#39;</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">__custom_root_type__</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="n">Config</span> <span class="o">=</span> <span class="n">BaseConfig</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;__dict__&#39;</span><span class="p">,</span> <span class="s1">&#39;__fields_set__&#39;</span><span class="p">)</span>
+    <span class="c1"># equivalent of inheriting from Representation</span>
+    <span class="n">__repr_name__</span> <span class="o">=</span> <span class="n">Representation</span><span class="o">.</span><span class="n">__repr_name__</span>
+    <span class="n">__repr_str__</span> <span class="o">=</span> <span class="n">Representation</span><span class="o">.</span><span class="n">__repr_str__</span>
+    <span class="n">__pretty__</span> <span class="o">=</span> <span class="n">Representation</span><span class="o">.</span><span class="n">__pretty__</span>
+    <span class="fm">__str__</span> <span class="o">=</span> <span class="n">Representation</span><span class="o">.</span><span class="fm">__str__</span>
+    <span class="fm">__repr__</span> <span class="o">=</span> <span class="n">Representation</span><span class="o">.</span><span class="fm">__repr__</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="n">__pydantic_self__</span><span class="p">,</span> <span class="o">**</span><span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># Uses something other than `self` the first arg to allow &quot;self&quot; as a settable attribute</span>
+        <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+            <span class="n">__pydantic_self__</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="n">__pydantic_self__</span><span class="o">.</span><span class="n">__fields_set__</span><span class="p">:</span> <span class="s1">&#39;SetStr&#39;</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="n">values</span><span class="p">,</span> <span class="n">fields_set</span><span class="p">,</span> <span class="n">validation_error</span> <span class="o">=</span> <span class="n">validate_model</span><span class="p">(</span><span class="n">__pydantic_self__</span><span class="o">.</span><span class="vm">__class__</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">validation_error</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">validation_error</span>
+        <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">__pydantic_self__</span><span class="p">,</span> <span class="s1">&#39;__dict__&#39;</span><span class="p">,</span> <span class="n">values</span><span class="p">)</span>
+        <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">__pydantic_self__</span><span class="p">,</span> <span class="s1">&#39;__fields_set__&#39;</span><span class="p">,</span> <span class="n">fields_set</span><span class="p">)</span>
+
+    <span class="nd">@no_type_check</span>
+    <span class="k">def</span> <span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__config__</span><span class="o">.</span><span class="n">extra</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">Extra</span><span class="o">.</span><span class="n">allow</span> <span class="ow">and</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__fields__</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">&quot; object has no field &quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">&quot;&#39;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">__config__</span><span class="o">.</span><span class="n">allow_mutation</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">&quot; is immutable and does not support item assignment&#39;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">__config__</span><span class="o">.</span><span class="n">validate_assignment</span><span class="p">:</span>
+            <span class="n">known_field</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__fields__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">known_field</span><span class="p">:</span>
+                <span class="n">value</span><span class="p">,</span> <span class="n">error_</span> <span class="o">=</span> <span class="n">known_field</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">exclude</span><span class="o">=</span><span class="p">{</span><span class="n">name</span><span class="p">}),</span> <span class="n">loc</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="bp">cls</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">error_</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="n">ValidationError</span><span class="p">([</span><span class="n">error_</span><span class="p">],</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__fields_set__</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__getstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;DictAny&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;__dict__&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">,</span> <span class="s1">&#39;__fields_set__&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__fields_set__</span><span class="p">}</span>
+
+    <span class="k">def</span> <span class="nf">__setstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="s1">&#39;DictAny&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;__dict__&#39;</span><span class="p">,</span> <span class="n">state</span><span class="p">[</span><span class="s1">&#39;__dict__&#39;</span><span class="p">])</span>
+        <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;__fields_set__&#39;</span><span class="p">,</span> <span class="n">state</span><span class="p">[</span><span class="s1">&#39;__fields_set__&#39;</span><span class="p">])</span>
+
+    <span class="k">def</span> <span class="nf">dict</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">include</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="s1">&#39;AbstractSetIntStr&#39;</span><span class="p">,</span> <span class="s1">&#39;DictIntStrAny&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">exclude</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="s1">&#39;AbstractSetIntStr&#39;</span><span class="p">,</span> <span class="s1">&#39;DictIntStrAny&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">by_alias</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">skip_defaults</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">exclude_unset</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">exclude_defaults</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">exclude_none</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;DictStrAny&#39;</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generate a dictionary representation of the model, optionally specifying which fields to include or exclude.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">skip_defaults</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">.dict(): &quot;skip_defaults&quot; is deprecated and replaced by &quot;exclude_unset&quot;&#39;</span><span class="p">,</span>
+                <span class="ne">DeprecationWarning</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">exclude_unset</span> <span class="o">=</span> <span class="n">skip_defaults</span>
+        <span class="n">get_key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_key_factory</span><span class="p">(</span><span class="n">by_alias</span><span class="p">)</span>
+        <span class="n">get_key</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">get_key</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__fields__</span><span class="p">)</span>
+
+        <span class="n">allowed_keys</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_keys</span><span class="p">(</span><span class="n">include</span><span class="o">=</span><span class="n">include</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="n">exclude</span><span class="p">,</span> <span class="n">exclude_unset</span><span class="o">=</span><span class="n">exclude_unset</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="n">get_key</span><span class="p">(</span><span class="n">k</span><span class="p">):</span> <span class="n">v</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iter</span><span class="p">(</span>
+                <span class="n">to_dict</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">by_alias</span><span class="o">=</span><span class="n">by_alias</span><span class="p">,</span>
+                <span class="n">allowed_keys</span><span class="o">=</span><span class="n">allowed_keys</span><span class="p">,</span>
+                <span class="n">include</span><span class="o">=</span><span class="n">include</span><span class="p">,</span>
+                <span class="n">exclude</span><span class="o">=</span><span class="n">exclude</span><span class="p">,</span>
+                <span class="n">exclude_unset</span><span class="o">=</span><span class="n">exclude_unset</span><span class="p">,</span>
+                <span class="n">exclude_defaults</span><span class="o">=</span><span class="n">exclude_defaults</span><span class="p">,</span>
+                <span class="n">exclude_none</span><span class="o">=</span><span class="n">exclude_none</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">}</span>
+
+    <span class="k">def</span> <span class="nf">_get_key_factory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">by_alias</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">by_alias</span><span class="p">:</span>
+            <span class="k">return</span> <span class="k">lambda</span> <span class="n">fields</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">fields</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">alias</span> <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">fields</span> <span class="k">else</span> <span class="n">key</span>
+
+        <span class="k">return</span> <span class="k">lambda</span> <span class="n">_</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">key</span>
+
+    <span class="k">def</span> <span class="nf">json</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">include</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="s1">&#39;AbstractSetIntStr&#39;</span><span class="p">,</span> <span class="s1">&#39;DictIntStrAny&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">exclude</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="s1">&#39;AbstractSetIntStr&#39;</span><span class="p">,</span> <span class="s1">&#39;DictIntStrAny&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">by_alias</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">skip_defaults</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">exclude_unset</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">exclude_defaults</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">exclude_none</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">encoder</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="n">Any</span><span class="p">],</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">dumps_kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generate a JSON representation of the model, `include` and `exclude` arguments as per `dict()`.</span>
+
+<span class="sd">        `encoder` is an optional function to supply as `default` to json.dumps(), other arguments as per `json.dumps()`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">skip_defaults</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">.json(): &quot;skip_defaults&quot; is deprecated and replaced by &quot;exclude_unset&quot;&#39;</span><span class="p">,</span>
+                <span class="ne">DeprecationWarning</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">exclude_unset</span> <span class="o">=</span> <span class="n">skip_defaults</span>
+        <span class="n">encoder</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">Callable</span><span class="p">[[</span><span class="n">Any</span><span class="p">],</span> <span class="n">Any</span><span class="p">],</span> <span class="n">encoder</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">__json_encoder__</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span>
+            <span class="n">include</span><span class="o">=</span><span class="n">include</span><span class="p">,</span>
+            <span class="n">exclude</span><span class="o">=</span><span class="n">exclude</span><span class="p">,</span>
+            <span class="n">by_alias</span><span class="o">=</span><span class="n">by_alias</span><span class="p">,</span>
+            <span class="n">exclude_unset</span><span class="o">=</span><span class="n">exclude_unset</span><span class="p">,</span>
+            <span class="n">exclude_defaults</span><span class="o">=</span><span class="n">exclude_defaults</span><span class="p">,</span>
+            <span class="n">exclude_none</span><span class="o">=</span><span class="n">exclude_none</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__custom_root_type__</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">ROOT_KEY</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__config__</span><span class="o">.</span><span class="n">json_dumps</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">encoder</span><span class="p">,</span> <span class="o">**</span><span class="n">dumps_kwargs</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">parse_obj</span><span class="p">(</span><span class="bp">cls</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="s1">&#39;Model&#39;</span><span class="p">],</span> <span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;Model&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__custom_root_type__</span> <span class="ow">and</span> <span class="p">(</span>
+            <span class="ow">not</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="n">obj</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="o">==</span> <span class="p">{</span><span class="n">ROOT_KEY</span><span class="p">})</span> <span class="ow">or</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__fields__</span><span class="p">[</span><span class="n">ROOT_KEY</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">SHAPE_MAPPING</span>
+        <span class="p">):</span>
+            <span class="n">obj</span> <span class="o">=</span> <span class="p">{</span><span class="n">ROOT_KEY</span><span class="p">:</span> <span class="n">obj</span><span class="p">}</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">obj</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+            <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">exc</span> <span class="o">=</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1"> expected dict not </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="n">ValidationError</span><span class="p">([</span><span class="n">ErrorWrapper</span><span class="p">(</span><span class="n">exc</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="n">ROOT_KEY</span><span class="p">)],</span> <span class="bp">cls</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="o">**</span><span class="n">obj</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">parse_raw</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="s1">&#39;Model&#39;</span><span class="p">],</span>
+        <span class="n">b</span><span class="p">:</span> <span class="n">StrBytes</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">content_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">encoding</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;utf8&#39;</span><span class="p">,</span>
+        <span class="n">proto</span><span class="p">:</span> <span class="n">Protocol</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">allow_pickle</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;Model&#39;</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">obj</span> <span class="o">=</span> <span class="n">load_str_bytes</span><span class="p">(</span>
+                <span class="n">b</span><span class="p">,</span>
+                <span class="n">proto</span><span class="o">=</span><span class="n">proto</span><span class="p">,</span>
+                <span class="n">content_type</span><span class="o">=</span><span class="n">content_type</span><span class="p">,</span>
+                <span class="n">encoding</span><span class="o">=</span><span class="n">encoding</span><span class="p">,</span>
+                <span class="n">allow_pickle</span><span class="o">=</span><span class="n">allow_pickle</span><span class="p">,</span>
+                <span class="n">json_loads</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">__config__</span><span class="o">.</span><span class="n">json_loads</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">,</span> <span class="ne">UnicodeDecodeError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">ValidationError</span><span class="p">([</span><span class="n">ErrorWrapper</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="n">ROOT_KEY</span><span class="p">)],</span> <span class="bp">cls</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">parse_obj</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">parse_file</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="s1">&#39;Model&#39;</span><span class="p">],</span>
+        <span class="n">path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">content_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">encoding</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;utf8&#39;</span><span class="p">,</span>
+        <span class="n">proto</span><span class="p">:</span> <span class="n">Protocol</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">allow_pickle</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;Model&#39;</span><span class="p">:</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="n">load_file</span><span class="p">(</span>
+            <span class="n">path</span><span class="p">,</span>
+            <span class="n">proto</span><span class="o">=</span><span class="n">proto</span><span class="p">,</span>
+            <span class="n">content_type</span><span class="o">=</span><span class="n">content_type</span><span class="p">,</span>
+            <span class="n">encoding</span><span class="o">=</span><span class="n">encoding</span><span class="p">,</span>
+            <span class="n">allow_pickle</span><span class="o">=</span><span class="n">allow_pickle</span><span class="p">,</span>
+            <span class="n">json_loads</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">__config__</span><span class="o">.</span><span class="n">json_loads</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">parse_obj</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_orm</span><span class="p">(</span><span class="bp">cls</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="s1">&#39;Model&#39;</span><span class="p">],</span> <span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;Model&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__config__</span><span class="o">.</span><span class="n">orm_mode</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">ConfigError</span><span class="p">(</span><span class="s1">&#39;You must have the config attribute orm_mode=True to use from_orm&#39;</span><span class="p">)</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_decompose_class</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
+        <span class="n">values</span><span class="p">,</span> <span class="n">fields_set</span><span class="p">,</span> <span class="n">validation_error</span> <span class="o">=</span> <span class="n">validate_model</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">obj</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">validation_error</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">validation_error</span>
+        <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="s1">&#39;__dict__&#39;</span><span class="p">,</span> <span class="n">values</span><span class="p">)</span>
+        <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="s1">&#39;__fields_set__&#39;</span><span class="p">,</span> <span class="n">fields_set</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">m</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">construct</span><span class="p">(</span><span class="bp">cls</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="s1">&#39;Model&#39;</span><span class="p">],</span> <span class="n">_fields_set</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="s1">&#39;SetStr&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">values</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;Model&#39;</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates a new model setting __dict__ and __fields_set__ from trusted or pre-validated data.</span>
+<span class="sd">        Default values are respected, but no other validation is performed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
+        <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="s1">&#39;__dict__&#39;</span><span class="p">,</span> <span class="p">{</span><span class="o">**</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">__field_defaults__</span><span class="p">),</span> <span class="o">**</span><span class="n">values</span><span class="p">})</span>
+        <span class="k">if</span> <span class="n">_fields_set</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">_fields_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">values</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="s1">&#39;__fields_set__&#39;</span><span class="p">,</span> <span class="n">_fields_set</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">m</span>
+
+    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">:</span> <span class="s1">&#39;Model&#39;</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">include</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="s1">&#39;AbstractSetIntStr&#39;</span><span class="p">,</span> <span class="s1">&#39;DictIntStrAny&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">exclude</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="s1">&#39;AbstractSetIntStr&#39;</span><span class="p">,</span> <span class="s1">&#39;DictIntStrAny&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">update</span><span class="p">:</span> <span class="s1">&#39;DictStrAny&#39;</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">deep</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;Model&#39;</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Duplicate a model, optionally choose which fields to include, exclude and change.</span>
+
+<span class="sd">        :param include: fields to include in new model</span>
+<span class="sd">        :param exclude: fields to exclude from new model, as with values this takes precedence over include</span>
+<span class="sd">        :param update: values to change/add in the new model. Note: the data is not validated before creating</span>
+<span class="sd">            the new model: you should trust this data</span>
+<span class="sd">        :param deep: set to `True` to make a deep copy of the model</span>
+<span class="sd">        :return: new model instance</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">include</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">exclude</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">update</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># skip constructing values if no arguments are passed</span>
+            <span class="n">v</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">allowed_keys</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_keys</span><span class="p">(</span><span class="n">include</span><span class="o">=</span><span class="n">include</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="n">exclude</span><span class="p">,</span> <span class="n">exclude_unset</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">update</span><span class="o">=</span><span class="n">update</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">allowed_keys</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">v</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">,</span> <span class="o">**</span><span class="p">(</span><span class="n">update</span> <span class="ow">or</span> <span class="p">{})}</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">v</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="o">**</span><span class="nb">dict</span><span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_iter</span><span class="p">(</span>
+                            <span class="n">to_dict</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                            <span class="n">by_alias</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                            <span class="n">include</span><span class="o">=</span><span class="n">include</span><span class="p">,</span>
+                            <span class="n">exclude</span><span class="o">=</span><span class="n">exclude</span><span class="p">,</span>
+                            <span class="n">exclude_unset</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                            <span class="n">allowed_keys</span><span class="o">=</span><span class="n">allowed_keys</span><span class="p">,</span>
+                        <span class="p">)</span>
+                    <span class="p">),</span>
+                    <span class="o">**</span><span class="p">(</span><span class="n">update</span> <span class="ow">or</span> <span class="p">{}),</span>
+                <span class="p">}</span>
+
+        <span class="k">if</span> <span class="n">deep</span><span class="p">:</span>
+            <span class="n">v</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+
+        <span class="bp">cls</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
+        <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="s1">&#39;__dict__&#39;</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+        <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="s1">&#39;__fields_set__&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__fields_set__</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
+        <span class="k">return</span> <span class="n">m</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">schema</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">by_alias</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;DictStrAny&#39;</span><span class="p">:</span>
+        <span class="n">cached</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__schema_cache__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">by_alias</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">cached</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">cached</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">model_schema</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">by_alias</span><span class="o">=</span><span class="n">by_alias</span><span class="p">)</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">__schema_cache__</span><span class="p">[</span><span class="n">by_alias</span><span class="p">]</span> <span class="o">=</span> <span class="n">s</span>
+        <span class="k">return</span> <span class="n">s</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">schema_json</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">by_alias</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">dumps_kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="kn">from</span> <span class="nn">.json</span> <span class="kn">import</span> <span class="n">pydantic_encoder</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__config__</span><span class="o">.</span><span class="n">json_dumps</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">schema</span><span class="p">(</span><span class="n">by_alias</span><span class="o">=</span><span class="n">by_alias</span><span class="p">),</span> <span class="n">default</span><span class="o">=</span><span class="n">pydantic_encoder</span><span class="p">,</span> <span class="o">**</span><span class="n">dumps_kwargs</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">__get_validators__</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;CallableGenerator&#39;</span><span class="p">:</span>
+        <span class="k">yield</span> <span class="bp">cls</span><span class="o">.</span><span class="n">validate</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">cls</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="s1">&#39;Model&#39;</span><span class="p">],</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;Model&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="o">**</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="bp">cls</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">value</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__config__</span><span class="o">.</span><span class="n">orm_mode</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_orm</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">value_as_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">DictError</span><span class="p">()</span> <span class="kn">from</span> <span class="nn">e</span>
+            <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="o">**</span><span class="n">value_as_dict</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_decompose_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="s1">&#39;Model&#39;</span><span class="p">],</span> <span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GetterDict</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__config__</span><span class="o">.</span><span class="n">getter_dict</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="nd">@no_type_check</span>
+    <span class="k">def</span> <span class="nf">_get_value</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">v</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+        <span class="n">to_dict</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+        <span class="n">by_alias</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+        <span class="n">include</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="s1">&#39;AbstractSetIntStr&#39;</span><span class="p">,</span> <span class="s1">&#39;DictIntStrAny&#39;</span><span class="p">]],</span>
+        <span class="n">exclude</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="s1">&#39;AbstractSetIntStr&#39;</span><span class="p">,</span> <span class="s1">&#39;DictIntStrAny&#39;</span><span class="p">]],</span>
+        <span class="n">exclude_unset</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+        <span class="n">exclude_defaults</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+        <span class="n">exclude_none</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">BaseModel</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">to_dict</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">v</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span>
+                    <span class="n">by_alias</span><span class="o">=</span><span class="n">by_alias</span><span class="p">,</span>
+                    <span class="n">exclude_unset</span><span class="o">=</span><span class="n">exclude_unset</span><span class="p">,</span>
+                    <span class="n">exclude_defaults</span><span class="o">=</span><span class="n">exclude_defaults</span><span class="p">,</span>
+                    <span class="n">include</span><span class="o">=</span><span class="n">include</span><span class="p">,</span>
+                    <span class="n">exclude</span><span class="o">=</span><span class="n">exclude</span><span class="p">,</span>
+                    <span class="n">exclude_none</span><span class="o">=</span><span class="n">exclude_none</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">v</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">include</span><span class="o">=</span><span class="n">include</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="n">exclude</span><span class="p">)</span>
+
+        <span class="n">value_exclude</span> <span class="o">=</span> <span class="n">ValueItems</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">exclude</span><span class="p">)</span> <span class="k">if</span> <span class="n">exclude</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="n">value_include</span> <span class="o">=</span> <span class="n">ValueItems</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">include</span><span class="p">)</span> <span class="k">if</span> <span class="n">include</span> <span class="k">else</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">return</span> <span class="p">{</span>
+                <span class="n">k_</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_get_value</span><span class="p">(</span>
+                    <span class="n">v_</span><span class="p">,</span>
+                    <span class="n">to_dict</span><span class="o">=</span><span class="n">to_dict</span><span class="p">,</span>
+                    <span class="n">by_alias</span><span class="o">=</span><span class="n">by_alias</span><span class="p">,</span>
+                    <span class="n">exclude_unset</span><span class="o">=</span><span class="n">exclude_unset</span><span class="p">,</span>
+                    <span class="n">exclude_defaults</span><span class="o">=</span><span class="n">exclude_defaults</span><span class="p">,</span>
+                    <span class="n">include</span><span class="o">=</span><span class="n">value_include</span> <span class="ow">and</span> <span class="n">value_include</span><span class="o">.</span><span class="n">for_element</span><span class="p">(</span><span class="n">k_</span><span class="p">),</span>
+                    <span class="n">exclude</span><span class="o">=</span><span class="n">value_exclude</span> <span class="ow">and</span> <span class="n">value_exclude</span><span class="o">.</span><span class="n">for_element</span><span class="p">(</span><span class="n">k_</span><span class="p">),</span>
+                    <span class="n">exclude_none</span><span class="o">=</span><span class="n">exclude_none</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="k">for</span> <span class="n">k_</span><span class="p">,</span> <span class="n">v_</span> <span class="ow">in</span> <span class="n">v</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+                <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">value_exclude</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">value_exclude</span><span class="o">.</span><span class="n">is_excluded</span><span class="p">(</span><span class="n">k_</span><span class="p">))</span>
+                <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="n">value_include</span> <span class="ow">or</span> <span class="n">value_include</span><span class="o">.</span><span class="n">is_included</span><span class="p">(</span><span class="n">k_</span><span class="p">))</span>
+            <span class="p">}</span>
+
+        <span class="k">elif</span> <span class="n">sequence_like</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+            <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="n">v</span><span class="p">)(</span>
+                <span class="bp">cls</span><span class="o">.</span><span class="n">_get_value</span><span class="p">(</span>
+                    <span class="n">v_</span><span class="p">,</span>
+                    <span class="n">to_dict</span><span class="o">=</span><span class="n">to_dict</span><span class="p">,</span>
+                    <span class="n">by_alias</span><span class="o">=</span><span class="n">by_alias</span><span class="p">,</span>
+                    <span class="n">exclude_unset</span><span class="o">=</span><span class="n">exclude_unset</span><span class="p">,</span>
+                    <span class="n">exclude_defaults</span><span class="o">=</span><span class="n">exclude_defaults</span><span class="p">,</span>
+                    <span class="n">include</span><span class="o">=</span><span class="n">value_include</span> <span class="ow">and</span> <span class="n">value_include</span><span class="o">.</span><span class="n">for_element</span><span class="p">(</span><span class="n">i</span><span class="p">),</span>
+                    <span class="n">exclude</span><span class="o">=</span><span class="n">value_exclude</span> <span class="ow">and</span> <span class="n">value_exclude</span><span class="o">.</span><span class="n">for_element</span><span class="p">(</span><span class="n">i</span><span class="p">),</span>
+                    <span class="n">exclude_none</span><span class="o">=</span><span class="n">exclude_none</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">v_</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+                <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">value_exclude</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">value_exclude</span><span class="o">.</span><span class="n">is_excluded</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+                <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="n">value_include</span> <span class="ow">or</span> <span class="n">value_include</span><span class="o">.</span><span class="n">is_included</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+            <span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">v</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">update_forward_refs</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">localns</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Try to update ForwardRefs on fields based on this Model, globalns and localns.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">globalns</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__module__</span><span class="p">]</span><span class="o">.</span><span class="vm">__dict__</span>
+        <span class="n">globalns</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="bp">cls</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__fields__</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">update_field_forward_refs</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">globalns</span><span class="o">=</span><span class="n">globalns</span><span class="p">,</span> <span class="n">localns</span><span class="o">=</span><span class="n">localns</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;TupleGenerator&#39;</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        so `dict(model)` works</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">yield from</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iter</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_iter</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">to_dict</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">by_alias</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">allowed_keys</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="s1">&#39;SetStr&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">include</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="s1">&#39;AbstractSetIntStr&#39;</span><span class="p">,</span> <span class="s1">&#39;DictIntStrAny&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">exclude</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="s1">&#39;AbstractSetIntStr&#39;</span><span class="p">,</span> <span class="s1">&#39;DictIntStrAny&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">exclude_unset</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">exclude_defaults</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">exclude_none</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;TupleGenerator&#39;</span><span class="p">:</span>
+
+        <span class="n">value_exclude</span> <span class="o">=</span> <span class="n">ValueItems</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exclude</span><span class="p">)</span> <span class="k">if</span> <span class="n">exclude</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="n">value_include</span> <span class="o">=</span> <span class="n">ValueItems</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">include</span><span class="p">)</span> <span class="k">if</span> <span class="n">include</span> <span class="k">else</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="n">exclude_defaults</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">allowed_keys</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">allowed_keys</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__fields__</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__field_defaults__</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">==</span> <span class="n">v</span><span class="p">:</span>
+                    <span class="n">allowed_keys</span><span class="o">.</span><span class="n">discard</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">allowed_keys</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">allowed_keys</span><span class="p">:</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_value</span><span class="p">(</span>
+                    <span class="n">v</span><span class="p">,</span>
+                    <span class="n">to_dict</span><span class="o">=</span><span class="n">to_dict</span><span class="p">,</span>
+                    <span class="n">by_alias</span><span class="o">=</span><span class="n">by_alias</span><span class="p">,</span>
+                    <span class="n">include</span><span class="o">=</span><span class="n">value_include</span> <span class="ow">and</span> <span class="n">value_include</span><span class="o">.</span><span class="n">for_element</span><span class="p">(</span><span class="n">k</span><span class="p">),</span>
+                    <span class="n">exclude</span><span class="o">=</span><span class="n">value_exclude</span> <span class="ow">and</span> <span class="n">value_exclude</span><span class="o">.</span><span class="n">for_element</span><span class="p">(</span><span class="n">k</span><span class="p">),</span>
+                    <span class="n">exclude_unset</span><span class="o">=</span><span class="n">exclude_unset</span><span class="p">,</span>
+                    <span class="n">exclude_defaults</span><span class="o">=</span><span class="n">exclude_defaults</span><span class="p">,</span>
+                    <span class="n">exclude_none</span><span class="o">=</span><span class="n">exclude_none</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">exclude_none</span> <span class="ow">and</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+                    <span class="k">yield</span> <span class="n">k</span><span class="p">,</span> <span class="n">value</span>
+
+    <span class="k">def</span> <span class="nf">_calculate_keys</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">include</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="s1">&#39;AbstractSetIntStr&#39;</span><span class="p">,</span> <span class="s1">&#39;DictIntStrAny&#39;</span><span class="p">]],</span>
+        <span class="n">exclude</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="s1">&#39;AbstractSetIntStr&#39;</span><span class="p">,</span> <span class="s1">&#39;DictIntStrAny&#39;</span><span class="p">]],</span>
+        <span class="n">exclude_unset</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+        <span class="n">update</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="s1">&#39;DictStrAny&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="s1">&#39;SetStr&#39;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">include</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">exclude</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">exclude_unset</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="n">exclude_unset</span><span class="p">:</span>
+            <span class="n">keys</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__fields_set__</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">keys</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+        <span class="k">if</span> <span class="n">include</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">include</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                <span class="n">keys</span> <span class="o">&amp;=</span> <span class="n">include</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">keys</span> <span class="o">&amp;=</span> <span class="n">include</span>
+
+        <span class="k">if</span> <span class="n">update</span><span class="p">:</span>
+            <span class="n">keys</span> <span class="o">-=</span> <span class="n">update</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">exclude</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">exclude</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                <span class="n">keys</span> <span class="o">-=</span> <span class="p">{</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">exclude</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">v</span> <span class="ow">is</span> <span class="o">...</span><span class="p">}</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">keys</span> <span class="o">-=</span> <span class="n">exclude</span>
+
+        <span class="k">return</span> <span class="n">keys</span>
+
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">BaseModel</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">()</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">dict</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">()</span> <span class="o">==</span> <span class="n">other</span>
+
+    <span class="k">def</span> <span class="nf">__repr_args__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;ReprArgs&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">fields</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ModelField</span><span class="p">]:</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;`fields` attribute is deprecated, use `__fields__` instead&#39;</span><span class="p">,</span> <span class="ne">DeprecationWarning</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__fields__</span>
+
+    <span class="k">def</span> <span class="nf">to_string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pretty</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;`model.to_string()` method is deprecated, use `str(model)` instead&#39;</span><span class="p">,</span> <span class="ne">DeprecationWarning</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">__values__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;DictStrAny&#39;</span><span class="p">:</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;`__values__` attribute is deprecated, use `__dict__` instead&#39;</span><span class="p">,</span> <span class="ne">DeprecationWarning</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span>
+
+
+<span class="k">def</span> <span class="nf">create_model</span><span class="p">(</span>
+    <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">__config__</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">BaseConfig</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">__base__</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">BaseModel</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="vm">__module__</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">__validators__</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">classmethod</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">field_definitions</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">[</span><span class="n">BaseModel</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Dynamically create a model.</span>
+<span class="sd">    :param model_name: name of the created model</span>
+<span class="sd">    :param __config__: config class to use for the new model</span>
+<span class="sd">    :param __base__: base class for the new model to inherit from</span>
+<span class="sd">    :param __validators__: a dict of method names and @validator class methods</span>
+<span class="sd">    :param **field_definitions: fields of the model (or extra fields if a base is supplied) in the format</span>
+<span class="sd">        `&lt;name&gt;=(&lt;type&gt;, &lt;default default&gt;)` or `&lt;name&gt;=&lt;default value&gt; eg. `foobar=(str, ...)` or `foobar=123`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">__base__</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">__config__</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">ConfigError</span><span class="p">(</span><span class="s1">&#39;to avoid confusion __config__ and __base__ cannot be used together&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">__base__</span> <span class="o">=</span> <span class="n">BaseModel</span>
+
+    <span class="n">fields</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">annotations</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">for</span> <span class="n">f_name</span><span class="p">,</span> <span class="n">f_def</span> <span class="ow">in</span> <span class="n">field_definitions</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_valid_field</span><span class="p">(</span><span class="n">f_name</span><span class="p">):</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;fields may not start with an underscore, ignoring &quot;</span><span class="si">{</span><span class="n">f_name</span><span class="si">}</span><span class="s1">&quot;&#39;</span><span class="p">,</span> <span class="ne">RuntimeWarning</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">f_def</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">f_annotation</span><span class="p">,</span> <span class="n">f_value</span> <span class="o">=</span> <span class="n">f_def</span>
+            <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">ConfigError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s1">&#39;field definitions should either be a tuple of (&lt;type&gt;, &lt;default&gt;) or just a &#39;</span>
+                    <span class="sa">f</span><span class="s1">&#39;default value, unfortunately this means tuples as &#39;</span>
+                    <span class="sa">f</span><span class="s1">&#39;default values are not allowed&#39;</span>
+                <span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">f_annotation</span><span class="p">,</span> <span class="n">f_value</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">f_def</span>
+
+        <span class="k">if</span> <span class="n">f_annotation</span><span class="p">:</span>
+            <span class="n">annotations</span><span class="p">[</span><span class="n">f_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">f_annotation</span>
+        <span class="n">fields</span><span class="p">[</span><span class="n">f_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">f_value</span>
+
+    <span class="n">namespace</span><span class="p">:</span> <span class="s1">&#39;DictStrAny&#39;</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;__annotations__&#39;</span><span class="p">:</span> <span class="n">annotations</span><span class="p">,</span> <span class="s1">&#39;__module__&#39;</span><span class="p">:</span> <span class="vm">__module__</span><span class="p">}</span>
+    <span class="k">if</span> <span class="n">__validators__</span><span class="p">:</span>
+        <span class="n">namespace</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">__validators__</span><span class="p">)</span>
+    <span class="n">namespace</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">fields</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">__config__</span><span class="p">:</span>
+        <span class="n">namespace</span><span class="p">[</span><span class="s1">&#39;Config&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">inherit_config</span><span class="p">(</span><span class="n">__config__</span><span class="p">,</span> <span class="n">BaseConfig</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="n">model_name</span><span class="p">,</span> <span class="p">(</span><span class="n">__base__</span><span class="p">,),</span> <span class="n">namespace</span><span class="p">)</span>
+
+
+<span class="n">_missing</span> <span class="o">=</span> <span class="nb">object</span><span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">validate_model</span><span class="p">(</span>  <span class="c1"># noqa: C901 (ignore complexity)</span>
+    <span class="n">model</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">BaseModel</span><span class="p">],</span> <span class="n">input_data</span><span class="p">:</span> <span class="s1">&#39;DictStrAny&#39;</span><span class="p">,</span> <span class="bp">cls</span><span class="p">:</span> <span class="s1">&#39;ModelOrDc&#39;</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="s1">&#39;DictStrAny&#39;</span><span class="p">,</span> <span class="s1">&#39;SetStr&#39;</span><span class="p">,</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ValidationError</span><span class="p">]]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    validate data against a model.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">values</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">errors</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="c1"># input_data names, possibly alias</span>
+    <span class="n">names_used</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="c1"># field names, never aliases</span>
+    <span class="n">fields_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">__config__</span>
+    <span class="n">check_extra</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">extra</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">Extra</span><span class="o">.</span><span class="n">ignore</span>
+    <span class="n">cls_</span> <span class="o">=</span> <span class="bp">cls</span> <span class="ow">or</span> <span class="n">model</span>
+
+    <span class="k">for</span> <span class="n">validator</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">__pre_root_validators__</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">input_data</span> <span class="o">=</span> <span class="n">validator</span><span class="p">(</span><span class="n">cls_</span><span class="p">,</span> <span class="n">input_data</span><span class="p">)</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">,</span> <span class="ne">AssertionError</span><span class="p">)</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{},</span> <span class="nb">set</span><span class="p">(),</span> <span class="n">ValidationError</span><span class="p">([</span><span class="n">ErrorWrapper</span><span class="p">(</span><span class="n">exc</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="n">ROOT_KEY</span><span class="p">)],</span> <span class="n">cls_</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">__fields__</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">field</span><span class="o">.</span><span class="n">type_</span><span class="p">)</span> <span class="o">==</span> <span class="n">ForwardRef</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">ConfigError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;field &quot;</span><span class="si">{</span><span class="n">field</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">&quot; not yet prepared so type is still a ForwardRef, &#39;</span>
+                <span class="sa">f</span><span class="s1">&#39;you might need to call </span><span class="si">{</span><span class="n">cls_</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">.update_forward_refs().&#39;</span>
+            <span class="p">)</span>
+
+        <span class="n">value</span> <span class="o">=</span> <span class="n">input_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">field</span><span class="o">.</span><span class="n">alias</span><span class="p">,</span> <span class="n">_missing</span><span class="p">)</span>
+        <span class="n">using_name</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="n">_missing</span> <span class="ow">and</span> <span class="n">config</span><span class="o">.</span><span class="n">allow_population_by_field_name</span> <span class="ow">and</span> <span class="n">field</span><span class="o">.</span><span class="n">alt_alias</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">input_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">field</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">_missing</span><span class="p">)</span>
+            <span class="n">using_name</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="n">_missing</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">field</span><span class="o">.</span><span class="n">required</span><span class="p">:</span>
+                <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ErrorWrapper</span><span class="p">(</span><span class="n">MissingError</span><span class="p">(),</span> <span class="n">loc</span><span class="o">=</span><span class="n">field</span><span class="o">.</span><span class="n">alias</span><span class="p">))</span>
+                <span class="k">continue</span>
+
+            <span class="k">if</span> <span class="n">field</span><span class="o">.</span><span class="n">default</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="c1"># deepcopy is quite slow on None</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">field</span><span class="o">.</span><span class="n">default</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">config</span><span class="o">.</span><span class="n">validate_all</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">field</span><span class="o">.</span><span class="n">validate_always</span><span class="p">:</span>
+                <span class="n">values</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+                <span class="k">continue</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">fields_set</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">check_extra</span><span class="p">:</span>
+                <span class="n">names_used</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">field</span><span class="o">.</span><span class="n">name</span> <span class="k">if</span> <span class="n">using_name</span> <span class="k">else</span> <span class="n">field</span><span class="o">.</span><span class="n">alias</span><span class="p">)</span>
+
+        <span class="n">v_</span><span class="p">,</span> <span class="n">errors_</span> <span class="o">=</span> <span class="n">field</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="n">field</span><span class="o">.</span><span class="n">alias</span><span class="p">,</span> <span class="bp">cls</span><span class="o">=</span><span class="n">cls_</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">errors_</span><span class="p">,</span> <span class="n">ErrorWrapper</span><span class="p">):</span>
+            <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">errors_</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">errors_</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">errors</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">errors_</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">values</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">v_</span>
+
+    <span class="k">if</span> <span class="n">check_extra</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="n">GetterDict</span><span class="p">):</span>
+            <span class="n">extra</span> <span class="o">=</span> <span class="n">input_data</span><span class="o">.</span><span class="n">extra_keys</span><span class="p">()</span> <span class="o">-</span> <span class="n">names_used</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">extra</span> <span class="o">=</span> <span class="n">input_data</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="o">-</span> <span class="n">names_used</span>
+        <span class="k">if</span> <span class="n">extra</span><span class="p">:</span>
+            <span class="n">fields_set</span> <span class="o">|=</span> <span class="n">extra</span>
+            <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">extra</span> <span class="ow">is</span> <span class="n">Extra</span><span class="o">.</span><span class="n">allow</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">extra</span><span class="p">:</span>
+                    <span class="n">values</span><span class="p">[</span><span class="n">f</span><span class="p">]</span> <span class="o">=</span> <span class="n">input_data</span><span class="p">[</span><span class="n">f</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">extra</span><span class="p">):</span>
+                    <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ErrorWrapper</span><span class="p">(</span><span class="n">ExtraError</span><span class="p">(),</span> <span class="n">loc</span><span class="o">=</span><span class="n">f</span><span class="p">))</span>
+
+    <span class="k">for</span> <span class="n">skip_on_failure</span><span class="p">,</span> <span class="n">validator</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">__post_root_validators__</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">skip_on_failure</span> <span class="ow">and</span> <span class="n">errors</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">values</span> <span class="o">=</span> <span class="n">validator</span><span class="p">(</span><span class="n">cls_</span><span class="p">,</span> <span class="n">values</span><span class="p">)</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">,</span> <span class="ne">AssertionError</span><span class="p">)</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+            <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ErrorWrapper</span><span class="p">(</span><span class="n">exc</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="n">ROOT_KEY</span><span class="p">))</span>
+            <span class="k">break</span>
+
+    <span class="k">if</span> <span class="n">errors</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">values</span><span class="p">,</span> <span class="n">fields_set</span><span class="p">,</span> <span class="n">ValidationError</span><span class="p">(</span><span class="n">errors</span><span class="p">,</span> <span class="n">cls_</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">values</span><span class="p">,</span> <span class="n">fields_set</span><span class="p">,</span> <span class="kc">None</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, jqqqqqqqqqq, Chenwe-i-lin
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

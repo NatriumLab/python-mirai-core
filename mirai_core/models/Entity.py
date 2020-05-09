@@ -5,7 +5,7 @@ from enum import Enum
 
 class Friend(BaseModel):
     id: int
-    nickname: Optional[str]
+    nickname: str
     remark: Optional[str]
 
     def __repr__(self):
@@ -40,7 +40,7 @@ class Member(BaseModel):
     group: Group
 
     def __repr__(self):
-        return f"<GroupMember id={self.id} group={self.group} permission={self.permission} group={self.group.id}>"
+        return f"<Member id={self.id} group={self.group} permission={self.permission} group={self.group.id}>"
 
     def get_avatar_url(self) -> str:
         return f'http://q4.qlogo.cn/g?b=qq&nk={self.id}&s=140'

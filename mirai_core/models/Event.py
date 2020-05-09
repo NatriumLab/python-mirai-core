@@ -1,353 +1,323 @@
-from enum import Enum
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, Extra, root_validator
 from .Entity import Permission, Group, Member, Friend
 from .Message import MessageChain
-from typing import Optional
+from .Types import MessageType
+from typing import Optional, Literal, Union, Type, Any
 from datetime import datetime
 
 
-class EventTypes(Enum):
-    """
-    EventTypes is used for registering handlers
-    """
-    # Bot events
-    BotOnlineEvent = 'BotOnlineEvent'
-    BotOfflineEventActive = 'BotOfflineEventActive'
-    BotOfflineEventForce = 'BotOfflineEventForce'
-    BotOfflineEventDropped = 'BotOfflineEventDropped'
-    BotReloginEvent = 'BotReloginEvent'
-    BotGroupPermissionChangeEvent = 'BotGroupPermissionChangeEvent'
-    BotMuteEvent = 'BotMuteEvent'
-    BotUnmuteEvent = 'BotUnmuteEvent'
-    BotJoinGroupEvent = 'BotJoinGroupEvent'
+class BaseEvent(BaseModel):
+    type: str
 
-    # Group events
-    GroupNameChangeEvent = 'GroupNameChangeEvent'
-    GroupEntranceAnnouncementChangeEvent = 'GroupEntranceAnnouncementChangeEvent'
-    GroupMuteAllEvent = 'GroupMuteAllEvent'
-    GroupRecallEvent = "GroupRecallEvent"
-    FriendRecallEvent = "FriendRecallEvent"
+    class Config:
+        extra = Extra.allow
 
-    # Group permission events
-    GroupAllowAnonymousChatEvent = 'GroupAllowAnonymousChatEvent'  # 群设置 是否允许匿名聊天 被修改
-    GroupAllowConfessTalkEvent = 'GroupAllowConfessTalkEvent'  # 坦白说
-    GroupAllowMemberInviteEvent = 'GroupAllowMemberInviteEvent'  # 邀请进群
-
-    # Group member events
-    MemberJoinEvent = 'MemberJoinEvent'
-    MemberLeaveEventKick = 'MemberLeaveEventKick'
-    MemberLeaveEventQuit = 'MemberLeaveEventQuit'
-    MemberCardChangeEvent = 'MemberCardChangeEvent'
-    MemberSpecialTitleChangeEvent = 'MemberSpecialTitleChangeEvent'
-    MemberPermissionChangeEvent = 'MemberPermissionChangeEvent'
-    MemberMuteEvent = 'MemberMuteEvent'
-    MemberUnmuteEvent = 'MemberUnmuteEvent'
-
-    # Requests
-    NewFriendRequestEvent = "NewFriendRequestEvent"
-    MemberJoinRequestEvent = "MemberJoinRequestEvent"
-
-    # Message events
-    FriendMessage = 'FriendMessage'
-    GroupMessage = 'GroupMessage'
+    def __str__(self):
+        return f'[{str(self.json(ensure_ascii=False))}]'
 
 
-class NewFriendRequestResponse(Enum):
-    ACCEPT = 0
-    REFUSE = 1
-    REFUSE_AND_BLACKLIST = 2
-
-
-class MemberJoinRequestResponse(Enum):
-    ACCEPT = 0
-    REFUSE = 1
-    IGNORE = 2
-    REFUSE_AND_BLACKLIST = 3
-    IGNORE_AND_BLACKLIST = 4
-
-
-class Event(BaseModel):
-    type: EventTypes
-
-
-class BotOnlineEvent(Event):
-    type = EventTypes.BotOnlineEvent
+class BotOnlineEvent(BaseEvent):
+    type: Literal['BotOnlineEvent']
     qq: int
 
     def __str__(self):
-        return f'[{self.type.value}: qq={self.qq}]'
+        return f'[{self.type}: qq={self.qq}]'
 
 
-class BotOfflineEventActive(Event):
-    type = EventTypes.BotOfflineEventActive
+class BotOfflineEventActive(BaseEvent):
+    type: Literal['BotOfflineEventActive']
     qq: int
 
     def __str__(self):
-        return f'[{self.type.value}: qq={self.qq}]'
+        return f'[{self.type}: qq={self.qq}]'
 
 
-class BotOfflineEventForce(Event):
-    type = EventTypes.BotOfflineEventForce
+class BotOfflineEventForce(BaseEvent):
+    type: Literal['BotOfflineEventForce']
     qq: int
 
     def __str__(self):
-        return f'[{self.type.value}: qq={self.qq}]'
+        return f'[{self.type}: qq={self.qq}]'
 
 
-class BotOfflineEventDropped(Event):
-    type = EventTypes.BotOfflineEventDropped
+class BotOfflineEventDropped(BaseEvent):
+    type: Literal['BotOfflineEventDropped']
     qq: int
 
     def __str__(self):
-        return f'[{self.type.value}: qq={self.qq}]'
+        return f'[{self.type}: qq={self.qq}]'
 
 
-class BotReloginEvent(Event):
-    type = EventTypes.BotReloginEvent
+class BotReloginEvent(BaseEvent):
+    type: Literal['BotReloginEvent']
     qq: int
 
     def __str__(self):
-        return f'[{self.type.value}: qq={self.qq}]'
+        return f'[{self.type}: qq={self.qq}]'
 
 
-class BotGroupPermissionChangeEvent(Event):
-    type = EventTypes.BotGroupPermissionChangeEvent
+class BotGroupPermissionChangeEvent(BaseEvent):
+    type: Literal['BotGroupPermissionChangeEvent']
     origin: Permission
     current: Permission
     group: Group
 
     def __str__(self):
-        return f'[{self.type.value}: ' \
+        return f'[{self.type}: ' \
                f'origin={repr(self.origin)}, new={repr(self.current)}, group={repr(self.group)}]'
 
 
-class BotMuteEvent(Event):
-    type = EventTypes.BotMuteEvent
+class BotMuteEvent(BaseEvent):
+    type: Literal['BotMuteEvent']
     durationSeconds: int
     operator: Optional[Member]
 
     def __str__(self):
-        return f'[{self.type.value}: durationSeconds={self.durationSeconds}, operator={repr(self.operator)}]'
+        return f'[{self.type}: durationSeconds={self.durationSeconds}, operator={repr(self.operator)}]'
 
 
-class BotUnmuteEvent(Event):
-    type = EventTypes.BotUnmuteEvent
+class BotUnmuteEvent(BaseEvent):
+    type: Literal['BotUnmuteEvent']
     operator: Optional[Member]
 
     def __str__(self):
-        return f'[{self.type.value}: operator={repr(self.operator)}]'
+        return f'[{self.type}: operator={repr(self.operator)}]'
 
 
-class BotJoinGroupEvent(Event):
-    type = EventTypes.BotJoinGroupEvent
+class BotJoinGroupEvent(BaseEvent):
+    type: Literal['BotJoinGroupEvent']
     group: Group
 
     def __str__(self):
-        return f'[{self.type.value}: group={repr(self.group)}]'
+        return f'[{self.type}: group={repr(self.group)}]'
 
 
-class GroupRecallEvent(Event):
-    type: EventTypes = EventTypes.GroupRecallEvent
+class BotLeaveEventActive(BaseEvent):
+    type: Literal['BotLeaveEventActive']
+    group: Group
+
+    def __str__(self):
+        return f'[{self.type}: group={repr(self.group)}]'
+
+
+class BotLeaveEventKick(BaseEvent):
+    type: Literal['BotLeaveEventKick']
+    group: Group
+
+    def __str__(self):
+        return f'[{self.type}: group={repr(self.group)}]'
+
+
+class GroupRecallEvent(BaseEvent):
+    type: Literal['GroupRecallEvent']
     authorId: int
     messageId: int
     time: datetime
     group: Group
     operator: Optional[Member]
 
+    def __str__(self):
+        return f'[{self.type}: authorId={self.authorId}, messageId={self.messageId}, time={self.time},' \
+               f' group={repr(self.group)}, operator={repr(self.operator)}]'
 
-class FriendRecallEvent(Event):
-    type: EventTypes = EventTypes.FriendRecallEvent
+
+class FriendRecallEvent(BaseEvent):
+    type: Literal['FriendRecallEvent']
     authorId: int
     messageId: int
     time: int
     operator: int
 
 
-class GroupNameChangeEvent(Event):
-    type = EventTypes.GroupNameChangeEvent
+class GroupNameChangeEvent(BaseEvent):
+    type: Literal['GroupNameChangeEvent']
     origin: str
     current: str
+    group: Group
+    operator: bool
+
+    def __str__(self):
+        return f'[{self.type}: ' \
+               f'origin={self.origin}, new={self.current}, group={repr(self.group)}, operator={self.operator}]'
+
+
+class GroupEntranceAnnouncementChangeEvent(BaseEvent):
+    type: Literal['GroupEntranceAnnouncementChangeEvent']
+    origin: str
+    current: str
+    group: Group
+    operator: Optional[Member]
+
+    def __str__(self):
+        return f'[{self.type}: ' \
+               f'origin={self.origin}, new={self.current}, group={repr(self.group)}, operator={repr(self.operator)}]'
+
+
+class GroupMuteAllEvent(BaseEvent):
+    type: Literal['GroupMuteAllEvent']
+    origin: bool
+    current: bool
+    group: Group
+    operator: Optional[Member]
+
+    def __str__(self):
+        return f'[{self.type}: ' \
+               f'origin={self.origin}, new={self.current}, group={repr(self.group)}, operator={repr(self.operator)}]'
+
+
+class GroupAllowAnonymousChatEvent(BaseEvent):
+    type: Literal['GroupAllowAnonymousChatEvent']
+    origin: bool
+    current: bool
+    group: Group
+    operator: Optional[Member]
+
+    def __str__(self):
+        return f'[{self.type}: ' \
+               f'origin={self.origin}, new={self.current}, group={repr(self.group)}, operator={repr(self.operator)}]'
+
+
+class GroupAllowConfessTalkEvent(BaseEvent):
+    type: Literal['GroupAllowAnonymousChatEvent']
+    origin: bool
+    current: bool
     group: Group
     isByBot: bool
 
     def __str__(self):
-        return f'[{self.type.value}: ' \
+        return f'[{self.type}: ' \
                f'origin={self.origin}, new={self.current}, group={repr(self.group)}, isByBot={self.isByBot}]'
 
 
-class GroupEntranceAnnouncementChangeEvent(Event):
-    type = EventTypes.GroupEntranceAnnouncementChangeEvent
-    origin: str
-    current: str
-    group: Group
-    operator: Optional[Member]
-
-    def __str__(self):
-        return f'[{self.type.value}: ' \
-               f'origin={self.origin}, new={self.current}, group={repr(self.group)}, operator={repr(self.operator)}]'
-
-
-class GroupMuteAllEvent(Event):
-    type = EventTypes.GroupMuteAllEvent
+class GroupAllowMemberInviteEvent(BaseEvent):
+    type: Literal['GroupAllowMemberInviteEvent']
     origin: bool
     current: bool
     group: Group
     operator: Optional[Member]
 
     def __str__(self):
-        return f'[{self.type.value}: ' \
+        return f'[{self.type}: ' \
                f'origin={self.origin}, new={self.current}, group={repr(self.group)}, operator={repr(self.operator)}]'
 
 
-class GroupAllowAnonymousChatEvent(Event):
-    type = EventTypes.GroupAllowAnonymousChatEvent
-    origin: bool
-    current: bool
-    group: Group
-    operator: Optional[Member]
-
-    def __str__(self):
-        return f'[{self.type.value}: ' \
-               f'origin={self.origin}, new={self.current}, group={repr(self.group)}, operator={repr(self.operator)}]'
-
-
-class GroupAllowConfessTalkEvent(Event):
-    type = EventTypes.GroupAllowAnonymousChatEvent
-    origin: bool
-    current: bool
-    group: Group
-    isByBot: bool
-
-    def __str__(self):
-        return f'[{self.type.value}: ' \
-               f'origin={self.origin}, new={self.current}, group={repr(self.group)}, isByBot={self.isByBot}]'
-
-
-class GroupAllowMemberInviteEvent(Event):
-    type = EventTypes.GroupAllowMemberInviteEvent
-    origin: bool
-    current: bool
-    group: Group
-    operator: Optional[Member]
-
-    def __str__(self):
-        return f'[{self.type.value}: ' \
-               f'origin={self.origin}, new={self.current}, group={repr(self.group)}, operator={repr(self.operator)}]'
-
-
-class MemberJoinEvent(Event):
-    type = EventTypes.MemberJoinEvent
+class MemberJoinEvent(BaseEvent):
+    type: Literal['MemberJoinEvent']
     member: Member
 
     def __str__(self):
-        return f'[{self.type.value}: ' \
+        return f'[{self.type}: ' \
                f'member={repr(self.member)}]'
 
 
-class MemberLeaveEventKick(Event):
-    type = EventTypes.MemberLeaveEventKick
+class MemberLeaveEventKick(BaseEvent):
+    type: Literal['MemberLeaveEventKick']
     member: Member
     operator: Optional[Member]
 
     def __str__(self):
-        return f'[{self.type.value}: ' \
+        return f'[{self.type}: ' \
                f'member={repr(self.member)}, operator={repr(self.operator)}]'
 
 
-class MemberLeaveEventQuit(Event):
-    type = EventTypes.MemberLeaveEventQuit
+class MemberLeaveEventQuit(BaseEvent):
+    type: Literal['MemberLeaveEventQuit']
     member: Member
 
     def __str__(self):
-        return f'[{self.type.value}: ' \
+        return f'[{self.type}: ' \
                f'member={repr(self.member)}]'
 
 
-class MemberCardChangeEvent(Event):
-    type = EventTypes.MemberCardChangeEvent
+class MemberCardChangeEvent(BaseEvent):
+    type: Literal['MemberCardChangeEvent']
     origin: str
     current: str
     member: Member
     operator: Optional[Member]
 
     def __str__(self):
-        return f'[{self.type.value}: ' \
+        return f'[{self.type}: ' \
                f'origin={self.origin}, new={self.current}, member={repr(self.member)}, operator={repr(self.operator)}]'
 
 
-class MemberSpecialTitleChangeEvent(Event):
-    type = EventTypes.MemberSpecialTitleChangeEvent
+class MemberSpecialTitleChangeEvent(BaseEvent):
+    type: Literal['MemberSpecialTitleChangeEvent']
     origin: str
     current: str
     member: Member
 
     def __str__(self):
-        return f'[{self.type.value}: ' \
+        return f'[{self.type}: ' \
                f'origin={self.origin}, new={self.current}, member={repr(self.member)}]'
 
 
-class MemberPermissionChangeEvent(Event):
-    type = EventTypes.MemberPermissionChangeEvent
+class MemberPermissionChangeEvent(BaseEvent):
+    type: Literal['MemberPermissionChangeEvent']
     origin: str
     current: str
     member: Member
 
     def __str__(self):
-        return f'[{self.type.value}: ' \
+        return f'[{self.type}: ' \
                f'origin={self.origin}, new={self.current}, member={repr(self.member)}]'
 
 
-class MemberMuteEvent(Event):
-    type = EventTypes.MemberMuteEvent
+class MemberMuteEvent(BaseEvent):
+    type: Literal['MemberMuteEvent']
     durationSeconds: int
     member: Member
     operator: Optional[Member]
 
     def __str__(self):
-        return f'[{self.type.value}: ' \
+        return f'[{self.type}: ' \
                f'durationSeconds={self.durationSeconds}, member={repr(self.member)}, operator={repr(self.operator)}]'
 
 
-class MemberUnmuteEvent(Event):
-    type = EventTypes.MemberUnmuteEvent
+class MemberUnmuteEvent(BaseEvent):
+    type: Literal['MemberUnmuteEvent']
     member: Member
     operator: Optional[Member]
 
     def __str__(self):
-        return f'[{self.type.value}: ' \
+        return f'[{self.type}: ' \
                f'member={repr(self.member)}, operator={repr(self.operator)}]'
 
 
-class FriendMessage(Event):
-    type: EventTypes = EventTypes.FriendMessage
-    messageChain: Optional[MessageChain]
-    sender: Friend
+class Message(BaseEvent):
+    # fusion class
+    type: MessageType
+    messageChain: MessageChain
+    sender: Union[Friend, Member]
 
-    def __str__(self):
-        return f'[{self.type.value}: ' \
-               f'messageChain={str(self.messageChain)}, sender={repr(self.sender)}]'
+    def __init__(self, messageChain: MessageChain = None, **kwargs):
+        if messageChain:
+            messageChain = MessageChain.parse_obj(messageChain)
+        super().__init__(messageChain=messageChain, **kwargs)
+
+    @property
+    def member(self):
+        if isinstance(self.sender, Member):
+            return self.sender
+        return None
+
+    @property
+    def friend(self):
+        if isinstance(self.sender, Friend):
+            return self.sender
+        return None
 
 
-class GroupMessage(Event):
-    type: EventTypes = EventTypes.GroupMessage
-    messageChain: Optional[MessageChain]
-    sender: Member
-
-    def __str__(self):
-        return f'[{self.type.value}: ' \
-               f'messageChain={str(self.messageChain)}, sender={repr(self.sender)}]'
-
-
-class NewFriendRequestEvent(Event):
-    type: EventTypes = EventTypes.NewFriendRequestEvent
+class NewFriendRequestEvent(BaseEvent):
+    type: Literal['NewFriendRequestEvent']
     requestId: int = Field(..., alias="eventId")
     supplicant: int = Field(..., alias="fromId")  # 即请求方 QQ
     sourceGroup: Optional[int] = Field(..., alias="groupId")
     nickname: str = Field(..., alias="nick")
 
 
-class MemberJoinRequestEvent(Event):
-    type: EventTypes = EventTypes.MemberJoinRequestEvent
+class MemberJoinRequestEvent(BaseEvent):
+    type: Literal['MemberJoinRequestEvent']
     requestId: int = Field(..., alias="eventId")
     supplicant: int = Field(..., alias="fromId")  # 即请求方 QQ
     sourceGroup: Optional[int] = Field(..., alias="groupId")
@@ -355,44 +325,43 @@ class MemberJoinRequestEvent(Event):
     nickname: str = Field(..., alias="nick")
 
 
-class Events(Enum):
-    """
-    Internal use only
-    """
-    BotOnlineEvent = BotOnlineEvent
-    BotOfflineEventActive = BotOfflineEventActive
-    BotOfflineEventForce = BotOfflineEventForce
-    BotOfflineEventDropped = BotOfflineEventDropped
-    BotReloginEvent = BotReloginEvent
-    BotGroupPermissionChangeEvent = BotGroupPermissionChangeEvent
-    BotMuteEvent = BotMuteEvent
-    BotUnmuteEvent = BotUnmuteEvent
-    BotJoinGroupEvent = BotJoinGroupEvent
+def events() -> Type:
+    event_types = [
+        Message,
 
-    GroupNameChangeEvent = GroupNameChangeEvent
-    GroupEntranceAnnouncementChangeEvent = GroupEntranceAnnouncementChangeEvent
-    GroupMuteAllEvent = GroupMuteAllEvent
-    GroupRecallEvent = GroupRecallEvent
-    FriendRecallEvent = FriendRecallEvent
+        BotOnlineEvent,
+        BotOfflineEventActive,
+        BotOfflineEventForce,
+        BotOfflineEventDropped,
+        BotReloginEvent,
+        BotGroupPermissionChangeEvent,
+        BotMuteEvent,
+        BotUnmuteEvent,
+        BotJoinGroupEvent,
+        BotLeaveEventActive,
+        BotLeaveEventKick,
+        GroupNameChangeEvent,
+        GroupEntranceAnnouncementChangeEvent,
+        GroupMuteAllEvent,
+        GroupRecallEvent,
+        FriendRecallEvent,
+        GroupAllowAnonymousChatEvent,
+        GroupAllowConfessTalkEvent,
+        GroupAllowMemberInviteEvent,
+        MemberJoinEvent,
+        MemberLeaveEventKick,
+        MemberLeaveEventQuit,
+        MemberCardChangeEvent,
+        MemberSpecialTitleChangeEvent,
+        MemberPermissionChangeEvent,
+        MemberMuteEvent,
+        MemberUnmuteEvent,
+        NewFriendRequestEvent,
+        MemberJoinRequestEvent,
 
-    # 群设置被修改事件
-    GroupAllowAnonymousChatEvent = GroupAllowAnonymousChatEvent  # 群设置 是否允许匿名聊天 被修改
-    GroupAllowConfessTalkEvent = GroupAllowConfessTalkEvent  # 坦白说
-    GroupAllowMemberInviteEvent = GroupAllowMemberInviteEvent  # 邀请进群
+        BaseEvent
+    ]
+    return Union[tuple(event_types)]
 
-    # 群事件(被 Bot 监听到的, 为被动事件, 其中 Bot 身份为第三方.)
-    MemberJoinEvent = MemberJoinEvent
-    MemberLeaveEventKick = MemberLeaveEventKick
-    MemberLeaveEventQuit = MemberLeaveEventQuit
-    MemberCardChangeEvent = MemberCardChangeEvent
-    MemberSpecialTitleChangeEvent = MemberSpecialTitleChangeEvent
-    MemberPermissionChangeEvent = MemberPermissionChangeEvent
-    MemberMuteEvent = MemberMuteEvent
-    MemberUnmuteEvent = MemberUnmuteEvent
 
-    # Join
-    NewFriendRequestEvent = NewFriendRequestEvent
-    MemberJoinRequestEvent = MemberJoinRequestEvent
-
-    FriendMessage = FriendMessage
-    GroupMessage = GroupMessage
+Events = events()

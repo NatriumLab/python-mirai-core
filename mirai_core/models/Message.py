@@ -1,8 +1,7 @@
 from abc import abstractmethod
 from enum import Enum
-from typing import List, Dict, Optional, overload, Iterable, Union
-from typing_extensions import Literal
-from pydantic import Field, validator, HttpUrl, BaseModel, Extra
+from typing import List, Dict, Optional, overload, Iterable, Union, Literal, Type, Any
+from pydantic import Field, validator, HttpUrl, BaseModel, Extra, root_validator
 from .Constant import qq_emoji_text_list
 import datetime
 from collections import MutableSequence
@@ -22,7 +21,8 @@ __all__ = [
     'Json',
     'Xml',
     'Poke',
-    'MessageChain'
+    'MessageChain',
+    'BotMessage'
 ]
 
 
@@ -334,35 +334,15 @@ class Poke(BaseMessageComponent):
         return f'[Poke: {self.name}]'
 
 
-class QuoteMessageChain(BaseModel, MutableSequence):
+class QuoteMessageChain(BaseModel):
     # stores the actual components
     __root__: List[Union[Source, Plain, Image, At, Face, FlashImage, AtAll, Xml, Json, App, Poke, BaseMessageComponent]]
 
     def insert(self, index: int, object) -> None:
         self.__root__.insert(index, object)
 
-    @overload
-    @abstractmethod
-    def __setitem__(self, i: int, o) -> None:
-        ...
-
-    @overload
-    @abstractmethod
-    def __setitem__(self, s: slice, o: Iterable) -> None:
-        ...
-
     def __setitem__(self, i: int, o) -> None:
         self.__root__.__setitem__(i, o)
-
-    @overload
-    @abstractmethod
-    def __delitem__(self, i: int) -> None:
-        ...
-
-    @overload
-    @abstractmethod
-    def __delitem__(self, i: slice) -> None:
-        ...
 
     def __delitem__(self, i: int) -> None:
         self.__root__.__delitem__(i)
@@ -444,7 +424,7 @@ class Quote(BaseMessageComponent):
         return f'[Quote: id={self.id}]'
 
 
-class MessageChain(BaseModel, MutableSequence):
+class MessageChain(BaseModel):
     # stores the actual components
     __root__: List[
         Union[Source, Plain, Image, Quote, At, Face, FlashImage, AtAll, Xml, Json, App, Poke, BaseMessageComponent]]
@@ -452,28 +432,8 @@ class MessageChain(BaseModel, MutableSequence):
     def insert(self, index: int, object) -> None:
         self.__root__.insert(index, object)
 
-    @overload
-    @abstractmethod
-    def __setitem__(self, i: int, o) -> None:
-        ...
-
-    @overload
-    @abstractmethod
-    def __setitem__(self, s: slice, o: Iterable) -> None:
-        ...
-
     def __setitem__(self, i: int, o) -> None:
         self.__root__.__setitem__(i, o)
-
-    @overload
-    @abstractmethod
-    def __delitem__(self, i: int) -> None:
-        ...
-
-    @overload
-    @abstractmethod
-    def __delitem__(self, i: slice) -> None:
-        ...
 
     def __delitem__(self, i: int) -> None:
         self.__root__.__delitem__(i)
@@ -489,20 +449,6 @@ class MessageChain(BaseModel, MutableSequence):
 
     def __str__(self) -> str:
         return ''.join([str(i) for i in self.__root__])
-
-    # @classmethod
-    # def custom_parse(cls, value: List[Dict]) -> 'MessageChain':
-    #     """
-    #     construct message chain from dict
-    #     used only when receiving messages from mirai
-    #
-    #     :param value: dict contains message components
-    #     :return: MessageChain
-    #     """
-    #     for i in value:
-    #         if not isinstance(i, dict):
-    #             raise TypeError("invaild value")
-    #     return cls(__root__=[ComponentTypes.__members__[m['type']].value(**m) for m in value])
 
     def __iter__(self):
         return self.__root__.__iter__()
@@ -555,9 +501,3 @@ class MessageChain(BaseModel, MutableSequence):
 class BotMessage(BaseModel):
     type: str = 'BotMessage'
     messageId: int
-
-
-class TargetType(str, Enum):
-    Friend = 'friend'
-    Group = 'group'
-    Temp = 'temp'

@@ -9,13 +9,13 @@ from .exceptions import AuthenticationException, NetworkException, ServerExcepti
 
 
 error_code = {
-                1: AuthenticationException('Incorrect authKey'),
-                2: AuthenticationException('Bot does not exist'),
-                3: SessionException('Session does not exist or has expired'),
-                4: AuthenticationException('Session is not verified'),
-                5: UnknownTargetException('Message target does not exist'),
-                10: PrivilegeException('Bot does not have corresponding privilege'),
-                400: BadRequestException('Bad Request, please check arguments/url'),
+                1: lambda: AuthenticationException('Incorrect authKey'),
+                2: lambda: AuthenticationException('Bot does not exist, please login in console'),
+                3: lambda: SessionException('Session does not exist or has expired'),
+                4: lambda: AuthenticationException('Session is not verified'),
+                5: lambda: UnknownTargetException('Message target does not exist'),
+                10: lambda: PrivilegeException('Bot does not have corresponding privilege'),
+                400: lambda: BadRequestException('Bad Request, please check arguments/url'),
             }
 
 
@@ -52,7 +52,7 @@ class HttpClient:
             if status_code is None or status_code == 0:
                 return result
         if status_code in error_code:
-            raise error_code[status_code]
+            raise error_code[status_code]()
         else:
             raise MiraiException('HTTP API updated, please upgrade python-mirai-core')
 

@@ -23,7 +23,7 @@ copyright = '2020, jqqqqqqqqqq, Chenwe-i-lin'
 author = 'jqqqqqqqqqq, Chenwe-i-lin'
 
 # The full version, including alpha/beta/rc tags
-release = mirai_core.__version__
+release = mirai_core.__VERSION__
 
 # -- General configuration ---------------------------------------------------
 

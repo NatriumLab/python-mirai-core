@@ -1,0 +1,30 @@
+mirai\_core.models.entity package
+=================================
+
+Submodules
+----------
+
+mirai\_core.models.entity.friend module
+---------------------------------------
+
+.. automodule:: mirai_core.models.entity.friend
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+mirai\_core.models.entity.group module
+--------------------------------------
+
+.. automodule:: mirai_core.models.entity.group
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: mirai_core.models.entity
+   :members:
+   :undoc-members:
+   :show-inheritance:

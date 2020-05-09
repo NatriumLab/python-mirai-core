@@ -1,11 +1,14 @@
 from typing import Union, List, Type, Dict
 from datetime import timedelta
 from pathlib import Path
+from pydantic import parse_obj_as
 import json
+from functools import wraps
 from .log import create_logger
 
-from .models.Message import BotMessage, TargetType, MessageChain, \
-    Source, Image, Quote, Plain, BaseMessageComponent, FlashImage
+from .models.Types import NewFriendRequestResponse, MemberJoinRequestResponse
+from .models.Message import BotMessage, MessageChain, \
+    Source, Image, Quote, Plain, BaseMessageComponent, FlashImage, At
 from .models.Event import *
 from .models.Entity import Friend, Group, GroupSetting, Member, MemberChangeableSetting
 from .network import HttpClient
@@ -17,6 +20,7 @@ __ALL__ = [
 
 
 def retry_once(func):
+    @wraps(func)
     async def wrapper(self, *args, **kwargs):
         try:
             return await func(self, *args, **kwargs)
@@ -100,39 +104,39 @@ class Bot:
 
     @retry_once
     async def send_message(self,
-                     target: Union[Friend, Member, Group, int],
-                     chat_type: TargetType,
-                     message: Union[
-                         MessageChain,
-                         BaseMessageComponent,
-                         List[BaseMessageComponent],
-                         str
-                     ] = '',
-                     temp_group: Optional[int] = None,
-                     quote_source: Union[int, Source] = None,
-                     save_image_id: bool = False
-                     ) -> BotMessage:
+                           target: Union[Friend, Member, Group, int],
+                           message_type: MessageType,
+                           message: Union[
+                               MessageChain,
+                               BaseMessageComponent,
+                               List[BaseMessageComponent],
+                               str
+                           ] = '',
+                           temp_group: Optional[int] = None,
+                           quote_source: Union[int, Source] = None
+                           ) -> BotMessage:
         """
         Send Group/Friend message, only keyword arguments are allowed
+        Image ID is available in returned message if uploaded via file path
 
         :param target: Group, Member, Friend, int
-        :param chat_type: ChatType, specify the type of target
-        :param temp_group: If chat_type is Member and target is int, then temp group must be specified
+        :param message_type: ChatType, specify the type of target
+        :param temp_group: If message_type is Member and target is int, then temp group must be specified
         :param message: MessageChain, BaseMessageComponent, List of BaseMessageComponent or str, the content to send
         :param quote_source: int (the 64-bit int) or Source, the message to quote
-        :param save_image_id: bool, whether this api should update the image_ids in MessageChain
-        The purpose of this argument is to save image ids for future use.
+               The purpose of this argument is to save image ids for future use.
+
         :return: BotMessage (contains message id)
         """
 
         data = {
             'sessionKey':   self.session_key,
         }
-        if chat_type == TargetType.Friend:
+        if message_type == MessageType.Friend:
             portal = '/sendFriendMessage'
             data['target'] = self._handle_target_as(target)
 
-        elif chat_type == TargetType.Temp:
+        elif message_type == MessageType.Temp:
             portal = '/sendTempMessage'
             if isinstance(target, int):
                 data['qq'] = target
@@ -143,13 +147,13 @@ class Bot:
                 data['group'] = target.group.id
                 data['qq'] = target.id
 
-        elif chat_type == TargetType.Group:
+        elif message_type == MessageType.Group:
             portal = '/sendGroupMessage'
             data['target'] = self._handle_target_as(target)
         else:
             raise ValueError('One of friend, member and group must not be empty')
 
-        message_chain = await self._handle_message_chain(message, chat_type, save_image_id)
+        message_chain = await self._handle_message_chain(message, message_type)
 
         data['messageChain'] = message_chain
 
@@ -160,71 +164,8 @@ class Bot:
                 data['quote'] = quote_source.id
 
         result = await self.session.post(portal, data=data)
-
-        return BotMessage.parse_obj(result)
-
-    # @retry_once
-    # async def send_friend_message(self,
-    #                               friend: Union[Friend, int],
-    #                               message: Union[
-    #                                   MessageChain,
-    #                                   BaseMessageComponent,
-    #                                   List[BaseMessageComponent],
-    #                                   str
-    #                               ],
-    #                               quote_source: Union[int, Source] = None) -> BotMessage:
-    #     """
-    #     Send friend message
-    #
-    #     :param friend: int or Friend object as target
-    #     :param message: MessageChain, BaseMessageComponent, List of BaseMessageComponent or str, the content to send
-    #     :param quote_source: int (the 64-bit int) or Source, the message to quote
-    #     :return: BotMessage (contains message id)
-    #     """
-    #     data = {
-    #         'sessionKey':   self.session_key,
-    #         'target':       Bot._handle_target_as(friend, Friend),
-    #         'messageChain': await self._handle_message_chain(message, Friend)
-    #     }
-    #     if quote_source:
-    #         if isinstance(quote_source, int):
-    #             data['quote'] = quote_source
-    #         elif isinstance(quote_source, Source):
-    #             data['quote'] = quote_source.id
-    #     result = await self.session.post('/sendFriendMessage', data=data)
-    #
-    #     return BotMessage.parse_obj(result)
-    #
-    # @retry_once
-    # async def send_group_message(self,
-    #                              group: Union[Group, int],
-    #                              message: Union[
-    #                                  MessageChain,
-    #                                  BaseMessageComponent,
-    #                                  List[BaseMessageComponent],
-    #                                  str
-    #                              ],
-    #                              quote_source: Union[int, Source] = None) -> BotMessage:
-    #     """
-    #     Send group message
-    #
-    #     :param group: int or Group object as target
-    #     :param message: MessageChain, BaseMessageComponent, List of BaseMessageComponent or str, the content to send
-    #     :param quote_source: int (the 64-bit int) or Source, the message to quote
-    #     :return: BotMessage (contains message id)
-    #     """
-    #     data = {
-    #         'sessionKey':   self.session_key,
-    #         'target':       Bot._handle_target_as(group, Group),
-    #         'messageChain': await self._handle_message_chain(message, Group)
-    #     }
-    #     if quote_source:
-    #         if isinstance(quote_source, int):
-    #             data['quote'] = quote_source
-    #         elif isinstance(quote_source, Source):
-    #             data['quote'] = quote_source.id
-    #     result = await self.session.post('/sendGroupMessage', data=data)
-    #     return BotMessage.parse_obj(result)
+        bot_message = BotMessage.parse_obj(result)
+        return bot_message
 
     @retry_once
     async def recall(self, source: Union[Source, int]) -> None:
@@ -294,13 +235,13 @@ class Bot:
         return [Member.parse_obj(member_info) for member_info in result]
 
     @retry_once
-    async def upload_image(self, image_type: TargetType, image_path: Union[Path, str]) -> Optional[Image]:
+    async def upload_image(self, message_type: MessageType, image_path: Union[Path, str]) -> Optional[Image]:
         """
         Deprecated
         Upload a image to QQ server. The image between group and friend is not exchangeable
         This function can be called separately to acquire image uuids, or automatically if using LocalImage while sending
 
-        :param image_type: ImageType, Friend or Group
+        :param message_type: MessageType, Friend, Group or Temp
         :param image_path: absolute path of the image
         :return: Image object
         """
@@ -312,20 +253,20 @@ class Bot:
 
         data = {
             'sessionKey': self.session_key,
-            'type':       image_type.value
+            'type': message_type.value
         }
         result = await self.session.upload('/uploadImage', file=image_path, data=data)
         return Image.parse_obj(result)
 
     @retry_once
-    async def fetch_message(self, count: int) -> List[Event]:
+    async def fetch_message(self, count: int) -> List[BaseEvent]:
         """
         Deprecated
         Fetch a list of messages
         This function is called automatically if using polling instead of websocket
 
         :param count: maximum count of one fetch
-        :return: List of Event
+        :return: List of BaseEvent
         """
         params = {
             'sessionKey': self.session_key,
@@ -414,7 +355,7 @@ class Bot:
             'sessionKey': self.session_key,
             'target':     Bot._handle_target_as(target=group),
             'memberId':   self._handle_target_as(target=member),
-            'info':       json.loads(setting.json())
+            'info':       json.loads(setting.json(ensure_ascii=False))
         }
 
         await self.session.post('/memberInfo', data=data)
@@ -447,7 +388,7 @@ class Bot:
         data = {
             'sessionKey': self.session_key,
             'target':     Bot._handle_target_as(target=group),
-            'config':     json.loads(config.json())
+            'config':     json.loads(config.json(ensure_ascii=False))
         }
 
         await self.session.post('/groupConfig', data=data)
@@ -514,10 +455,30 @@ class Bot:
         await self.session.post('/kick', data=data)
 
     @retry_once
+    async def quit(self, group: Union[Group, int]):
+        """
+        Quit a group
+
+        :param group: int or Group, target group
+        """
+        data = {
+            'sessionKey': self.session_key,
+            'target':     Bot._handle_target_as(target=group)
+        }
+        await self.session.post('/quit', data=data)
+
+    @retry_once
     async def respond_request(self,
                               request: Union[NewFriendRequestEvent, MemberJoinRequestEvent],
                               response: Union[NewFriendRequestResponse, MemberJoinRequestResponse],
                               message: str = ''):
+        """
+        Respond NewFriendRequestEvent and MemberJoinRequestEvent
+
+        :param request: NewFriendRequestEvent or MemberJoinRequestEvent
+        :param response: NewFriendRequestResponse or MemberJoinRequestResponse
+        :param message: text message for the response
+        """
         if isinstance(request, NewFriendRequestEvent):
             assert isinstance(response, (NewFriendRequestResponse, int)), f'Response type mismatch'
             response = response.value if isinstance(response, NewFriendRequestResponse) else response
@@ -545,57 +506,49 @@ class Bot:
         else:
             raise TypeError(f'Unsupported event: {str(request)}')
 
-    async def _handle_message_component(self, message: BaseMessageComponent, image_type: TargetType) -> dict:
+    async def _handle_message_component(self, message_component: BaseMessageComponent, message_type: MessageType) -> BaseMessageComponent:
         """
         Internal use only
-        Upload Image, and convert everything to json
+        Upload Image and get uuid for the image (only if the image is uploaded by path)
 
-        :param message: BaseMessageComponent
-        :param image_type: ImageType
-        :return: json representation
+        :param message_component: BaseMessageComponent
+        :param message_type: ImageType
+        :return: BaseMessageComponent
         """
-        if not isinstance(message, (Image, FlashImage)):
-            return json.loads(message.json())
+        if not isinstance(message_component, (Image, FlashImage)):
+            return message_component
 
-        if message.imageId or message.url:
-            return json.loads(message.json())
+        if message_component.imageId or message_component.url:
+            return message_component
 
-        image = await self.upload_image(image_type, message.path)
-        message.imageId = image.imageId
+        image = await self.upload_image(message_type, message_component.path)
+        message_component.imageId = image.imageId
 
-        return {
-            'type':    'Image',
-            'imageId': image.imageId
-        }
+        return message_component
 
     async def _handle_message_chain(self, message: Union[
-        MessageChain,
-        BaseMessageComponent,
-        List[BaseMessageComponent],
-        str],
-                                    image_type: TargetType,
-                                    save_image_id=False) -> List:
+                                                        MessageChain,
+                                                        BaseMessageComponent,
+                                                        List[BaseMessageComponent],
+                                                        str
+                                                        ],
+                                    message_type: MessageType) -> MessageChain:
         """
         Internal use only
         Convert MessageChain to json
 
         :param message: MessageChain
-        :param image_type: Group or Friend
-        :param save_image_id: whether to update image id in Image or FlashImage objects
-        :param image_type: what type of image should be uploaded
+        :param message_type: the target chat type (to determine image upload args)
         :return: list
         """
         if isinstance(message, MessageChain):
-            return json.loads(message.json())
+            return message
         elif isinstance(message, str):
-            return [json.loads(Plain(text=message).json())]
+            return MessageChain.parse_obj([Plain(text=message)])
         elif isinstance(message, (BaseMessageComponent, tuple, list)):
             if isinstance(message, BaseMessageComponent):
                 message = [message]
-            if save_image_id:
-                return [await self._handle_message_component(m, image_type=image_type) for m in message]
-            else:
-                return [json.loads(m.json()) for m in message]
+            return MessageChain.parse_obj([await self._handle_message_component(m, message_type=message_type) for m in message])
         else:
             raise ValueError('Invalid message')
 
@@ -630,43 +583,38 @@ class Bot:
 
         await self.session.post('/config', data=data)
 
-    def _parse_event(self, result) -> Event:
+    def _parse_event(self, result) -> BaseEvent:
         """
         Internal use only
-        Parse event or message from json to Event
+        Parse event or message from json to BaseEvent
 
         :param result: the json
-        :return: Event
+        :return: BaseEvent
         """
-        if hasattr(Events, result['type']):  # if Event
-            try:
-                if 'messageChain' in result:  # construct message chain
-                    # parse quote first
-                    if len(result['messageChain']) > 1:
-                        first_component = result['messageChain'][1]
-                        if first_component['type'] == 'Quote':  # FIXME: add the first two message part back
-                            try:
-                                del result['messageChain'][2]  # delete duplicated at
-                                if result['messageChain'][2]['type'] == 'Plain' and result['messageChain'][2]['text'] == ' ':
-                                    del result['messageChain'][2]  # delete space after duplicated at
-                            except:
-                                self.logger.exception('Please open a github issue to report this error')
-                    # for idx, component in enumerate(result['messageChain']):
-                    #     if component['type'] == 'Quote':
-                    #         result['messageChain'][idx]['origin'] = MessageChain.custom_parse(
-                    #             result['messageChain'][idx]['origin'])
-                    result['messageChain'] = MessageChain.parse_obj(result['messageChain'])
-                result = Events[result['type']].value.parse_obj(result)
-            except:
-                self.logger.exception('Unhandled exception')
-            return result
-        else:
-            raise ValueError('Invalid message chain')
+
+        try:
+            result = parse_obj_as(Events, result)
+            if isinstance(result, Message):  # construct message chain
+                # parse quote first
+                if len(result.messageChain) > 2:
+                    first_component = result.messageChain[1]
+                    if isinstance(first_component, Quote):  # FIXME: add the first two message part back
+                        try:
+                            if isinstance(result.messageChain[2], At):
+                                del result.messageChain[2]  # delete duplicated at
+                            if len(result.messageChain) > 2:
+                                if isinstance(result.messageChain[2], Plain) and result.messageChain[2].text == ' ':
+                                    del result.messageChain[2]  # delete space after duplicated at
+                        except:
+                            self.logger.exception('Please open a github issue to report this error')
+        except:
+            self.logger.exception('Unhandled exception')
+        return result
 
     def _websocket_handler(self, handler: callable) -> callable:
         """
         Internal use only
-        Wrap the handler, and convert json to Event
+        Wrap the handler, and convert json to BaseEvent
 
         :param handler: callable, the handler
         :return: wrapped handler
@@ -685,7 +633,7 @@ class Bot:
     @retry_once
     async def create_websocket(self, handler, ws_close_handler=None, listen: str = 'all') -> None:
         """
-        Register callback for websocket. Once an Event or Message is received, the handler will be invoked
+        Register callback for websocket. Once an BaseEvent or Message is received, the handler will be invoked
 
         :param handler: callable
         :param ws_close_handler: callable, websocket shutdown hook

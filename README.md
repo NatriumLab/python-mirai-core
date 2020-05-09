@@ -7,7 +7,7 @@ A Flask like Python wrapper of [Mirai-HTTP-API](https://github.com/mamoe/mirai-a
 
 See full documentation [here](https://mirai-py.originpages.com/python-mirai-core/docs/mirai_core/index.html)
 
-Synced with mirai core 0.37.4
+Synced with mirai core 1.0RC
 
 ## Installation
 
@@ -47,6 +47,8 @@ A list of available message components (to construct MessageChain) is under `mir
 
 - Similar logic to python-telegram-bot or aiogram
 
+- Message type is an argument everywhere, no more send_group/friend/temp_message
+
 - Supports multiple listener for single event, use `return True` to block further calling for this event only
 
 - Supports Websocket (enabled by default)
@@ -55,14 +57,90 @@ A list of available message components (to construct MessageChain) is under `mir
 
 ### Example
 
-Basic example: see demo folder.
+```python
+from mirai_core import Bot, Updater
+from mirai_core.models import Event, Message, Types
 
-Comprehensive example: see [UMR](https://github.com/jqqqqqqqqqq/UnifiedMessageRelay/blob/dev-4.0/src/Driver/Mirai/__init__.py)
+qq = 123456
+host = '127.0.0.1'
+port = 18080
+auth_key = 'abcdefgh'
+
+bot = Bot(qq, host, port, auth_key)
+updater = Updater(bot)
+
+
+# for bot methods, see available methods under mirai_core.Bot
+# for event types, see mirai_core.models.Event
+# for enums, see mirai_core.models.Types
+# for exception types, see mirai_core.exceptions
+
+# this is how handling inbound events looks like
+@updater.add_handler([Event.Message])
+async def handler(event: Event.BaseEvent):
+    """
+    handler for multiple events
+
+    :param event: generic type of event
+    if only one type of event is handled by this method, the type hinting should be changed accordingly
+
+    e.g. async def handler(event: BaseEvent.Message):
+
+    in order to see detailed definition of a certain event, either use isinstance to restrict the type, or change the
+    type hinting in event handler's definition
+
+    e.g. if isinstance(event, BaseEvent.Message):
+
+    :return: True for block calling other event handlers for this event, None or False for keep calling the rest
+    """
+    if isinstance(event, Event.Message):  # handle different types of events
+        # see auto completion for event for available attributes
+        # echo
+        await bot.send_message(target=event.sender,
+                               message_type=event.type,
+                               message=event.messageChain,
+                               quote_source=event.messageChain.get_source())
+
+        # custom message
+        # see auto completion for Message for more available message components
+        message_chain = [
+            # see docstring for __init__ for argument descriptions
+            Message.Plain(text='test')
+        ]
+        if event.type == Types.MessageType.GROUP:
+            message_chain.append(event.member.id)
+        image = Message.Image(path='/root/whatever.jpg')
+        message_chain.append(image)
+        
+        # see docstring for individual method
+        bot_message = await bot.send_message(target=event.sender,
+                                             message_type=event.type,
+                                             message=message_chain,
+                                             # friend message can also quoted, but only viewable by QQ, not TIM
+                                             quote_source=event.messageChain.get_source())
+
+        # in case you want the message id for recalling
+        print(bot_message.messageId)
+
+        # in case you want the image id (only available when sending via local path instead of url)
+        # the image id is available for two weeks from the last time it is used
+        image_id = image.imageId
+        print(image_id)
+        return True
+
+# run the updater forever, block the program from exiting
+updater.run()
+
+```
+
+Comprehensive example: see [UMR](https://github.com/JQ-Networks/UMRMiraiDriver/blob/master/umr_mirai_driver/driver.py)
 
 ### Thanks 
 
 Thanks [`mamoe`](https://github.com/mamoe) brings us [`mirai`](https://github.com/mamoe/mirai), a tremendous work that 
 enables boundless possibilities for QQ Bots. 
+
+Thanks [`Python-Mirai`](https://github.com/NatriumLab/python-mirai/) for inspirations and data parsing.
 
 ### License
 

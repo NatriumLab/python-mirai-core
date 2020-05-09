@@ -1,0 +1,887 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>mirai_core package &mdash; Python Mirai Core 0.8 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="mirai_core.models package" href="mirai_core.models.html" />
+    <link rel="prev" title="Welcome to Python Mirai Core’s documentation!" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Python Mirai Core
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">mirai_core package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mirai_core.models.html">mirai_core.models package</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-mirai_core.bot">mirai_core.bot module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-mirai_core.exceptions">mirai_core.exceptions module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-mirai_core.log">mirai_core.log module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-mirai_core.network">mirai_core.network module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-mirai_core.updater">mirai_core.updater module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-mirai_core">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Python Mirai Core</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>mirai_core package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/mirai_core.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="mirai-core-package">
+<h1>mirai_core package<a class="headerlink" href="#mirai-core-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="mirai_core.models.html">mirai_core.models package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="mirai_core.models.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mirai_core.models.html#module-mirai_core.models.Entity">mirai_core.models.Entity module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mirai_core.models.html#module-mirai_core.models.Event">mirai_core.models.Event module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mirai_core.models.html#module-mirai_core.models.Message">mirai_core.models.Message module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mirai_core.models.html#module-mirai_core.models.Types">mirai_core.models.Types module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mirai_core.models.html#module-mirai_core.models">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-mirai_core.bot">
+<span id="mirai-core-bot-module"></span><h2>mirai_core.bot module<a class="headerlink" href="#module-mirai_core.bot" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="mirai_core.bot.retry_once">
+<code class="sig-prename descclassname">mirai_core.bot.</code><code class="sig-name descname">retry_once</code><span class="sig-paren">(</span><em class="sig-param">func</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mirai_core/bot.html#retry_once"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.bot.retry_once" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="mirai_core.bot.Bot">
+<em class="property">class </em><code class="sig-prename descclassname">mirai_core.bot.</code><code class="sig-name descname">Bot</code><span class="sig-paren">(</span><em class="sig-param">qq: int</em>, <em class="sig-param">host: str = '127.0.0.1'</em>, <em class="sig-param">port: int = 8080</em>, <em class="sig-param">auth_key: str = 'abcdefgh'</em>, <em class="sig-param">loop=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mirai_core/bot.html#Bot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.bot.Bot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>See <a class="reference external" href="https://github.com/mamoe/mirai-api-http">https://github.com/mamoe/mirai-api-http</a> for details</p>
+<dl class="method">
+<dt id="mirai_core.bot.Bot.handshake">
+<em class="property">async </em><code class="sig-name descname">handshake</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mirai_core/bot.html#Bot.handshake"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.bot.Bot.handshake" title="Permalink to this definition">¶</a></dt>
+<dd><p>Authenticate and verify the session_key
+Automatically called if session_key needs to be updated</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mirai_core.bot.Bot.auth">
+<em class="property">async </em><code class="sig-name descname">auth</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/mirai_core/bot.html#Bot.auth"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.bot.Bot.auth" title="Permalink to this definition">¶</a></dt>
+<dd><p>Post auth_key, and get session_key</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mirai_core.bot.Bot.verify">
+<em class="property">async </em><code class="sig-name descname">verify</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/mirai_core/bot.html#Bot.verify"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.bot.Bot.verify" title="Permalink to this definition">¶</a></dt>
+<dd><p>Post session_key to verify the session</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mirai_core.bot.Bot.release">
+<em class="property">async </em><code class="sig-name descname">release</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/mirai_core/bot.html#Bot.release"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.bot.Bot.release" title="Permalink to this definition">¶</a></dt>
+<dd><p>Post session_key to release the session
+Needs to be called manually if Updater is not used</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mirai_core.bot.Bot.send_message">
+<em class="property">async </em><code class="sig-name descname">send_message</code><span class="sig-paren">(</span><em class="sig-param">target: Union[mirai_core.models.Entity.Friend, mirai_core.models.Entity.Member, mirai_core.models.Entity.Group, int], message_type: mirai_core.models.Types.MessageType, message: Union[mirai_core.models.Message.MessageChain, mirai_core.models.Message.BaseMessageComponent, List[mirai_core.models.Message.BaseMessageComponent], str] = '', temp_group: Optional[int] = None, quote_source: Union[int, mirai_core.models.Message.Source] = None</em><span class="sig-paren">)</span> &#x2192; mirai_core.models.Message.BotMessage<a class="reference internal" href="_modules/mirai_core/bot.html#Bot.send_message"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.bot.Bot.send_message" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send Group/Friend message, only keyword arguments are allowed
+Image ID is available in returned message if uploaded via file path</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>target</strong> – Group, Member, Friend, int</p></li>
+<li><p><strong>message_type</strong> – ChatType, specify the type of target</p></li>
+<li><p><strong>temp_group</strong> – If message_type is Member and target is int, then temp group must be specified</p></li>
+<li><p><strong>message</strong> – MessageChain, BaseMessageComponent, List of BaseMessageComponent or str, the content to send</p></li>
+<li><p><strong>quote_source</strong> – int (the 64-bit int) or Source, the message to quote
+The purpose of this argument is to save image ids for future use.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>BotMessage (contains message id)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="mirai_core.bot.Bot.recall">
+<em class="property">async </em><code class="sig-name descname">recall</code><span class="sig-paren">(</span><em class="sig-param">source: Union[mirai_core.models.Message.Source, int]</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/mirai_core/bot.html#Bot.recall"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.bot.Bot.recall" title="Permalink to this definition">¶</a></dt>
+<dd><p>Recall a message
+Success if no exception is raised</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>source</strong> – int (the 64-bit int) or Source</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="mirai_core.bot.Bot.groups">
+<em class="property">property </em><code class="sig-name descname">groups</code><a class="headerlink" href="#mirai_core.bot.Bot.groups" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get list of joined groups</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>List of Group</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="mirai_core.bot.Bot.friends">
+<em class="property">property </em><code class="sig-name descname">friends</code><a class="headerlink" href="#mirai_core.bot.Bot.friends" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get list of friends</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>List of Friend</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="mirai_core.bot.Bot.get_members">
+<em class="property">async </em><code class="sig-name descname">get_members</code><span class="sig-paren">(</span><em class="sig-param">target: Union[mirai_core.models.Entity.Group, int]</em><span class="sig-paren">)</span> &#x2192; List[mirai_core.models.Entity.Member]<a class="reference internal" href="_modules/mirai_core/bot.html#Bot.get_members"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.bot.Bot.get_members" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get list of members of a group</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>target</strong> – int or Group, the target group</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>List of Member</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="mirai_core.bot.Bot.upload_image">
+<em class="property">async </em><code class="sig-name descname">upload_image</code><span class="sig-paren">(</span><em class="sig-param">message_type: mirai_core.models.Types.MessageType, image_path: Union[pathlib.Path, str]</em><span class="sig-paren">)</span> &#x2192; Optional[mirai_core.models.Message.Image]<a class="reference internal" href="_modules/mirai_core/bot.html#Bot.upload_image"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.bot.Bot.upload_image" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deprecated
+Upload a image to QQ server. The image between group and friend is not exchangeable
+This function can be called separately to acquire image uuids, or automatically if using LocalImage while sending</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>message_type</strong> – MessageType, Friend, Group or Temp</p></li>
+<li><p><strong>image_path</strong> – absolute path of the image</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Image object</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="mirai_core.bot.Bot.fetch_message">
+<em class="property">async </em><code class="sig-name descname">fetch_message</code><span class="sig-paren">(</span><em class="sig-param">count: int</em><span class="sig-paren">)</span> &#x2192; List[mirai_core.models.Event.BaseEvent]<a class="reference internal" href="_modules/mirai_core/bot.html#Bot.fetch_message"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.bot.Bot.fetch_message" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deprecated
+Fetch a list of messages
+This function is called automatically if using polling instead of websocket</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>count</strong> – maximum count of one fetch</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>List of BaseEvent</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="mirai_core.bot.Bot.mute_all">
+<em class="property">async </em><code class="sig-name descname">mute_all</code><span class="sig-paren">(</span><em class="sig-param">group: Union[mirai_core.models.Entity.Group, int]</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/mirai_core/bot.html#Bot.mute_all"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.bot.Bot.mute_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mute all non admin members in group
+Success if no exception is raised</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>group</strong> – int or Group, the target group</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="mirai_core.bot.Bot.unmute_all">
+<em class="property">async </em><code class="sig-name descname">unmute_all</code><span class="sig-paren">(</span><em class="sig-param">group: Union[mirai_core.models.Entity.Group, int]</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/mirai_core/bot.html#Bot.unmute_all"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.bot.Bot.unmute_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Unmute all non admin members in group
+Success if no exception is raised</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>group</strong> – int or Group, the target group</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="mirai_core.bot.Bot.get_member_info">
+<em class="property">async </em><code class="sig-name descname">get_member_info</code><span class="sig-paren">(</span><em class="sig-param">group: Union[mirai_core.models.Entity.Group, int], member: Union[mirai_core.models.Entity.Member, int]</em><span class="sig-paren">)</span> &#x2192; mirai_core.models.Entity.MemberChangeableSetting<a class="reference internal" href="_modules/mirai_core/bot.html#Bot.get_member_info"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.bot.Bot.get_member_info" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the info of a member</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>group</strong> – int or Group, target group</p></li>
+<li><p><strong>member</strong> – int or Member, target member</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>MemberChangeableSetting</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="mirai_core.bot.Bot.get_bot_member_info">
+<em class="property">async </em><code class="sig-name descname">get_bot_member_info</code><span class="sig-paren">(</span><em class="sig-param">group: Union[mirai_core.models.Entity.Group, int]</em><span class="sig-paren">)</span> &#x2192; mirai_core.models.Entity.MemberChangeableSetting<a class="reference internal" href="_modules/mirai_core/bot.html#Bot.get_bot_member_info"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.bot.Bot.get_bot_member_info" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the info of this bot</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>group</strong> – int or Group, target group</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>MemberChangeableSetting</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="mirai_core.bot.Bot.set_member_info">
+<em class="property">async </em><code class="sig-name descname">set_member_info</code><span class="sig-paren">(</span><em class="sig-param">group: Union[mirai_core.models.Entity.Group, int], member: Union[mirai_core.models.Entity.Member, int], setting: mirai_core.models.Entity.MemberChangeableSetting</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/mirai_core/bot.html#Bot.set_member_info"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.bot.Bot.set_member_info" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the info of a member
+Success if no exception is raised</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>group</strong> – int or Group, target group</p></li>
+<li><p><strong>member</strong> – int or Member, target member</p></li>
+<li><p><strong>setting</strong> – MemberChangeableSetting, the new settings</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="mirai_core.bot.Bot.get_group_config">
+<em class="property">async </em><code class="sig-name descname">get_group_config</code><span class="sig-paren">(</span><em class="sig-param">group: Union[mirai_core.models.Entity.Group, int]</em><span class="sig-paren">)</span> &#x2192; mirai_core.models.Entity.GroupSetting<a class="reference internal" href="_modules/mirai_core/bot.html#Bot.get_group_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.bot.Bot.get_group_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the group config of a group</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>group</strong> – int or Group, target group</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>GroupSetting</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="mirai_core.bot.Bot.set_group_config">
+<em class="property">async </em><code class="sig-name descname">set_group_config</code><span class="sig-paren">(</span><em class="sig-param">group: Union[mirai_core.models.Entity.Group, int], config: mirai_core.models.Entity.GroupSetting</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/mirai_core/bot.html#Bot.set_group_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.bot.Bot.set_group_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the group config of a group
+Success if no exception is raised</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>group</strong> – int or Group, target group</p></li>
+<li><p><strong>config</strong> – GroupSetting</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="mirai_core.bot.Bot.mute">
+<em class="property">async </em><code class="sig-name descname">mute</code><span class="sig-paren">(</span><em class="sig-param">group: Union[mirai_core.models.Entity.Group, int], member: Union[mirai_core.models.Entity.Member, int], time: Union[datetime.timedelta, int]</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/mirai_core/bot.html#Bot.mute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.bot.Bot.mute" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mute a member of a group
+Success if no exception is raised</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>group</strong> – int or Group, target group</p></li>
+<li><p><strong>member</strong> – int or Member, target member</p></li>
+<li><p><strong>time</strong> – int or datetime.timedelta, must between 1 minutes and 30 days</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="mirai_core.bot.Bot.unmute">
+<em class="property">async </em><code class="sig-name descname">unmute</code><span class="sig-paren">(</span><em class="sig-param">group: Union[mirai_core.models.Entity.Group, int], member: Union[mirai_core.models.Entity.Member, int]</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/mirai_core/bot.html#Bot.unmute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.bot.Bot.unmute" title="Permalink to this definition">¶</a></dt>
+<dd><p>Unmute a member of a group
+Success if no exception is raised</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>group</strong> – int or Group, target group</p></li>
+<li><p><strong>member</strong> – int or Member, target member</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="mirai_core.bot.Bot.kick">
+<em class="property">async </em><code class="sig-name descname">kick</code><span class="sig-paren">(</span><em class="sig-param">group: Union[mirai_core.models.Entity.Group, int], member: Union[mirai_core.models.Entity.Member, int], message: str = ''</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/mirai_core/bot.html#Bot.kick"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.bot.Bot.kick" title="Permalink to this definition">¶</a></dt>
+<dd><p>Kick a member of a group</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>group</strong> – int or Group, target group</p></li>
+<li><p><strong>member</strong> – int or Member, target member</p></li>
+<li><p><strong>message</strong> – string, message to the member</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="mirai_core.bot.Bot.quit">
+<em class="property">async </em><code class="sig-name descname">quit</code><span class="sig-paren">(</span><em class="sig-param">group: Union[mirai_core.models.Entity.Group, int]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mirai_core/bot.html#Bot.quit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.bot.Bot.quit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Quit a group</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>group</strong> – int or Group, target group</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="mirai_core.bot.Bot.respond_request">
+<em class="property">async </em><code class="sig-name descname">respond_request</code><span class="sig-paren">(</span><em class="sig-param">request: Union[mirai_core.models.Event.NewFriendRequestEvent, mirai_core.models.Event.MemberJoinRequestEvent], response: Union[mirai_core.models.Types.NewFriendRequestResponse, mirai_core.models.Types.MemberJoinRequestResponse], message: str = ''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mirai_core/bot.html#Bot.respond_request"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.bot.Bot.respond_request" title="Permalink to this definition">¶</a></dt>
+<dd><p>Respond NewFriendRequestEvent and MemberJoinRequestEvent</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>request</strong> – NewFriendRequestEvent or MemberJoinRequestEvent</p></li>
+<li><p><strong>response</strong> – NewFriendRequestResponse or MemberJoinRequestResponse</p></li>
+<li><p><strong>message</strong> – text message for the response</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="mirai_core.bot.Bot.get_config">
+<em class="property">async </em><code class="sig-name descname">get_config</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; dict<a class="reference internal" href="_modules/mirai_core/bot.html#Bot.get_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.bot.Bot.get_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the config of http api</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>config</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="mirai_core.bot.Bot.set_config">
+<em class="property">async </em><code class="sig-name descname">set_config</code><span class="sig-paren">(</span><em class="sig-param">cache_size: int = 4096</em>, <em class="sig-param">enable_websocket: bool = True</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/mirai_core/bot.html#Bot.set_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.bot.Bot.set_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the config of http api
+Success if no exception is raised</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cache_size</strong> – int, the size of message cache</p></li>
+<li><p><strong>enable_websocket</strong> – bool, whether to enable websocket (will disable fetch_message accordingly)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="mirai_core.bot.Bot.create_websocket">
+<em class="property">async </em><code class="sig-name descname">create_websocket</code><span class="sig-paren">(</span><em class="sig-param">handler</em>, <em class="sig-param">ws_close_handler=None</em>, <em class="sig-param">listen: str = 'all'</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/mirai_core/bot.html#Bot.create_websocket"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.bot.Bot.create_websocket" title="Permalink to this definition">¶</a></dt>
+<dd><p>Register callback for websocket. Once an BaseEvent or Message is received, the handler will be invoked</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>handler</strong> – callable</p></li>
+<li><p><strong>ws_close_handler</strong> – callable, websocket shutdown hook</p></li>
+<li><p><strong>listen</strong> – ‘all’, ‘event’ or ‘message’</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-mirai_core.exceptions">
+<span id="mirai-core-exceptions-module"></span><h2>mirai_core.exceptions module<a class="headerlink" href="#module-mirai_core.exceptions" title="Permalink to this headline">¶</a></h2>
+<dl class="exception">
+<dt id="mirai_core.exceptions.MiraiException">
+<em class="property">exception </em><code class="sig-prename descclassname">mirai_core.exceptions.</code><code class="sig-name descname">MiraiException</code><a class="reference internal" href="_modules/mirai_core/exceptions.html#MiraiException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.exceptions.MiraiException" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Generic exception</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="mirai_core.exceptions.NetworkException">
+<em class="property">exception </em><code class="sig-prename descclassname">mirai_core.exceptions.</code><code class="sig-name descname">NetworkException</code><a class="reference internal" href="_modules/mirai_core/exceptions.html#NetworkException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.exceptions.NetworkException" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mirai_core.exceptions.MiraiException" title="mirai_core.exceptions.MiraiException"><code class="xref py py-class docutils literal notranslate"><span class="pre">mirai_core.exceptions.MiraiException</span></code></a></p>
+<p>Exceptions such as not able to reach mirai, possibly due to service not started or incorrect ip/port</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="mirai_core.exceptions.AuthenticationException">
+<em class="property">exception </em><code class="sig-prename descclassname">mirai_core.exceptions.</code><code class="sig-name descname">AuthenticationException</code><a class="reference internal" href="_modules/mirai_core/exceptions.html#AuthenticationException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.exceptions.AuthenticationException" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mirai_core.exceptions.MiraiException" title="mirai_core.exceptions.MiraiException"><code class="xref py py-class docutils literal notranslate"><span class="pre">mirai_core.exceptions.MiraiException</span></code></a></p>
+<p>Exceptions such as incorrect auth_key</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="mirai_core.exceptions.SessionException">
+<em class="property">exception </em><code class="sig-prename descclassname">mirai_core.exceptions.</code><code class="sig-name descname">SessionException</code><a class="reference internal" href="_modules/mirai_core/exceptions.html#SessionException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.exceptions.SessionException" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mirai_core.exceptions.MiraiException" title="mirai_core.exceptions.MiraiException"><code class="xref py py-class docutils literal notranslate"><span class="pre">mirai_core.exceptions.MiraiException</span></code></a></p>
+<p>Exceptions such as incorrect session_key</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="mirai_core.exceptions.PrivilegeException">
+<em class="property">exception </em><code class="sig-prename descclassname">mirai_core.exceptions.</code><code class="sig-name descname">PrivilegeException</code><a class="reference internal" href="_modules/mirai_core/exceptions.html#PrivilegeException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.exceptions.PrivilegeException" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mirai_core.exceptions.MiraiException" title="mirai_core.exceptions.MiraiException"><code class="xref py py-class docutils literal notranslate"><span class="pre">mirai_core.exceptions.MiraiException</span></code></a></p>
+<p>You do not have permission to perform such action (such as mute, kick, etc.)</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="mirai_core.exceptions.UnknownTargetException">
+<em class="property">exception </em><code class="sig-prename descclassname">mirai_core.exceptions.</code><code class="sig-name descname">UnknownTargetException</code><a class="reference internal" href="_modules/mirai_core/exceptions.html#UnknownTargetException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.exceptions.UnknownTargetException" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mirai_core.exceptions.MiraiException" title="mirai_core.exceptions.MiraiException"><code class="xref py py-class docutils literal notranslate"><span class="pre">mirai_core.exceptions.MiraiException</span></code></a></p>
+<p>Target not found (sending to non-existing group, friend, etc.)</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="mirai_core.exceptions.BadRequestException">
+<em class="property">exception </em><code class="sig-prename descclassname">mirai_core.exceptions.</code><code class="sig-name descname">BadRequestException</code><a class="reference internal" href="_modules/mirai_core/exceptions.html#BadRequestException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.exceptions.BadRequestException" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mirai_core.exceptions.MiraiException" title="mirai_core.exceptions.MiraiException"><code class="xref py py-class docutils literal notranslate"><span class="pre">mirai_core.exceptions.MiraiException</span></code></a></p>
+<p>Request contains invalid parameter</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="mirai_core.exceptions.ServerException">
+<em class="property">exception </em><code class="sig-prename descclassname">mirai_core.exceptions.</code><code class="sig-name descname">ServerException</code><a class="reference internal" href="_modules/mirai_core/exceptions.html#ServerException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.exceptions.ServerException" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mirai_core.exceptions.MiraiException" title="mirai_core.exceptions.MiraiException"><code class="xref py py-class docutils literal notranslate"><span class="pre">mirai_core.exceptions.MiraiException</span></code></a></p>
+<p>Server is returning non 200 return code, see console log for more details
+This is more likely to be mirai side issue, but sometimes incorrect parameters can cause this problem too</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-mirai_core.log">
+<span id="mirai-core-log-module"></span><h2>mirai_core.log module<a class="headerlink" href="#module-mirai_core.log" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="mirai_core.log.create_logger">
+<code class="sig-prename descclassname">mirai_core.log.</code><code class="sig-name descname">create_logger</code><span class="sig-paren">(</span><em class="sig-param">module: str</em><span class="sig-paren">)</span> &#x2192; logging.Logger<a class="reference internal" href="_modules/mirai_core/log.html#create_logger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.log.create_logger" title="Permalink to this definition">¶</a></dt>
+<dd><p>create logger for module</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mirai_core.log.install_logger">
+<code class="sig-prename descclassname">mirai_core.log.</code><code class="sig-name descname">install_logger</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mirai_core/log.html#install_logger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.log.install_logger" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-mirai_core.network">
+<span id="mirai-core-network-module"></span><h2>mirai_core.network module<a class="headerlink" href="#module-mirai_core.network" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="mirai_core.network.HttpClient">
+<em class="property">class </em><code class="sig-prename descclassname">mirai_core.network.</code><code class="sig-name descname">HttpClient</code><span class="sig-paren">(</span><em class="sig-param">base_url: str</em>, <em class="sig-param">timeout=5</em>, <em class="sig-param">loop=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mirai_core/network.html#HttpClient"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.network.HttpClient" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Internal use only
+HttpClient implemented by aiohttp</p>
+<dl class="attribute">
+<dt id="mirai_core.network.HttpClient.DEFAULT_TIMEOUT">
+<code class="sig-name descname">DEFAULT_TIMEOUT</code><em class="property"> = 5</em><a class="headerlink" href="#mirai_core.network.HttpClient.DEFAULT_TIMEOUT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="mirai_core.network.HttpClient.get">
+<em class="property">async </em><code class="sig-name descname">get</code><span class="sig-paren">(</span><em class="sig-param">url</em>, <em class="sig-param">headers=None</em>, <em class="sig-param">params=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mirai_core/network.html#HttpClient.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.network.HttpClient.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>send http get request</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>url</strong> – the sub url</p></li>
+<li><p><strong>headers</strong> – request headers</p></li>
+<li><p><strong>params</strong> – get params</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>json decoded response</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="mirai_core.network.HttpClient.post">
+<em class="property">async </em><code class="sig-name descname">post</code><span class="sig-paren">(</span><em class="sig-param">url</em>, <em class="sig-param">headers=None</em>, <em class="sig-param">data=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mirai_core/network.html#HttpClient.post"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.network.HttpClient.post" title="Permalink to this definition">¶</a></dt>
+<dd><p>send http post request</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>url</strong> – the sub url</p></li>
+<li><p><strong>headers</strong> – request headers</p></li>
+<li><p><strong>data</strong> – post params</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>json decoded response</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="mirai_core.network.HttpClient.upload">
+<em class="property">async </em><code class="sig-name descname">upload</code><span class="sig-paren">(</span><em class="sig-param">url</em>, <em class="sig-param">headers=None</em>, <em class="sig-param">data=None</em>, <em class="sig-param">file: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mirai_core/network.html#HttpClient.upload"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.network.HttpClient.upload" title="Permalink to this definition">¶</a></dt>
+<dd><p>upload using multipart upload</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>url</strong> – the sub url</p></li>
+<li><p><strong>headers</strong> – request headers</p></li>
+<li><p><strong>data</strong> – post params</p></li>
+<li><p><strong>file</strong> – file to attach</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>json decoded response</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="mirai_core.network.HttpClient.websocket">
+<em class="property">async </em><code class="sig-name descname">websocket</code><span class="sig-paren">(</span><em class="sig-param">url: str</em>, <em class="sig-param">handler: callable</em>, <em class="sig-param">ws_close_handler: callable</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mirai_core/network.html#HttpClient.websocket"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.network.HttpClient.websocket" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create websocket subscriber to url</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>url</strong> – the sub url</p></li>
+<li><p><strong>handler</strong> – request headers</p></li>
+<li><p><strong>ws_close_handler</strong> – callback for connection close</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="mirai_core.network.HttpClient.close">
+<em class="property">async </em><code class="sig-name descname">close</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mirai_core/network.html#HttpClient.close"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.network.HttpClient.close" title="Permalink to this definition">¶</a></dt>
+<dd><p>Close session</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-mirai_core.updater">
+<span id="mirai-core-updater-module"></span><h2>mirai_core.updater module<a class="headerlink" href="#module-mirai_core.updater" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="mirai_core.updater.Updater">
+<em class="property">class </em><code class="sig-prename descclassname">mirai_core.updater.</code><code class="sig-name descname">Updater</code><span class="sig-paren">(</span><em class="sig-param">bot: mirai_core.bot.Bot</em>, <em class="sig-param">use_websocket: bool = True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mirai_core/updater.html#Updater"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.updater.Updater" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Initialize Updater</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>bot</strong> – the Bot object to use</p></li>
+<li><p><strong>use_websocket</strong> – bool. whether websocket (recommended) should be used</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="method">
+<dt id="mirai_core.updater.Updater.run_task">
+<em class="property">async </em><code class="sig-name descname">run_task</code><span class="sig-paren">(</span><em class="sig-param">shutdown_hook: callable = None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mirai_core/updater.html#Updater.run_task"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.updater.Updater.run_task" title="Permalink to this definition">¶</a></dt>
+<dd><p>return awaitable coroutine to run in event loop (must be the same loop as bot object)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>shutdown_hook</strong> – callable, if running in main thread, this must be set. Trigger is called on shutdown</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="mirai_core.updater.Updater.add_handler">
+<code class="sig-name descname">add_handler</code><span class="sig-paren">(</span><em class="sig-param">event: Union[mirai_core.models.Event.Message, mirai_core.models.Event.BotOnlineEvent, mirai_core.models.Event.BotOfflineEventActive, mirai_core.models.Event.BotOfflineEventForce, mirai_core.models.Event.BotOfflineEventDropped, mirai_core.models.Event.BotReloginEvent, mirai_core.models.Event.BotGroupPermissionChangeEvent, mirai_core.models.Event.BotMuteEvent, mirai_core.models.Event.BotUnmuteEvent, mirai_core.models.Event.BotJoinGroupEvent, mirai_core.models.Event.BotLeaveEventActive, mirai_core.models.Event.BotLeaveEventKick, mirai_core.models.Event.GroupNameChangeEvent, mirai_core.models.Event.GroupEntranceAnnouncementChangeEvent, mirai_core.models.Event.GroupMuteAllEvent, mirai_core.models.Event.GroupRecallEvent, mirai_core.models.Event.FriendRecallEvent, mirai_core.models.Event.GroupAllowAnonymousChatEvent, mirai_core.models.Event.GroupAllowConfessTalkEvent, mirai_core.models.Event.GroupAllowMemberInviteEvent, mirai_core.models.Event.MemberJoinEvent, mirai_core.models.Event.MemberLeaveEventKick, mirai_core.models.Event.MemberLeaveEventQuit, mirai_core.models.Event.MemberCardChangeEvent, mirai_core.models.Event.MemberSpecialTitleChangeEvent, mirai_core.models.Event.MemberPermissionChangeEvent, mirai_core.models.Event.MemberMuteEvent, mirai_core.models.Event.MemberUnmuteEvent, mirai_core.models.Event.NewFriendRequestEvent, mirai_core.models.Event.MemberJoinRequestEvent, mirai_core.models.Event.BaseEvent, List[Union[mirai_core.models.Event.Message, mirai_core.models.Event.BotOnlineEvent, mirai_core.models.Event.BotOfflineEventActive, mirai_core.models.Event.BotOfflineEventForce, mirai_core.models.Event.BotOfflineEventDropped, mirai_core.models.Event.BotReloginEvent, mirai_core.models.Event.BotGroupPermissionChangeEvent, mirai_core.models.Event.BotMuteEvent, mirai_core.models.Event.BotUnmuteEvent, mirai_core.models.Event.BotJoinGroupEvent, mirai_core.models.Event.BotLeaveEventActive, mirai_core.models.Event.BotLeaveEventKick, mirai_core.models.Event.GroupNameChangeEvent, mirai_core.models.Event.GroupEntranceAnnouncementChangeEvent, mirai_core.models.Event.GroupMuteAllEvent, mirai_core.models.Event.GroupRecallEvent, mirai_core.models.Event.FriendRecallEvent, mirai_core.models.Event.GroupAllowAnonymousChatEvent, mirai_core.models.Event.GroupAllowConfessTalkEvent, mirai_core.models.Event.GroupAllowMemberInviteEvent, mirai_core.models.Event.MemberJoinEvent, mirai_core.models.Event.MemberLeaveEventKick, mirai_core.models.Event.MemberLeaveEventQuit, mirai_core.models.Event.MemberCardChangeEvent, mirai_core.models.Event.MemberSpecialTitleChangeEvent, mirai_core.models.Event.MemberPermissionChangeEvent, mirai_core.models.Event.MemberMuteEvent, mirai_core.models.Event.MemberUnmuteEvent, mirai_core.models.Event.NewFriendRequestEvent, mirai_core.models.Event.MemberJoinRequestEvent, mirai_core.models.Event.BaseEvent]]]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mirai_core/updater.html#Updater.add_handler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.updater.Updater.add_handler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decorator for event listeners
+Catch all is not supported at this time</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>event</strong> – events.Events</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="mirai_core.updater.Updater.run">
+<code class="sig-name descname">run</code><span class="sig-paren">(</span><em class="sig-param">log_to_stderr=True</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/mirai_core/updater.html#Updater.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.updater.Updater.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Start the Updater and block the thread</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>log_to_stderr</strong> – if you are setting other loggers that capture the log from this Library, set to False</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="mirai_core.updater.Updater.handshake">
+<em class="property">async </em><code class="sig-name descname">handshake</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mirai_core/updater.html#Updater.handshake"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.updater.Updater.handshake" title="Permalink to this definition">¶</a></dt>
+<dd><p>Internal use only, automatic handshake
+Called when launch or websocket disconnects</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="mirai_core.updater.Updater.message_polling">
+<em class="property">async </em><code class="sig-name descname">message_polling</code><span class="sig-paren">(</span><em class="sig-param">count=5</em>, <em class="sig-param">interval=0.5</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/mirai_core/updater.html#Updater.message_polling"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.updater.Updater.message_polling" title="Permalink to this definition">¶</a></dt>
+<dd><p>Internal use only, polling message and fire events</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>count</strong> – maximum message count for each polling</p></li>
+<li><p><strong>interval</strong> – minimum interval between two polling</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="mirai_core.updater.Updater.event_caller">
+<em class="property">async </em><code class="sig-name descname">event_caller</code><span class="sig-paren">(</span><em class="sig-param">event: mirai_core.models.Event.BaseEvent</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/mirai_core/updater.html#Updater.event_caller"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.updater.Updater.event_caller" title="Permalink to this definition">¶</a></dt>
+<dd><p>Internal use only, call the event handlers sequentially</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>event</strong> – the event</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="mirai_core.updater.Updater.raise_shutdown">
+<em class="property">async </em><code class="sig-name descname">raise_shutdown</code><span class="sig-paren">(</span><em class="sig-param">shutdown_event: Callable[[...], Awaitable[None]]</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/mirai_core/updater.html#Updater.raise_shutdown"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.updater.Updater.raise_shutdown" title="Permalink to this definition">¶</a></dt>
+<dd><p>Internal use only, shutdown</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>shutdown_event</strong> – callable</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="mirai_core.updater.Updater.handle_exception">
+<code class="sig-name descname">handle_exception</code><span class="sig-paren">(</span><em class="sig-param">loop</em>, <em class="sig-param">context</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mirai_core/updater.html#Updater.handle_exception"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.updater.Updater.handle_exception" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="mirai_core.updater.EventHandler">
+<em class="property">class </em><code class="sig-prename descclassname">mirai_core.updater.</code><code class="sig-name descname">EventHandler</code><span class="sig-paren">(</span><em class="sig-param">func: Callable</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mirai_core/updater.html#EventHandler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.updater.EventHandler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Contains the callback function</p>
+<dl class="attribute">
+<dt id="mirai_core.updater.EventHandler.func">
+<code class="sig-name descname">func</code><em class="property">: Callable</em><em class="property"> = None</em><a class="headerlink" href="#mirai_core.updater.EventHandler.func" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="exception">
+<dt id="mirai_core.updater.Shutdown">
+<em class="property">exception </em><code class="sig-prename descclassname">mirai_core.updater.</code><code class="sig-name descname">Shutdown</code><a class="reference internal" href="_modules/mirai_core/updater.html#Shutdown"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mirai_core.updater.Shutdown" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Internal use only
+Shutdown BaseEvent</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-mirai_core">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-mirai_core" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="mirai_core.models.html" class="btn btn-neutral float-right" title="mirai_core.models package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to Python Mirai Core’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, jqqqqqqqqqq, Chenwe-i-lin
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

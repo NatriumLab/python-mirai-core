@@ -4,9 +4,8 @@ from collections import defaultdict
 from dataclasses import dataclass
 import signal
 from .log import create_logger, install_logger
-
 from .bot import Bot
-from .models.Event import Event, EventTypes
+from .models.Event import BaseEvent, Events
 from .exceptions import SessionException, NetworkException, AuthenticationException, ServerException
 
 
@@ -21,7 +20,7 @@ class Updater:
         self.bot = bot
         self.loop = bot.loop
         self.logger = create_logger('Updater')
-        self.event_handlers: DefaultDict[EventTypes, List[EventHandler]] = defaultdict(lambda: list())
+        self.event_handlers: DefaultDict[Events, List[EventHandler]] = defaultdict(lambda: list())
         self.use_websocket = use_websocket
 
     async def run_task(self, shutdown_hook: callable = None):
@@ -40,7 +39,7 @@ class Updater:
             tasks.append(self.raise_shutdown(shutdown_hook))
         await asyncio.wait(tasks)
 
-    def add_handler(self, event: Union[EventTypes, List[EventTypes]]):
+    def add_handler(self, event: Union[Events, List[Events]]):
         """
         Decorator for event listeners
         Catch all is not supported at this time
@@ -53,13 +52,17 @@ class Updater:
 
             # save function and its parameter types
             event_handler = EventHandler(func)
-            if isinstance(event, EventTypes):
-                # add listener
-                self.event_handlers[event].append(event_handler)
-            else:
-                for e in event:
-                    if isinstance(e, EventTypes):
-                        self.event_handlers[e].append(event_handler)
+            nonlocal event
+            if not isinstance(event, list):
+                event = [event]
+            for e in event:
+                if e in Events.__args__:
+                    if e.__name__ == 'Message':
+                        self.event_handlers['GroupMessage'].append(event_handler)
+                        self.event_handlers['FriendMessage'].append(event_handler)
+                        self.event_handlers['TempMessage'].append(event_handler)
+                    else:
+                        self.event_handlers[e.__name__].append(event_handler)
             return func
 
         return receiver_wrapper
@@ -71,6 +74,7 @@ class Updater:
         :param log_to_stderr: if you are setting other loggers that capture the log from this Library, set to False
         """
         asyncio.set_event_loop(self.loop)
+        self.loop.set_exception_handler(self.handle_exception)
 
         shutdown_event = asyncio.Event()
 
@@ -96,20 +100,18 @@ class Updater:
 
         :return:
         """
-        try:
-            await self.bot.handshake()
-            if self.use_websocket:
-                asyncio.run_coroutine_threadsafe(
-                    self.bot.create_websocket(self.event_caller, self.handshake), self.loop)
-            return
-        except NetworkException:
-            self.logger.warning('Unable to communicate with Mirai console, retrying in 5 seconds')
+        while True:
+            try:
+                await self.bot.handshake()
+                if self.use_websocket:
+                    asyncio.run_coroutine_threadsafe(
+                        self.bot.create_websocket(self.event_caller, self.handshake), self.loop)
+                return True
+            except NetworkException:
+                self.logger.warning('Unable to communicate with Mirai console, retrying in 5 seconds')
+            except Exception as e:
+                self.logger.exception(f'retrying in 5 seconds')
             await asyncio.sleep(5)
-            asyncio.run_coroutine_threadsafe(self.handshake(), self.loop)
-        except Exception as e:
-            self.logger.exception(f'retrying in 5 seconds')
-            await asyncio.sleep(5)
-            asyncio.run_coroutine_threadsafe(self.handshake(), self.loop)
 
     async def message_polling(self, count=5, interval=0.5) -> None:
         """
@@ -121,7 +123,7 @@ class Updater:
         while True:
             await asyncio.sleep(interval)
             try:
-                results: List[Event] = await self.bot.fetch_message(count)
+                results: List[BaseEvent] = await self.bot.fetch_message(count)
                 if len(results) > 0:
                     self.logger.debug('Received messages:\n' + '\n'.join([str(result) for result in results]))
                 for result in results:
@@ -130,7 +132,7 @@ class Updater:
                 self.logger.warning(f'{e}, new handshake initiated')
                 await self.handshake()
 
-    async def event_caller(self, event: Event) -> None:
+    async def event_caller(self, event: BaseEvent) -> None:
         """
         Internal use only, call the event handlers sequentially
 
@@ -150,6 +152,11 @@ class Updater:
         await self.bot.release()
         raise Shutdown()
 
+    def handle_exception(self, loop, context):
+        # context["message"] will always be there; but context["exception"] may not
+        msg = context.get("exception", context["message"])
+        self.logger.exception('Unhandled exception: ', exc_info=msg)
+
 
 @dataclass
 class EventHandler:
@@ -162,6 +169,6 @@ class EventHandler:
 class Shutdown(Exception):
     """
     Internal use only
-    Shutdown Event
+    Shutdown BaseEvent
     """
     pass
