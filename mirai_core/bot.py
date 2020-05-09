@@ -518,6 +518,13 @@ class Bot:
         if not isinstance(message_component, (Image, FlashImage)):
             return message_component
 
+        if message_type == MessageType.GROUP:
+            if message_component.imageId and message_component.imageId.startswith('/'):
+                message_component.imageId = None
+        else:
+            if message_component.imageId and message_component.imageId.startswith('{'):
+                message_component.imageId = None
+
         if message_component.imageId or message_component.url:
             return message_component
 
