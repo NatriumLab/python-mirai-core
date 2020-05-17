@@ -19,3 +19,11 @@ class MessageType(str, Enum):
     GROUP = 'GroupMessage'
     FRIEND = 'FriendMessage'
     TEMP = 'TempMessage'
+
+    @property
+    def chat_type(self):
+        return {
+            'GroupMessage':  'group',
+            'FriendMessage': 'friend',
+            'TempMessage':   'temp'
+        }[self]

@@ -3,4 +3,4 @@ from .updater import Updater
 from . import models
 from . import exceptions
 
-__VERSION__ = '0.8.2'
+__VERSION__ = '0.8.3'

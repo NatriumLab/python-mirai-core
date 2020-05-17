@@ -253,7 +253,7 @@ class Bot:
 
         data = {
             'sessionKey': self.session_key,
-            'type': message_type.value
+            'type': message_type.chat_type
         }
         result = await self.session.upload('/uploadImage', file=image_path, data=data)
         return Image.parse_obj(result)
