@@ -132,11 +132,11 @@ class Bot:
         data = {
             'sessionKey':   self.session_key,
         }
-        if message_type == MessageType.Friend:
+        if message_type == MessageType.FRIEND:
             portal = '/sendFriendMessage'
             data['target'] = self._handle_target_as(target)
 
-        elif message_type == MessageType.Temp:
+        elif message_type == MessageType.TEMP:
             portal = '/sendTempMessage'
             if isinstance(target, int):
                 data['qq'] = target
@@ -147,7 +147,7 @@ class Bot:
                 data['group'] = target.group.id
                 data['qq'] = target.id
 
-        elif message_type == MessageType.Group:
+        elif message_type == MessageType.GROUP:
             portal = '/sendGroupMessage'
             data['target'] = self._handle_target_as(target)
         else:
@@ -155,7 +155,7 @@ class Bot:
 
         message_chain = await self._handle_message_chain(message, message_type)
 
-        data['messageChain'] = message_chain
+        data['messageChain'] = json.loads(message_chain.json())
 
         if quote_source:
             if isinstance(quote_source, int):
