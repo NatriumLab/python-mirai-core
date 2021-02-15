@@ -128,7 +128,7 @@ class HttpClient:
         :param ws_close_handler: callback for connection close
         """
         try:
-            ws = await self.session.ws_connect(self.base_url + url)
+            ws = await self.session.ws_connect(self.base_url + url, heartbeat=HttpClient.DEFAULT_TIMEOUT)
             self.logger.debug('Websocket established')
             while True:
                 msg = await ws.receive()
