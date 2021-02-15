@@ -132,15 +132,16 @@ class Face(BaseMessageComponent):
         """
         Construct Face component
 
-        :param face_id: unsigned 8-bit face id
+        :param face_id: unsigned integer face id
         """
         super().__init__(faceId=faceId, **kwargs)
 
     def __str__(self):
-        return qq_emoji_text_list[self.faceId]
+        return qq_emoji_text_list[self.faceId] if self.faceId in qq_emoji_text_list else "[Unknown]"
 
     def __repr__(self):
-        return f'[Face: id={self.faceId}, {qq_emoji_text_list[self.faceId]}]'
+        face_text = qq_emoji_text_list[self.faceId] if self.faceId in qq_emoji_text_list else "[Unknown]"
+        return f'[Face: id={self.faceId}, {face_text}]'
 
 
 class Image(BaseMessageComponent):
