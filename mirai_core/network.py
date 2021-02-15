@@ -14,7 +14,10 @@ error_code = {
                 3: lambda: SessionException('Session does not exist or has expired'),
                 4: lambda: AuthenticationException('Session is not verified'),
                 5: lambda: UnknownTargetException('Message target does not exist'),
+                6: lambda: UnknownTargetException('File target does not exist'),
                 10: lambda: PrivilegeException('Bot does not have corresponding privilege'),
+                20: lambda: PrivilegeException('Bot is banned in group'),
+                30: lambda: PrivilegeException('Message is too long'),
                 400: lambda: BadRequestException('Bad Request, please check arguments/url'),
             }
 
