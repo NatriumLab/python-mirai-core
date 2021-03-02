@@ -84,7 +84,7 @@ class Updater:
         try:
             self.loop.add_signal_handler(signal.SIGTERM, _signal_handler)
             self.loop.add_signal_handler(signal.SIGINT, _signal_handler)
-        except (AttributeError, NotImplementedError):
+        except (AttributeError, NotImplementedError, RuntimeError):
             pass
 
         if log_to_stderr:
