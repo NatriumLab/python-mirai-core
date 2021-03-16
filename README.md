@@ -7,7 +7,7 @@ Derived from [Python-Mirai](https://github.com/Chenwe-i-lin/python-mirai). If yo
 
 A Flask like Python wrapper of [Mirai-HTTP-API](https://github.com/mamoe/mirai-api-http)
 
-See full documentation [here](https://mirai-py.originpages.com/python-mirai-core/docs/mirai_core/index.html)
+See full documentation [here](https://natriumlab.github.io/python-mirai-core/)
 
 Synced with mirai core 1.0RC
 
