@@ -66,8 +66,9 @@ qq = 123456
 host = '127.0.0.1'
 port = 18080
 auth_key = 'abcdefgh'
+protocol = 'https'
 
-bot = Bot(qq, host, port, auth_key)
+bot = Bot(qq, host, port, auth_key, protocol=protocol)
 updater = Updater(bot)
 
 
