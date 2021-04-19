@@ -41,10 +41,10 @@ class Bot:
     See https://github.com/mamoe/mirai-api-http for details
     """
 
-    def __init__(self, qq: int, host: str = '127.0.0.1', port: int = 8080, auth_key: str = 'abcdefgh', loop=None, protocol: str = 'http'):
+    def __init__(self, qq: int, host: str = '127.0.0.1', port: int = 8080, auth_key: str = 'abcdefgh', loop=None, scheme: str = 'http'):
         self.qq = qq
         self.auth_key = auth_key
-        self.base_url = f'{protocol}://{host}:{port}'
+        self.base_url = f'{scheme}://{host}:{port}'
         self.loop = loop
         self.session = HttpClient(self.base_url, loop=self.loop)
         self.session_key = ''
