@@ -325,6 +325,12 @@ class MemberJoinRequestEvent(BaseEvent):
     nickname: str = Field(..., alias="nick")
 
 
+class VerifyResponseEvent(BaseEvent):
+    type: Literal['VerifyResponseEvent'] = Field('VerifyResponseEvent')
+    code: int
+    sessionKey: str = Field(..., alias="session")
+
+
 def events() -> Type:
     event_types = [
         Message,
@@ -358,8 +364,9 @@ def events() -> Type:
         MemberUnmuteEvent,
         NewFriendRequestEvent,
         MemberJoinRequestEvent,
+        VerifyResponseEvent,
 
-        BaseEvent
+        BaseEvent,
     ]
     return Union[tuple(event_types)]
 
