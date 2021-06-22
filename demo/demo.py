@@ -1,8 +1,5 @@
 from mirai_core import Bot, Updater
 from mirai_core.models import Event, Message, Types
-import logging
-
-logging.root.setLevel(logging.DEBUG)
 
 qq = 123456
 host = '127.0.0.1'
@@ -65,8 +62,6 @@ async def handler(event: Event.BaseEvent):
         image_id = image.imageId
         print(image_id)
         return True
-    else:
-        logging.debug("Unprocessed event {event}")
 
 # run the updater forever, block the program from exiting
 updater.run()

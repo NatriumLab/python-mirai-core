@@ -104,10 +104,9 @@ class Updater:
             try:
                 await self.bot.handshake()
                 if self.use_websocket:
-                    await asyncio.run_coroutine_threadsafe(
-                        self.bot.create_websocket(self.event_caller), self.loop)
-                else:
-                    return True
+                    asyncio.run_coroutine_threadsafe(
+                        self.bot.create_websocket(self.event_caller, self.handshake), self.loop)
+                return True
             except NetworkException:
                 self.logger.warning('Unable to communicate with Mirai console, retrying in 5 seconds')
             except Exception as e:

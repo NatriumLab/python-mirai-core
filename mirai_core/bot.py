@@ -1,4 +1,3 @@
-import asyncio
 from typing import Union, List, Type, Dict
 from datetime import timedelta
 from pathlib import Path
@@ -46,8 +45,6 @@ class Bot:
         self.qq = qq
         self.auth_key = auth_key
         self.base_url = f'{scheme}://{host}:{port}'
-        if loop is None:
-            loop = asyncio.get_event_loop()
         self.loop = loop
         self.session = HttpClient(self.base_url, loop=self.loop)
         self.session_key = ''
@@ -65,14 +62,14 @@ class Bot:
         """
         Post auth_key, and get session_key
         """
-        result = await self.session.post('/verify', data={'verifyKey': self.auth_key})
+        result = await self.session.post('/auth', data={'authKey': self.auth_key})
         self.session_key = result.get('session')
 
     async def verify(self) -> None:
         """
         Post session_key to verify the session
         """
-        await self.session.post('/bind',
+        await self.session.post('/verify',
                                 data={
                                     'sessionKey': self.session_key,
                                     'qq':         self.qq
@@ -202,7 +199,7 @@ class Bot:
             'sessionKey': self.session_key,
         }
         result = await self.session.get('/groupList', params=params)
-        return [Group.parse_obj(group_info) for group_info in result["data"]]
+        return [Group.parse_obj(group_info) for group_info in result]
 
     @property
     @retry_once
@@ -216,7 +213,7 @@ class Bot:
             'sessionKey': self.session_key,
         }
         result = await self.session.get('/friendList', params=params)
-        return [Friend.parse_obj(friend_info) for friend_info in result["data"]]
+        return [Friend.parse_obj(friend_info) for friend_info in result]
 
     @retry_once
     async def get_members(self, target: Union[Group, int]) -> List[Member]:
@@ -235,7 +232,7 @@ class Bot:
             'target':     group
         }
         result = await self.session.get('/memberList', params=params)
-        return [Member.parse_obj(member_info) for member_info in result["data"]]
+        return [Member.parse_obj(member_info) for member_info in result]
 
     @retry_once
     async def upload_image(self, message_type: MessageType, image_path: Union[Path, str]) -> Optional[Image]:
@@ -537,12 +534,12 @@ class Bot:
         return message_component
 
     async def _handle_message_chain(self, message: Union[
-        MessageChain,
-        BaseMessageComponent,
-        List[BaseMessageComponent],
-        str
-    ],
-            message_type: MessageType) -> MessageChain:
+                                                        MessageChain,
+                                                        BaseMessageComponent,
+                                                        List[BaseMessageComponent],
+                                                        str
+                                                        ],
+                                    message_type: MessageType) -> MessageChain:
         """
         Internal use only
         Convert MessageChain to json
@@ -601,8 +598,9 @@ class Bot:
         :param result: the json
         :return: BaseEvent
         """
+
         try:
-            result = parse_obj_as(Events, result["data"])
+            result = parse_obj_as(Events, result)
             if isinstance(result, Message):  # construct message chain
                 # parse quote first
                 if len(result.messageChain) > 2:
@@ -653,5 +651,5 @@ class Bot:
         if ws_close_handler is None:
             async def ws_close_handler(event):
                 pass
-        await self.session.websocket(f'/{listen}?verifyKey={self.auth_key}&sessionKey={self.session_key}&qq={self.qq}',
+        await self.session.websocket(f'/{listen}?sessionKey={self.session_key}',
                                      self._websocket_handler(handler), ws_close_handler)
