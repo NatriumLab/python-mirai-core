@@ -325,9 +325,16 @@ class MemberJoinRequestEvent(BaseEvent):
     nickname: str = Field(..., alias="nick")
 
 
+class AuthEvent(BaseModel):
+    code: int = Field(..., alias="code")
+    session: str = Field(..., alias="session")
+
+
 def events() -> Type:
     event_types = [
         Message,
+
+        AuthEvent,
 
         BotOnlineEvent,
         BotOfflineEventActive,
@@ -365,3 +372,8 @@ def events() -> Type:
 
 
 Events = events()
+
+
+class WebSocketEvent(BaseModel):
+    sync_id: str = Field(..., alias="syncId")
+    data: Events
