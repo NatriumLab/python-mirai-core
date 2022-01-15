@@ -41,9 +41,9 @@ class Bot:
     See https://github.com/mamoe/mirai-api-http for details
     """
 
-    def __init__(self, qq: int, host: str = '127.0.0.1', port: int = 8080, auth_key: str = 'abcdefgh', loop=None, scheme: str = 'http'):
+    def __init__(self, qq: int, host: str = '127.0.0.1', port: int = 8080, verify_key: str = 'abcdefgh', loop=None, scheme: str = 'http'):
         self.qq = qq
-        self.auth_key = auth_key
+        self.verify_key = verify_key
         self.base_url = f'{scheme}://{host}:{port}'
         self.loop = loop
         self.session = HttpClient(self.base_url, loop=self.loop)
@@ -55,21 +55,21 @@ class Bot:
         Authenticate and verify the session_key
         Automatically called if session_key needs to be updated
         """
-        await self.auth()
         await self.verify()
-
-    async def auth(self) -> None:
-        """
-        Post auth_key, and get session_key
-        """
-        result = await self.session.post('/auth', data={'authKey': self.auth_key})
-        self.session_key = result.get('session')
+        await self.bind()
 
     async def verify(self) -> None:
         """
+        Post auth_key, and get session_key
+        """
+        result = await self.session.post('/verify', data={'verifyKey': self.verify_key})
+        self.session_key = result.get('session')
+
+    async def bind(self) -> None:
+        """
         Post session_key to verify the session
         """
-        await self.session.post('/verify',
+        await self.session.post('/bind',
                                 data={
                                     'sessionKey': self.session_key,
                                     'qq':         self.qq
@@ -199,7 +199,9 @@ class Bot:
             'sessionKey': self.session_key,
         }
         result = await self.session.get('/groupList', params=params)
-        return [Group.parse_obj(group_info) for group_info in result]
+        if result['code'] != 0:
+            raise MiraiException('Failed to retrieve group list')
+        return [Group.parse_obj(group_info) for group_info in result['data']]
 
     @property
     @retry_once
@@ -213,7 +215,9 @@ class Bot:
             'sessionKey': self.session_key,
         }
         result = await self.session.get('/friendList', params=params)
-        return [Friend.parse_obj(friend_info) for friend_info in result]
+        if result['code'] != 0:
+            raise MiraiException('Failed to retrieve friend list')
+        return [Friend.parse_obj(friend_info) for friend_info in result['data']]
 
     @retry_once
     async def get_members(self, target: Union[Group, int]) -> List[Member]:
@@ -232,7 +236,9 @@ class Bot:
             'target':     group
         }
         result = await self.session.get('/memberList', params=params)
-        return [Member.parse_obj(member_info) for member_info in result]
+        if result['code'] != 0:
+            raise MiraiException('Failed to retrieve member list')
+        return [Member.parse_obj(member_info) for member_info in result['data']]
 
     @retry_once
     async def upload_image(self, message_type: MessageType, image_path: Union[Path, str]) -> Optional[Image]:
@@ -590,17 +596,19 @@ class Bot:
 
         await self.session.post('/config', data=data)
 
-    def _parse_event(self, result) -> BaseEvent:
+    def _parse_event(self, result) -> Union[BaseEvent, None]:
         """
         Internal use only
         Parse event or message from json to BaseEvent
 
         :param result: the json
-        :return: BaseEvent
+        :return: BaseEvent or None
         """
 
         try:
-            result = parse_obj_as(Events, result)
+            result = WebSocketEvent.parse_obj(result).data
+            if isinstance(result, AuthEvent):
+                return None
             if isinstance(result, Message):  # construct message chain
                 # parse quote first
                 if len(result.messageChain) > 2:
@@ -633,7 +641,8 @@ class Bot:
             :param result: json
             """
             result = self._parse_event(result)
-            await handler(result)
+            if result is not None:
+                await handler(result)
 
         return _handler
 
@@ -651,5 +660,5 @@ class Bot:
         if ws_close_handler is None:
             async def ws_close_handler(event):
                 pass
-        await self.session.websocket(f'/{listen}?sessionKey={self.session_key}',
+        await self.session.websocket(f'/{listen}?verifyKey={self.verify_key}&qq={self.qq}',
                                      self._websocket_handler(handler), ws_close_handler)
