@@ -111,17 +111,18 @@ class HttpClient:
         :param file: file to attach
         :return: json decoded response
         """
-        if data is None:
-            data = dict()
-        data['img'] = BytesIO(open(file, 'rb').read())
-
-        headers = headers or {}
-        headers["Content-Type"] = "multipart/form-data"
+        # Use aiohttp.FormData instead of specifying header directly
+        form_data = aiohttp.FormData()
+        # Append all the data items to FormData
+        for key, value in data.items():
+            form_data.add_field(key, value)
+        # Add image
+        form_data.add_field('img', file.open('rb'), filename=file.name)
 
         self.logger.debug(f'upload {url} with file: {file}')
         try:
             response = await self.session.post(self.base_url + url,
-                                               headers=headers, data=data)
+                                               headers=headers, data=form_data)
         except client_exceptions.ClientConnectorError:
             raise NetworkException('Unable to reach Mirai console')
         self.logger.debug(f'Image uploaded: {response.text}')
